@@ -1,0 +1,11 @@
+.navbar {
+    @apply flex flex-col bg-white h-full border-r-2 p-2 border-gray-100;
+  
+    &__item {
+      @apply text-sm font-bold p-2 text-gray-300 cursor-pointer mb-2 whitespace-pre;
+      &:hover,
+      &--active {
+        @apply text-blue-500 bg-blue-50 rounded-md;
+      }
+    }
+  }

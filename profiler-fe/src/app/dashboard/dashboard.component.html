@@ -1,0 +1,10 @@
+<div class="overflow-scroll">
+    <app-aggreagation [aggregation]="aggregation$ | async"></app-aggreagation>
+
+    <router-outlet></router-outlet>
+</div>
+
+
+<!-- <ng-container *ngIf="batch$ | async as batch">
+    <app-batch-report [report]="batch"></app-batch-report>
+</ng-container> -->

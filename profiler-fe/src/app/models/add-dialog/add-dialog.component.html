@@ -1,0 +1,71 @@
+<h2 mat-dialog-title>Add model</h2>
+
+<div *ngIf="error" class="p-4 bg-red-50 text-red-800 mb-6">
+  {{ error | json }}
+</div>
+
+
+<div *ngIf="succeed" class="my-10">
+  <div class="text-gray-600 flex flex-col font-bold content-center items-center">
+    <button mat-mini-fab color="primary" aria-label="Model was stored and metrics were generated successfully" >
+      <mat-icon>check</mat-icon>
+    </button>
+    <div class="text-center mt-4">Model was stored and metrics were generated successfully</div>
+  </div>
+</div>
+
+<mat-dialog-content>
+  <form [formGroup]="formGroup" #form *ngIf="!succeed">
+    <mat-form-field appearance="legacy" class="pr-6">
+        <mat-label>name</mat-label>
+        <input matInput placeholder="name" formControlName="name">
+    </mat-form-field>
+    <mat-form-field appearance="legacy">
+        <mat-label>version</mat-label>
+        <input matInput placeholder="version" formControlName="version">
+    </mat-form-field>
+      <div >
+        <input
+        type="file"
+        formControlName="contract"
+        class="file-upload"
+        (change)="handleContract($event)"
+        hidden
+        #contractFile>
+        <mat-label class="text-sm font-bold capitalize text-gray-900">Contract file</mat-label>
+        <div class="flex items-center">
+            <div class="text-xs font-bold text-gray-600 pr-3">{{ contract?.name || "No file uploaded yet." }}</div>
+            <button mat-button
+                (click)="contractFile.click()">
+              Upload file
+            </button>
+        </div>
+      </div>
+        <div >
+          <input
+          type="file"
+          formControlName="training"
+          class="file-upload"
+          (change)="handleTraining($event)"
+          hidden
+          #trainingFile>
+          <mat-label class="text-sm font-bold capitalize text-gray-900">Training data file</mat-label>
+          <div class="flex items-center">
+              <div class="text-xs font-bold text-gray-600 pr-3">{{ training?.name || "No file uploaded yet." }}</div>
+              <button mat-button
+                  (click)="trainingFile.click()">
+                Upload file
+              </button>
+          </div>
+        </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" *ngIf="!succeed">
+  <button mat-raised-button  color="primary" class="button" [disabled]="!formGroup.valid" (click)="onSubmit()">Submit Form</button>
+  <button mat-button mat-dialog-close>Cancel</button>
+</mat-dialog-actions>
+
+<mat-dialog-actions align="center" *ngIf="succeed">
+  <button mat-button mat-dialog-close>Close</button>
+</mat-dialog-actions>
