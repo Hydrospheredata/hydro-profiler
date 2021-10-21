@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'vis-layout',
+  selector: 'profiler-layout',
   templateUrl: './layout.component.html',
   styleUrls: ['./layout.component.scss'],
 })

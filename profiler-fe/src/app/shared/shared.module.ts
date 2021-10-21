@@ -8,9 +8,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatListModule } from '@angular/material/list';
-import { MatIconModule } from '@angular/material/icon'
-
-
+import { MatIconModule } from '@angular/material/icon';
 
 const modules = [
   MatTableModule,
@@ -22,15 +20,12 @@ const modules = [
   MatButtonModule,
   MatDialogModule,
   MatCommonModule,
-  MatIconModule
-]
+  MatIconModule,
+];
 
 @NgModule({
   declarations: [],
-  imports: [
-    CommonModule,
-    ...modules
-  ],
-  exports: [...modules]
+  imports: [CommonModule, ...modules],
+  exports: [...modules],
 })
-export class SharedModule { }
+export class SharedModule {}

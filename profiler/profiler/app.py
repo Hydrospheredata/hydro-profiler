@@ -14,6 +14,7 @@ from adapters.metrics_repository.sqlite_metrics_repository import (
 import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 from profiler.domain.model_signature import ModelSignature, DataType, DataProfileType, ModelField
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
 app.add_middleware(
@@ -24,7 +25,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# GET report (modelName, fileName) => Report
 metrics_repo = SqliteMetricsRepository()
 models_repo = SqliteModelsRepository()
 reports_repo = SqliteReportsRepository()
@@ -44,6 +44,8 @@ report_use_case = report_use_case.ReportUseCase(
     agg_use_case=aggregation_use_case
 )
 
+app.mount("/static", StaticFiles(directory="profiler/resources/static/profiler-fe"), name="static")
+
 @app.post("/model")
 async def register_model(
         name: str = Form(...),
@@ -58,6 +60,7 @@ async def register_model(
     metrics_use_case.generate_metrics(model=model, t_df=df)
 
     return model
+
 
 @app.post("/model/batch")
 async def process_batch(
@@ -76,6 +79,7 @@ async def process_batch(
 @app.get("/models")
 async def get_models():
     return models_repo.get_all()
+
 
 @app.get("/aggregation/{model_name}/{model_version}")
 async def get_rep(model_name: str, model_version: int):

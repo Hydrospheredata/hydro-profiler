@@ -2,23 +2,23 @@ import { Injectable } from '@angular/core';
 import { StoreConfig, Store } from '@datorama/akita';
 
 export interface Aggregation {
-  features: string[],
-  scores: Array<{batch_name: string, scores: { [featureName: string]: number}}>
+  features: string[];
+  scores: Array<{ batch_name: string; scores: { [featureName: string]: number } }>;
 }
 
 export interface DashboardState {
-  aggregation: Aggregation,
-  batchReport: any
+  aggregation: Aggregation;
+  batchReport: any;
 }
 
 function createInitialState() {
   return {
     aggregation: undefined,
-    batchReport: undefined
+    batchReport: undefined,
   };
 }
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 @StoreConfig({ name: 'visualization' })
 export class DashboardStore extends Store<DashboardState> {
   constructor() {

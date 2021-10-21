@@ -1,31 +1,42 @@
-<div  class="pb-6">
+<div class="p-10">
+  <div class="pb-6">
     <button mat-raised-button (click)="openDialog()">Add model</button>
-</div>
+  </div>
 
-<ng-container *ngIf="models$ | async as models">
+  <ng-container *ngIf="models$ | async as models">
     <table mat-table [dataSource]="models" class="mat-elevation-z8 w-full">
-        <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef> Name </th>
-            <td mat-cell *matCellDef="let element" class="font-bold text-gray-700"> {{element.name}} </td>
-        </ng-container>
-        <ng-container matColumnDef="version">
-            <th mat-header-cell *matHeaderCellDef> Version </th>
-            <td mat-cell *matCellDef="let element" class="font-bold text-gray-700"> {{element.version}} </td>
-        </ng-container>
-        <ng-container matColumnDef="action">
-            <th mat-header-cell *matHeaderCellDef> action </th>
-            <td mat-cell *matCellDef="let element" class="font-bold text-gray-700">
-                <button mat-button color="primary" (click)="openLoadBatch($event, element.name, element.version)">Load batch</button>
-            </td>
-        </ng-container>
-    
-        <tr mat-header-row *matHeaderRowDef="['name', 'version', 'action']"></tr>
-        <tr 
-            mat-row 
-            *matRowDef="let row; columns: ['name', 'version', 'action'];" 
-            [routerLink]="['/', row['name'], row['version'] , 'dashboard']"
-            class="hover:bg-blue-50 cursor-pointer"
-            >
-        </tr>
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Name</th>
+        <td mat-cell *matCellDef="let element" class="font-bold text-gray-700">
+          {{ element.name }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="version">
+        <th mat-header-cell *matHeaderCellDef>Version</th>
+        <td mat-cell *matCellDef="let element" class="font-bold text-gray-700">
+          {{ element.version }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef>action</th>
+        <td mat-cell *matCellDef="let element" class="font-bold text-gray-700">
+          <button
+            mat-button
+            color="primary"
+            (click)="openLoadBatch($event, element.name, element.version)"
+          >
+            Load batch
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="['name', 'version', 'action']"></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: ['name', 'version', 'action']"
+        [routerLink]="['/', row['name'], row['version'], 'dashboard']"
+        class="hover:bg-blue-50 cursor-pointer"
+      ></tr>
     </table>
-</ng-container>
+  </ng-container>
+</div>

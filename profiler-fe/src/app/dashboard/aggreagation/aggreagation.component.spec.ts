@@ -8,9 +8,8 @@ describe('AggreagationComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AggreagationComponent ]
-    })
-    .compileComponents();
+      declarations: [AggreagationComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

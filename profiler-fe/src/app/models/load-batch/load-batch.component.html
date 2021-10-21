@@ -1,51 +1,54 @@
 <h2 mat-dialog-title>Upload inference data</h2>
 
 <div *ngIf="error" class="p-4 bg-red-50 text-red-800 mb-6">
-    {{ error | json }}
+  {{ error | json }}
 </div>
 
 <mat-dialog-content>
-    <div *ngIf="succeed" class="my-10">
-        <div class="text-gray-600 flex flex-col font-bold content-center items-center">
-          <button mat-mini-fab color="primary" aria-label="success" >
-            <mat-icon>check</mat-icon>
-          </button>
-          <div class="text-center mt-4">Report was generated successfully</div>
-        </div>
-      </div>
-
-    <form [formGroup]="formGroup" #form *ngIf="!succeed">
-        <input 
-            type="file" 
-            formControlName="batch" 
-            class="file-upload" 
-            (change)="handleBatch($event)"
-            hidden
-            #batchFile>
-        
-    <div >
-        <mat-label class="text-sm font-bold capitalize text-gray-900">batch file</mat-label>
-        <div class="flex items-center">
-            <div class="text-xs font-bold text-gray-600 pr-3">{{ batch?.name || "No file uploaded yet." }}</div>
-            <button mat-button 
-                (click)="batchFile.click()">
-              Upload file
-            </button> 
-        </div>
+  <div *ngIf="succeed" class="my-10">
+    <div class="text-gray-600 flex flex-col font-bold content-center items-center">
+      <button mat-mini-fab color="primary" aria-label="success">
+        <mat-icon>check</mat-icon>
+      </button>
+      <div class="text-center mt-4">Report was generated successfully</div>
     </div>
-    </form>
+  </div>
+
+  <form [formGroup]="formGroup" #form *ngIf="!succeed">
+    <input
+      type="file"
+      formControlName="batch"
+      class="file-upload"
+      (change)="handleBatch($event)"
+      hidden
+      #batchFile
+    />
+
+    <div>
+      <mat-label class="text-sm font-bold capitalize text-gray-900">batch file</mat-label>
+      <div class="flex items-center">
+        <div class="text-xs font-bold text-gray-600 pr-3">
+          {{ batch?.name || 'No file uploaded yet.' }}
+        </div>
+        <button mat-button (click)="batchFile.click()">Upload file</button>
+      </div>
+    </div>
+  </form>
 </mat-dialog-content>
 
-<mat-dialog-actions align='end' *ngIf="!succeed">
-    <button 
-        mat-raised-button 
-        color="primary" 
-        class="button" 
-        [disabled]="!formGroup.valid" 
-        (click)="onSubmit()">Upload batch</button>
-    <button mat-button mat-dialog-close>Cancel</button>
+<mat-dialog-actions align="end" *ngIf="!succeed">
+  <button
+    mat-raised-button
+    color="primary"
+    class="button"
+    [disabled]="!formGroup.valid"
+    (click)="onSubmit()"
+  >
+    Upload batch
+  </button>
+  <button mat-button mat-dialog-close>Cancel</button>
 </mat-dialog-actions>
 
 <mat-dialog-actions align="center" *ngIf="succeed">
-    <button mat-button mat-dialog-close>Close</button>
-  </mat-dialog-actions>
+  <button mat-button mat-dialog-close>Close</button>
+</mat-dialog-actions>

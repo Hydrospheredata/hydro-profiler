@@ -5,48 +5,44 @@ import { ModelsService } from '../state/models.service';
 
 @Component({
   templateUrl: './load-batch.component.html',
-  styleUrls: ['./load-batch.component.scss']
+  styleUrls: ['./load-batch.component.scss'],
 })
-export class LoadBatchComponent implements OnInit {
+export class LoadBatchComponent {
   formGroup: FormGroup = this.fb.group({
     batch: ['', Validators.required],
   });
   batch: File | undefined = undefined;
   error = '';
   succeed = false;
-  
+
   constructor(
     private fb: FormBuilder,
     private service: ModelsService,
     public dialogRef: MatDialogRef<LoadBatchComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: {modelName: string, modelVersion: number}
-    
-    ) {
-      console.log(data)
-    }
-
-  ngOnInit(): void {
+    @Inject(MAT_DIALOG_DATA) public data: { modelName: string; modelVersion: number },
+  ) {
+    console.log(data);
   }
 
   handleBatch(evt: any) {
-    this.batch = evt.target.files[0]
+    this.batch = evt.target.files[0];
   }
 
   onSubmit() {
-    const fd = new FormData()
-    
-    fd.append("model_name", this.data.modelName)
-    fd.append("batch_name", (this.batch as File).name)
-    fd.append("model_version", `${this.data.modelVersion}`)
-    fd.append("batch", this.batch as File)
+    const fd = new FormData();
+
+    fd.append('model_name', this.data.modelName);
+    fd.append('batch_name', (this.batch as File).name);
+    fd.append('model_version', `${this.data.modelVersion}`);
+    fd.append('batch', this.batch as File);
 
     this.service.loadBatch(fd).subscribe(
       () => {
-        this.succeed = true
+        this.succeed = true;
       },
-      error => {
-        this.error = error
-      }
-    )
+      (error) => {
+        this.error = error;
+      },
+    );
   }
 }
