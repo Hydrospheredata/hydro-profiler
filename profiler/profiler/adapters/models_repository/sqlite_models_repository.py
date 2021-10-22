@@ -1,12 +1,5 @@
-import json
-
-from profiler.domain.contract import Contract
 from profiler.domain.model_signature import ModelSignature
-from profiler.domain.table_requirement import TableRequirement
 from profiler.ports.models_repository import ModelsRepository
-from profiler.ports.reports_repository import ReportsRepository
-from typing import Any, List, Dict
-from profiler.domain.production_batch import ProductionBatch
 from profiler.domain.model import Model
 
 import sqlite3

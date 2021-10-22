@@ -5,8 +5,7 @@ from profiler.domain.feature_metric import (
     MinMaxMetric,
     PercentileMetric, MetricType,
 )
-from profiler.domain.metric_spec import MetricSpec
-from typing import List, Dict
+from typing import List, Dict, Any
 from profiler.ports.metrics_repository import MetricsRepository
 from profiler.domain.model import Model
 
@@ -43,7 +42,7 @@ class SqliteMetricsRepository(MetricsRepository):
 
         return r
 
-    def save(self, model: Model, metrics: Dict[str, List[MetricSpec]]):
+    def save(self, model: Model, metrics: Dict[str, List[Any]]):
         data = json.dumps(metrics)
         self.cur.execute("INSERT INTO metrics VALUES (?, ?, ?)", (model.name, model.version, data))
         self.con.commit()

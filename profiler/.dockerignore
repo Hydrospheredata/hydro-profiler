@@ -1,5 +1,2 @@
-__pycache__/
-.idea
-.vscode
-.DS_Store
 profiler/resources/db/sqlite/profiler.db
+.vscode

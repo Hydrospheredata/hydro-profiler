@@ -1,8 +1,8 @@
-from abc import ABC, abstractmethod
 from profiler.domain.feature_metric import BaseMetric
-from profiler.domain.metric_spec import MetricSpec
-from domain.model import Model
+from profiler.domain.model import Model
+
 from typing import List, Dict
+from abc import ABC, abstractmethod
 
 
 class MetricsRepository(ABC):

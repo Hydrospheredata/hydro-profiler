@@ -1,11 +1,13 @@
-from typing import Dict, List
+from typing import Dict
 
 from profiler.domain.overall import Overall, merge_overall
 from profiler.domain.model import Model
-from functools import reduce
-
 from profiler.domain.model_signature import ModelField
 from profiler.ports.aggregations_repository import AggregationsRepository
+
+from functools import reduce
+
+
 
 def calculate_score(overall: Overall) -> float:
     return float(overall.succeed / overall.count)

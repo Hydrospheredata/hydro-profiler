@@ -1,9 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Dict, List, Any
-
-from profiler.domain.model import Model
-from profiler.domain.production_batch import ProductionBatch
-
+from typing import List, Any
 
 class AggregationsRepository(ABC):
     @abstractmethod

@@ -1,13 +1,12 @@
 from profiler.domain.overall import Overall, merge_overall
 from profiler.ports.reports_repository import ReportsRepository
-from profiler.domain.production_batch import ProductionBatch
 from profiler.domain.model import Model
 from profiler.ports.metrics_repository import MetricsRepository
 from profiler.ports.models_repository import ModelsRepository
+from profiler.use_cases.aggregation_use_case import AggregationUseCase
+
 from pandas.core.frame import DataFrame
 from functools import reduce
-
-from profiler.use_cases.aggregation_use_case import AggregationUseCase
 
 
 class ReportUseCase:

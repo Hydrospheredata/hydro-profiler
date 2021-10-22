@@ -1,8 +1,6 @@
 from abc import ABC
 from abc import abstractmethod
 
-from pandas.core.frame import DataFrame
-
 from profiler.domain.model import Model
 
 

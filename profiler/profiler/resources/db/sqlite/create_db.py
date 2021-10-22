@@ -1,18 +1,14 @@
-import  yoyo
-
-backend = yoyo.get_backend('sqlite:///profiler.db')
-migrations = yoyo.read_migrations('./migrations')
-
-def create_db_file():
-    database_name = 'profiler.db'
-    try:
-        open(database_name, 'r').close()
-    except:
-        open(database_name, 'w').close()
+import yoyo
+import os
 
 
 if __name__ == "__main__":
-    create_db_file()
+    path = os.path.dirname(os.path.realpath(__file__)) + '/profiler.db'
+
+    open(path, 'w').close()
+    backend = yoyo.get_backend('sqlite:///' + path)
+
+    migrations = yoyo.read_migrations('./migrations')
 
     with backend.lock():
         backend.apply_migrations(backend.to_apply(migrations))
