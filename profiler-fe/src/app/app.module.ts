@@ -20,12 +20,12 @@ import {LayoutModule} from "./layout/layout.module";
     BrowserModule,
     BrowserAnimationsModule,
     ReactiveFormsModule,
-    AppRoutingModule,
     HttpClientModule,
     MatButtonModule,
     AkitaNgRouterStoreModule,
     SharedModule,
-    LayoutModule
+    LayoutModule,
+    AppRoutingModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

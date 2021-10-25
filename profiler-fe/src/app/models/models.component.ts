@@ -4,6 +4,7 @@ import { ModelsService } from './state/models.service';
 import { MatDialog } from '@angular/material/dialog';
 import { AddDialogComponent } from './add-dialog/add-dialog.component';
 import { LoadBatchComponent } from './load-batch/load-batch.component';
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'profiler-models',

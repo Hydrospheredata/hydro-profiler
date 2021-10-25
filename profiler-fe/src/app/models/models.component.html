@@ -2,7 +2,6 @@
   <div class="pb-6">
     <button mat-raised-button (click)="openDialog()">Add model</button>
   </div>
-
   <ng-container *ngIf="models$ | async as models">
     <table mat-table [dataSource]="models" class="mat-elevation-z8 w-full">
       <ng-container matColumnDef="name">
@@ -34,7 +33,7 @@
       <tr
         mat-row
         *matRowDef="let row; columns: ['name', 'version', 'action']"
-        [routerLink]="['/', row['name'], row['version'], 'dashboard']"
+        [routerLink]="[row['name'], row['version'], 'dashboard']"
         class="hover:bg-blue-50 cursor-pointer"
       ></tr>
     </table>
