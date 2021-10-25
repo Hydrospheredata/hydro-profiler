@@ -17,15 +17,9 @@ export class ProfilerHttpService {
         if (shellUrlWithBaseHref) {
           return this.http.get<T>(`${shellUrlWithBaseHref}${url}`);
         } else {
-          debugger;
-          if (environment.production) {
-            const { protocol, hostname } = window.location;
-            return this.http.get<T>(`${protocol}//${hostname}/${url}`);
-          } else {
             return this.http.get<T>(
               `${environment.host}${environment.port ? ':' + environment.port : ''}/${url}`,
             );
-          }
         }
       }),
     );
