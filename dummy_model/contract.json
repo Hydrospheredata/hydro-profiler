@@ -37,8 +37,8 @@
       "shape": {
           "dims": []
       },
-      "dtype": 9,
-      "profile": 2
+      "dtype": 7,
+      "profile": 1
     },
     {
       "name": "marital-status",

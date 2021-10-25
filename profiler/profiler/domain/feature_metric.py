@@ -74,7 +74,7 @@ class IncludeMetric(BaseMetric):
         }
 
     def check(self, value: str):
-        if value in self.categories:
+        if str(value) in self.categories:
             return self.success(value)
         else:
             return self.fail(value)

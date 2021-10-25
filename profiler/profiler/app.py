@@ -13,6 +13,7 @@ from profiler.adapters.reports_repository.sqlite_reports_repository import (
     SqliteReportsRepository,
 )
 from profiler.domain.model import Model
+from profiler.grpc.monitoring_manager import MonitoringDataSubscriber
 from profiler.use_cases.aggregation_use_case import AggregationUseCase
 from profiler.use_cases import metrics_use_case, report_use_case
 from profiler.domain.model_signature import (
@@ -29,8 +30,8 @@ from fastapi.staticfiles import StaticFiles
 
 origins = [
     "http://localhost",
-    "http://localhost:8080", # production fe in compose
-    "http://localhost:5002"  # dev fe
+    "http://localhost:8080",  # production fe in compose
+    "http://localhost:5002",  # dev fe
 ]
 
 app = FastAPI()
@@ -60,6 +61,8 @@ report_use_case = report_use_case.ReportUseCase(
     reports_repo=reports_repo,
     agg_use_case=aggregation_use_case,
 )
+monitoring_data_grpc = MonitoringDataSubscriber(metrics_use_case, report_use_case)
+
 
 app.mount(
     "/static",
@@ -110,9 +113,7 @@ async def get_rep(model_name: str, model_version: int):
 
 @app.get("/report/{model_name}/{model_version}/{batch_name}")
 async def get_report(model_name: str, model_version: int, batch_name: str):
-    return report_use_case.get_report(
-        model_name, model_version, batch_name
-    )
+    return report_use_case.get_report(model_name, model_version, batch_name)
 
 
 def migrate(db_uri, migrations_path):
@@ -129,10 +130,18 @@ def migrate(db_uri, migrations_path):
     except Exception as e:
         print(e)
 
-#  TODO (Pasha): add expections
+
+#  TODO (Pasha): add exceptions
 if __name__ == "__main__":
     try:
-        migrate("sqlite:///profiler/resources/db/sqlite/profiler.db", "profiler/resources/db/sqlite/migrations")
+        migrate(
+            "sqlite:///profiler/resources/db/sqlite/profiler.db",
+            "profiler/resources/db/sqlite/migrations",
+        )
+
+        # monitoring_data_grpc.start_watching()
+
         uvicorn.run(app, host="0.0.0.0", port=5000, log_level="info")
-    except Exception:
-        print('Could not start application')
+    except Exception as e:
+        print("Could not start application")
+        print(e)
