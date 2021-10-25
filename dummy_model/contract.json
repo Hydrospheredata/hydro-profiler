@@ -1,0 +1,118 @@
+{
+  "inputs":[
+    {
+      "name": "age",
+      "shape": {
+          "dims": []
+      },
+      "dtype": 9,
+      "profile": 2
+    },
+    {
+      "name": "workclass",
+      "shape": {
+          "dims": []
+      },
+      "dtype": 7,
+      "profile": 1
+    },
+    {
+      "name": "fnlwgt",
+      "shape": {
+          "dims": []
+      },
+      "dtype": 9,
+      "profile": 2
+    },
+    {
+      "name": "education",
+      "shape": {
+          "dims": []
+      },
+      "dtype": 7,
+      "profile": 1
+    },
+    {
+      "name": "educational-num",
+      "shape": {
+          "dims": []
+      },
+      "dtype": 9,
+      "profile": 2
+    },
+    {
+      "name": "marital-status",
+      "shape": {
+          "dims": []
+      },
+      "dtype": 7,
+      "profile": 1
+    },
+    {
+      "name": "occupation",
+      "shape": {
+          "dims": []
+      },
+      "dtype": 7,
+      "profile": 1
+    },
+    {
+      "name": "relationship",
+      "shape": {
+          "dims": []
+      },
+      "dtype": 7,
+      "profile": 1
+    },
+    {
+      "name": "race",
+      "shape": {
+          "dims": []
+      },
+      "dtype": 7,
+      "profile": 1
+    },
+    {
+      "name": "gender",
+      "shape": {
+          "dims": []
+      },
+      "dtype": 7,
+      "profile": 1
+    },
+    {
+      "name": "capital-gain",
+      "shape": {
+          "dims": []
+      },
+      "dtype": 9,
+      "profile": 2
+    },
+    {
+      "name": "hours-per-week",
+      "shape": {
+          "dims": []
+      },
+      "dtype": 9,
+      "profile": 2
+    },
+    {
+      "name": "native-country",
+      "shape": {
+          "dims": []
+      },
+      "dtype": 7,
+      "profile": 1
+    }
+  ],
+  "outputs": [
+    {
+      "name": "income",
+      "shape": {
+          "dims": []
+      },
+      "dtype": 7,
+      "profile": 1
+    }
+  ]
+}
