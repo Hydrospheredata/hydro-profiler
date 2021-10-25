@@ -15,8 +15,12 @@
 Dockerfile for backend part of profiler.
 This image can be used as part of Hydrosphere architecture or as independent project composed with profiler-fe.
 
-By default app starts on 5000 post.
-Exposes ```/static``` endpoint for serving static frontend files.
+**Important**
+
+Build it with command ```docker build . -t profiler -f profiler/Dockerfile``` from root dir, because we need to handle relative path with static files
+
+Service exposes ```/static``` endpoint for serving static frontend files(need for micro-frontend).
+By default service listens to 5000 port.
 
 
 #### ```profiler-fe/Dockerfile```

@@ -6,6 +6,8 @@ const routes: Routes = [
   {
     path: '',
     component: LayoutComponent,
+    redirectTo: 'models',
+    pathMatch: 'full',
     children: [
       {
         path: 'models',
