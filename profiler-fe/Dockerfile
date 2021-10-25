@@ -11,7 +11,6 @@ RUN npm install
 
 COPY . ./
 RUN npm run build
-RUN ls -la
 
 
 FROM openresty/openresty:1.19.9.1-0-amzn2

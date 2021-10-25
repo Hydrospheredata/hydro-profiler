@@ -34,5 +34,6 @@ Used for creating independent profiler application
 * ```docker compose up -d```
 * open ```http://localhost/models``` 
 * From **dummy_model**  model use files to upload model(with contract(contract.json) and training data(train.csv))
+* Press **Load data** to upload inference data (from **dummy_model** batch_*.csv file)
 * Click on any models row to go to dashboard
 
