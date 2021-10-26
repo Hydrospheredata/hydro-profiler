@@ -11,6 +11,7 @@ RUN npm install
 
 COPY profiler-fe ./
 RUN npm run build
+RUN ls
 
 FROM python:3.8.12-slim-bullseye as python-base
 LABEL maintainer="support@hydrosphere.io"
@@ -65,7 +66,8 @@ WORKDIR /app
 
 COPY --from=build $VENV_PATH $VENV_PATH
 COPY --chown=app:app profiler/profiler ./profiler
-COPY --from=static-fe --chown=app:app frontend/dist/profiler-fe ./profiler/resources/static
+RUN rm -rf ./profiler/resources/static/profiler-fe
+COPY --from=static-fe --chown=app:app frontend/dist/ ./profiler/resources/static/
 COPY --chown=app:app profiler/start.sh start.sh
 
 ENTRYPOINT ["bash", "start.sh"]

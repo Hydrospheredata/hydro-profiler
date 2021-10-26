@@ -1,5 +1,9 @@
 version: "0.1"
 services:
+  shell-ui:
+    image: shell-ui
+    ports:
+      - "4200:8080"
   db:
     image: postgres
     environment:
@@ -33,3 +37,6 @@ services:
       - monitoring-manager
     ports:
       - "5000:5000"
+    environment:
+      - "AWS_ACCESS_KEY_ID=miniadmin"
+      - "AWS_SECRET_ACCESS_KEY=minioadmin"

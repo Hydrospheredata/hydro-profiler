@@ -144,11 +144,11 @@ if __name__ == "__main__":
         registration_request = RegisterPluginRequest(
             plugin_id = "profiler",
             description = "Profiler plugin for inference data",
-            routePath = "routePath",
-            ngModuleName = "ngModuleName",
-            remoteName = "remoteName",
-            exposedModule = "exposedModule",
-            addr = f"be:{config.http_port}"
+            routePath = "profiler",
+            ngModuleName = "DashboardModule",
+            remoteName = "hydrosphereProfiler",
+            exposedModule = "./Module",
+            addr = f"http://be:{config.http_port}"
         )
         print("Registering...")
         registering = True
@@ -158,11 +158,9 @@ if __name__ == "__main__":
                 registering = False
                 print("Success")
             except Exception as e:
-                print("Obosralsya")
-                print(e)
                 pass
 
-        monitoring_data_grpc.start_watching()
+        # monitoring_data_grpc.start_watching()
 
         uvicorn.run(app, host=config.http_host, port=config.http_port, log_level="info")
     except Exception as e:

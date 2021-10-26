@@ -1,4 +1,4 @@
 profiler/resources/db/sqlite/profiler.db
-profiler/resources/static
+profiler/resources/static/*
 .vscode
 node_modules
