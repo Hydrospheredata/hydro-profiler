@@ -17,29 +17,29 @@ from profiler.protobuf.monitoring_manager_pb2 import (
 
 from profiler.use_cases.metrics_use_case import MetricsUseCase
 from profiler.use_cases.report_use_case import ReportUseCase
-
+import grpc
 
 class MonitoringDataSubscriber:
     _metrics_use_case: MetricsUseCase
     _reports_use_case: ReportUseCase
+    channel: grpc.Channel
+    data_stub: DataStorageServiceStub
+    model_stub: ModelCatalogServiceStub 
 
     def __init__(
-        self, metrics_use_case: MetricsUseCase, reports_use_case: ReportUseCase
+        self, channel: grpc.Channel, metrics_use_case: MetricsUseCase, reports_use_case: ReportUseCase
     ):
+        self.channel = channel
         self._metrics_use_case = metrics_use_case
         self._reports_use_case = reports_use_case
-
-    @staticmethod
-    def model_stub() -> ModelCatalogServiceStub:
-        return ModelCatalogServiceStub("")
-
-    @staticmethod
-    def data_stub() -> DataStorageServiceStub:
-        return DataStorageServiceStub("")
+        self.data_stub = DataStorageServiceStub(self.channel)
+        self.model_stub = ModelCatalogServiceStub(self.channel) 
 
     def watch_inference_data(self):
         req = GetInferenceDataUpdatesRequest()
-        for response in self.data_stub().GetInferenceDataUpdates(req):
+        for response in self.data_stub.GetInferenceDataUpdates(req):
+            print("Prishli dannye")
+            print(response)
             contract = ModelSignature.parse_obj(response.signature)
             model = Model(
                 name=response.model, version=response.model, contract=contract
@@ -57,9 +57,10 @@ class MonitoringDataSubscriber:
 
     def watch_models(self):
         req = GetModelUpdatesRequest("profile_plugin")
-        for response in self.model_stub().GetModelUpdates(req):
+        for response in self.model_stub.GetModelUpdates(req):
             training_data_url = response.training_data_objs[0]
-
+            print("Prishla model")
+            print(training_data_url)
             contract = ModelSignature.parse_obj(response.signature)
             model = Model(
                 name=response.model, version=response.model, contract=contract

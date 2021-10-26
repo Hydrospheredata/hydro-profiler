@@ -1,3 +1,4 @@
+import grpc
 from yoyo.backends import DatabaseBackend
 import pandas
 import yoyo
@@ -14,6 +15,8 @@ from profiler.adapters.reports_repository.sqlite_reports_repository import (
 )
 from profiler.domain.model import Model
 from profiler.grpc.monitoring_manager import MonitoringDataSubscriber
+from profiler.protobuf.monitoring_manager_pb2 import RegisterPluginRequest
+from profiler.protobuf.monitoring_manager_pb2_grpc import PluginManagementServiceStub
 from profiler.use_cases.aggregation_use_case import AggregationUseCase
 from profiler.use_cases import metrics_use_case, report_use_case
 from profiler.domain.model_signature import (
@@ -58,7 +61,8 @@ report_use_case = report_use_case.ReportUseCase(
     reports_repo=reports_repo,
     agg_use_case=aggregation_use_case,
 )
-monitoring_data_grpc = MonitoringDataSubscriber(metrics_use_case, report_use_case)
+channel = grpc.insecure_channel(config.manager_addr)
+monitoring_data_grpc = MonitoringDataSubscriber(channel, metrics_use_case, report_use_case)
 
 
 app.mount(
@@ -135,8 +139,30 @@ if __name__ == "__main__":
             "sqlite:///profiler/resources/db/sqlite/profiler.db",
             "profiler/resources/db/sqlite/migrations",
         )
+        plugin_manager = PluginManagementServiceStub(channel)
 
-        # monitoring_data_grpc.start_watching()
+        registration_request = RegisterPluginRequest(
+            plugin_id = "profiler",
+            description = "Profiler plugin for inference data",
+            routePath = "routePath",
+            ngModuleName = "ngModuleName",
+            remoteName = "remoteName",
+            exposedModule = "exposedModule",
+            addr = f"be:{config.http_port}"
+        )
+        print("Registering...")
+        registering = True
+        while registering:
+            try:
+                plugin_manager.RegisterPlugin(registration_request)
+                registering = False
+                print("Success")
+            except Exception as e:
+                print("Obosralsya")
+                print(e)
+                pass
+
+        monitoring_data_grpc.start_watching()
 
         uvicorn.run(app, host=config.http_host, port=config.http_port, log_level="info")
     except Exception as e:

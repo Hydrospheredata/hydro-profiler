@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x18monitoring_manager.proto\x12\x12monitoring_manager\"q\n\x0eModelSignature\x12.\n\x06inputs\x18\x02 \x03(\x0b\x32\x1e.monitoring_manager.ModelField\x12/\n\x07outputs\x18\x03 \x03(\x0b\x32\x1e.monitoring_manager.ModelField\"\xad\x01\n\nModelField\x12\x0c\n\x04name\x18\x01 \x01(\t\x12.\n\x05shape\x18\x02 \x01(\x0b\x32\x1f.monitoring_manager.TensorShape\x12+\n\x05\x64type\x18\x04 \x01(\x0e\x32\x1c.monitoring_manager.DataType\x12\x34\n\x07profile\x18\x05 \x01(\x0e\x32#.monitoring_manager.DataProfileType\"\x1b\n\x0bTensorShape\x12\x0c\n\x04\x64ims\x18\x01 \x03(\x03\"\xb9\x01\n\x15RegisterPluginRequest\x12\x11\n\tplugin_id\x18\x01 \x01(\t\x12\x0f\n\x07iconUrl\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\x11\n\troutePath\x18\x05 \x01(\t\x12\x14\n\x0cngModuleName\x18\x06 \x01(\t\x12\x13\n\x0bremoteEntry\x18\x07 \x01(\t\x12\x12\n\nremoteName\x18\x08 \x01(\t\x12\x15\n\rexposedModule\x18\t \x01(\t\"\x18\n\x16RegisterPluginResponse\"+\n\x16GetModelUpdatesRequest\x12\x11\n\tplugin_id\x18\x01 \x01(\t\"\x98\x01\n\x17GetModelUpdatesResponse\x12*\n\x05model\x18\x01 \x01(\x0b\x32\x1b.monitoring_manager.ModelId\x12\x35\n\tsignature\x18\x02 \x01(\x0b\x32\".monitoring_manager.ModelSignature\x12\x1a\n\x12training_data_objs\x18\x03 \x03(\t\"\xca\x02\n\x1eGetInferenceDataUpdatesRequest\x12Q\n\x04init\x18\x01 \x01(\x0b\x32\x41.monitoring_manager.GetInferenceDataUpdatesRequest.InitialRequestH\x00\x12\x45\n\x03\x61\x63k\x18\x02 \x01(\x0b\x32\x36.monitoring_manager.GetInferenceDataUpdatesRequest.AckH\x00\x1aO\n\x0eInitialRequest\x12\x11\n\tplugin_id\x18\x01 \x01(\t\x12*\n\x05model\x18\x02 \x01(\x0b\x32\x1b.monitoring_manager.ModelId\x1a\x35\n\x03\x41\x63k\x12\x11\n\tplugin_id\x18\x01 \x01(\t\x12\x1b\n\x13inference_data_objs\x18\x02 \x03(\tB\x06\n\x04\x64\x61ta\"\xa1\x01\n\x1fGetInferenceDataUpdatesResponse\x12*\n\x05model\x18\x01 \x01(\x0b\x32\x1b.monitoring_manager.ModelId\x12\x35\n\tsignature\x18\x02 \x01(\x0b\x32\".monitoring_manager.ModelSignature\x12\x1b\n\x13inference_data_objs\x18\x03 \x03(\t\"4\n\x07ModelId\x12\x12\n\nmodel_name\x18\x01 \x01(\t\x12\x15\n\rmodel_version\x18\x02 \x01(\x04*\xde\x01\n\x08\x44\x61taType\x12\x0e\n\nDT_INVALID\x10\x00\x12\x0c\n\x08\x44T_FLOAT\x10\x01\x12\r\n\tDT_DOUBLE\x10\x02\x12\x0c\n\x08\x44T_INT32\x10\x03\x12\x0c\n\x08\x44T_UINT8\x10\x04\x12\x0c\n\x08\x44T_INT16\x10\x05\x12\x0b\n\x07\x44T_INT8\x10\x06\x12\r\n\tDT_STRING\x10\x07\x12\x0c\n\x08\x44T_INT64\x10\t\x12\x0b\n\x07\x44T_BOOL\x10\n\x12\r\n\tDT_UINT16\x10\x11\x12\x0b\n\x07\x44T_HALF\x10\x13\x12\r\n\tDT_UINT32\x10\x16\x12\r\n\tDT_UINT64\x10\x17\x12\n\n\x06\x44T_ANY\x10\x18*\xa9\x01\n\x0f\x44\x61taProfileType\x12\x08\n\x04NONE\x10\x00\x12\x0f\n\x0b\x43\x41TEGORICAL\x10\x01\x12\x0b\n\x07NOMINAL\x10\x0b\x12\x0b\n\x07ORDINAL\x10\x0c\x12\r\n\tNUMERICAL\x10\x02\x12\x0e\n\nCONTINUOUS\x10\x15\x12\x0c\n\x08INTERVAL\x10\x16\x12\t\n\x05RATIO\x10\x17\x12\t\n\x05IMAGE\x10\x03\x12\t\n\x05VIDEO\x10\x04\x12\t\n\x05\x41UDIO\x10\x05\x12\x08\n\x04TEXT\x10\x06\x32\x82\x01\n\x17PluginManagementService\x12g\n\x0eRegisterPlugin\x12).monitoring_manager.RegisterPluginRequest\x1a*.monitoring_manager.RegisterPluginResponse2\x83\x01\n\x13ModelCatalogService\x12l\n\x0fGetModelUpdates\x12*.monitoring_manager.GetModelUpdatesRequest\x1a+.monitoring_manager.GetModelUpdatesResponse0\x01\x32\x9d\x01\n\x12\x44\x61taStorageService\x12\x86\x01\n\x17GetInferenceDataUpdates\x12\x32.monitoring_manager.GetInferenceDataUpdatesRequest\x1a\x33.monitoring_manager.GetInferenceDataUpdatesResponse(\x01\x30\x01\x62\x06proto3'
+  serialized_pb=b'\n\x18monitoring_manager.proto\x12\x12monitoring_manager\"q\n\x0eModelSignature\x12.\n\x06inputs\x18\x02 \x03(\x0b\x32\x1e.monitoring_manager.ModelField\x12/\n\x07outputs\x18\x03 \x03(\x0b\x32\x1e.monitoring_manager.ModelField\"\xad\x01\n\nModelField\x12\x0c\n\x04name\x18\x01 \x01(\t\x12.\n\x05shape\x18\x02 \x01(\x0b\x32\x1f.monitoring_manager.TensorShape\x12+\n\x05\x64type\x18\x04 \x01(\x0e\x32\x1c.monitoring_manager.DataType\x12\x34\n\x07profile\x18\x05 \x01(\x0e\x32#.monitoring_manager.DataProfileType\"\x1b\n\x0bTensorShape\x12\x0c\n\x04\x64ims\x18\x01 \x03(\x03\"\xa1\x01\n\x15RegisterPluginRequest\x12\x11\n\tplugin_id\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\x11\n\troutePath\x18\x05 \x01(\t\x12\x14\n\x0cngModuleName\x18\x06 \x01(\t\x12\x12\n\nremoteName\x18\x08 \x01(\t\x12\x15\n\rexposedModule\x18\t \x01(\t\x12\x0c\n\x04\x61\x64\x64r\x18\n \x01(\t\"\x18\n\x16RegisterPluginResponse\"+\n\x16GetModelUpdatesRequest\x12\x11\n\tplugin_id\x18\x01 \x01(\t\"\x98\x01\n\x17GetModelUpdatesResponse\x12*\n\x05model\x18\x01 \x01(\x0b\x32\x1b.monitoring_manager.ModelId\x12\x35\n\tsignature\x18\x02 \x01(\x0b\x32\".monitoring_manager.ModelSignature\x12\x1a\n\x12training_data_objs\x18\x03 \x03(\t\"\xca\x02\n\x1eGetInferenceDataUpdatesRequest\x12Q\n\x04init\x18\x01 \x01(\x0b\x32\x41.monitoring_manager.GetInferenceDataUpdatesRequest.InitialRequestH\x00\x12\x45\n\x03\x61\x63k\x18\x02 \x01(\x0b\x32\x36.monitoring_manager.GetInferenceDataUpdatesRequest.AckH\x00\x1aO\n\x0eInitialRequest\x12\x11\n\tplugin_id\x18\x01 \x01(\t\x12*\n\x05model\x18\x02 \x01(\x0b\x32\x1b.monitoring_manager.ModelId\x1a\x35\n\x03\x41\x63k\x12\x11\n\tplugin_id\x18\x01 \x01(\t\x12\x1b\n\x13inference_data_objs\x18\x02 \x03(\tB\x06\n\x04\x64\x61ta\"\xa1\x01\n\x1fGetInferenceDataUpdatesResponse\x12*\n\x05model\x18\x01 \x01(\x0b\x32\x1b.monitoring_manager.ModelId\x12\x35\n\tsignature\x18\x02 \x01(\x0b\x32\".monitoring_manager.ModelSignature\x12\x1b\n\x13inference_data_objs\x18\x03 \x03(\t\"4\n\x07ModelId\x12\x12\n\nmodel_name\x18\x01 \x01(\t\x12\x15\n\rmodel_version\x18\x02 \x01(\x04*\xde\x01\n\x08\x44\x61taType\x12\x0e\n\nDT_INVALID\x10\x00\x12\x0c\n\x08\x44T_FLOAT\x10\x01\x12\r\n\tDT_DOUBLE\x10\x02\x12\x0c\n\x08\x44T_INT32\x10\x03\x12\x0c\n\x08\x44T_UINT8\x10\x04\x12\x0c\n\x08\x44T_INT16\x10\x05\x12\x0b\n\x07\x44T_INT8\x10\x06\x12\r\n\tDT_STRING\x10\x07\x12\x0c\n\x08\x44T_INT64\x10\t\x12\x0b\n\x07\x44T_BOOL\x10\n\x12\r\n\tDT_UINT16\x10\x11\x12\x0b\n\x07\x44T_HALF\x10\x13\x12\r\n\tDT_UINT32\x10\x16\x12\r\n\tDT_UINT64\x10\x17\x12\n\n\x06\x44T_ANY\x10\x18*\xa9\x01\n\x0f\x44\x61taProfileType\x12\x08\n\x04NONE\x10\x00\x12\x0f\n\x0b\x43\x41TEGORICAL\x10\x01\x12\x0b\n\x07NOMINAL\x10\x0b\x12\x0b\n\x07ORDINAL\x10\x0c\x12\r\n\tNUMERICAL\x10\x02\x12\x0e\n\nCONTINUOUS\x10\x15\x12\x0c\n\x08INTERVAL\x10\x16\x12\t\n\x05RATIO\x10\x17\x12\t\n\x05IMAGE\x10\x03\x12\t\n\x05VIDEO\x10\x04\x12\t\n\x05\x41UDIO\x10\x05\x12\x08\n\x04TEXT\x10\x06\x32\x82\x01\n\x17PluginManagementService\x12g\n\x0eRegisterPlugin\x12).monitoring_manager.RegisterPluginRequest\x1a*.monitoring_manager.RegisterPluginResponse2\x83\x01\n\x13ModelCatalogService\x12l\n\x0fGetModelUpdates\x12*.monitoring_manager.GetModelUpdatesRequest\x1a+.monitoring_manager.GetModelUpdatesResponse0\x01\x32\x9d\x01\n\x12\x44\x61taStorageService\x12\x86\x01\n\x17GetInferenceDataUpdates\x12\x32.monitoring_manager.GetInferenceDataUpdatesRequest\x1a\x33.monitoring_manager.GetInferenceDataUpdatesResponse(\x01\x30\x01\x62\x06proto3'
 )
 
 _DATATYPE = _descriptor.EnumDescriptor(
@@ -108,8 +108,8 @@ _DATATYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=1334,
-  serialized_end=1556,
+  serialized_start=1310,
+  serialized_end=1532,
 )
 _sym_db.RegisterEnumDescriptor(_DATATYPE)
 
@@ -184,8 +184,8 @@ _DATAPROFILETYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=1559,
-  serialized_end=1728,
+  serialized_start=1535,
+  serialized_end=1704,
 )
 _sym_db.RegisterEnumDescriptor(_DATAPROFILETYPE)
 
@@ -360,50 +360,43 @@ _REGISTERPLUGINREQUEST = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='iconUrl', full_name='monitoring_manager.RegisterPluginRequest.iconUrl', index=1,
-      number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='description', full_name='monitoring_manager.RegisterPluginRequest.description', index=2,
+      name='description', full_name='monitoring_manager.RegisterPluginRequest.description', index=1,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='routePath', full_name='monitoring_manager.RegisterPluginRequest.routePath', index=3,
+      name='routePath', full_name='monitoring_manager.RegisterPluginRequest.routePath', index=2,
       number=5, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='ngModuleName', full_name='monitoring_manager.RegisterPluginRequest.ngModuleName', index=4,
+      name='ngModuleName', full_name='monitoring_manager.RegisterPluginRequest.ngModuleName', index=3,
       number=6, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='remoteEntry', full_name='monitoring_manager.RegisterPluginRequest.remoteEntry', index=5,
-      number=7, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='remoteName', full_name='monitoring_manager.RegisterPluginRequest.remoteName', index=6,
+      name='remoteName', full_name='monitoring_manager.RegisterPluginRequest.remoteName', index=4,
       number=8, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='exposedModule', full_name='monitoring_manager.RegisterPluginRequest.exposedModule', index=7,
+      name='exposedModule', full_name='monitoring_manager.RegisterPluginRequest.exposedModule', index=5,
       number=9, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='addr', full_name='monitoring_manager.RegisterPluginRequest.addr', index=6,
+      number=10, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -421,7 +414,7 @@ _REGISTERPLUGINREQUEST = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=369,
-  serialized_end=554,
+  serialized_end=530,
 )
 
 
@@ -445,8 +438,8 @@ _REGISTERPLUGINRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=556,
-  serialized_end=580,
+  serialized_start=532,
+  serialized_end=556,
 )
 
 
@@ -477,8 +470,8 @@ _GETMODELUPDATESREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=582,
-  serialized_end=625,
+  serialized_start=558,
+  serialized_end=601,
 )
 
 
@@ -523,8 +516,8 @@ _GETMODELUPDATESRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=628,
-  serialized_end=780,
+  serialized_start=604,
+  serialized_end=756,
 )
 
 
@@ -562,8 +555,8 @@ _GETINFERENCEDATAUPDATESREQUEST_INITIALREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=971,
-  serialized_end=1050,
+  serialized_start=947,
+  serialized_end=1026,
 )
 
 _GETINFERENCEDATAUPDATESREQUEST_ACK = _descriptor.Descriptor(
@@ -600,8 +593,8 @@ _GETINFERENCEDATAUPDATESREQUEST_ACK = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1052,
-  serialized_end=1105,
+  serialized_start=1028,
+  serialized_end=1081,
 )
 
 _GETINFERENCEDATAUPDATESREQUEST = _descriptor.Descriptor(
@@ -643,8 +636,8 @@ _GETINFERENCEDATAUPDATESREQUEST = _descriptor.Descriptor(
       create_key=_descriptor._internal_create_key,
     fields=[]),
   ],
-  serialized_start=783,
-  serialized_end=1113,
+  serialized_start=759,
+  serialized_end=1089,
 )
 
 
@@ -689,8 +682,8 @@ _GETINFERENCEDATAUPDATESRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1116,
-  serialized_end=1277,
+  serialized_start=1092,
+  serialized_end=1253,
 )
 
 
@@ -728,8 +721,8 @@ _MODELID = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1279,
-  serialized_end=1331,
+  serialized_start=1255,
+  serialized_end=1307,
 )
 
 _MODELSIGNATURE.fields_by_name['inputs'].message_type = _MODELFIELD
@@ -861,8 +854,8 @@ _PLUGINMANAGEMENTSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=1731,
-  serialized_end=1861,
+  serialized_start=1707,
+  serialized_end=1837,
   methods=[
   _descriptor.MethodDescriptor(
     name='RegisterPlugin',
@@ -887,8 +880,8 @@ _MODELCATALOGSERVICE = _descriptor.ServiceDescriptor(
   index=1,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=1864,
-  serialized_end=1995,
+  serialized_start=1840,
+  serialized_end=1971,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetModelUpdates',
@@ -913,8 +906,8 @@ _DATASTORAGESERVICE = _descriptor.ServiceDescriptor(
   index=2,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=1998,
-  serialized_end=2155,
+  serialized_start=1974,
+  serialized_end=2131,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetInferenceDataUpdates',
