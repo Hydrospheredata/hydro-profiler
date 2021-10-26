@@ -1,5 +1,5 @@
-import pandas
 from yoyo.backends import DatabaseBackend
+import pandas
 import yoyo
 import os
 
@@ -22,22 +22,19 @@ from profiler.domain.model_signature import (
 from profiler.adapters.metrics_repository.sqlite_metrics_repository import (
     SqliteMetricsRepository,
 )
+from profiler.config.config import config
 
-from fastapi import FastAPI, UploadFile, File, Form
+
 import uvicorn
+from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-origins = [
-    "http://localhost",
-    "http://localhost:8080",  # production fe in compose
-    "http://localhost:5002",  # dev fe
-]
 
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -141,7 +138,7 @@ if __name__ == "__main__":
 
         # monitoring_data_grpc.start_watching()
 
-        uvicorn.run(app, host="0.0.0.0", port=5000, log_level="info")
+        uvicorn.run(app, host=config.http_host, port=config.http_port, log_level="info")
     except Exception as e:
         print("Could not start application")
         print(e)

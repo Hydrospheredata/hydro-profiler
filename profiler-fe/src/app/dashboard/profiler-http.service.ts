@@ -12,14 +12,12 @@ export class ProfilerHttpService {
   get<T>(url: string): Observable<T> {
     return this.routerQuery.selectData('shellBackendUrl').pipe(
       switchMap((shellUrlWithBaseHref: string) => {
-        debugger;
-        console.log(shellUrlWithBaseHref);
         if (shellUrlWithBaseHref) {
-          return this.http.get<T>(`${shellUrlWithBaseHref}${url}`);
+          return this.http.get<T>(`${shellUrlWithBaseHref}plugin-proxy/profiler/${url}`);
         } else {
-            return this.http.get<T>(
-              `${environment.host}${environment.port ? ':' + environment.port : ''}/${url}`,
-            );
+          return this.http.get<T>(
+            `${environment.host}${environment.port ? ':' + environment.port : ''}/${url}`,
+          );
         }
       }),
     );
