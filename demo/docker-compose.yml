@@ -1,0 +1,11 @@
+version: "0.1"
+services:
+  fe:
+    image: hydrosphere/profiler-fe:latest
+    ports:
+      - "8080:8080"
+  be:
+    image: hydrosphere/profiler:latest
+    ports:
+      - "5000:5000"
+

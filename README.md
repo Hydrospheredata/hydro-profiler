@@ -19,8 +19,11 @@ This image can be used as part of Hydrosphere architecture or as independent pro
 
 Build it with command ```docker build . -t profiler -f profiler/Dockerfile``` from root dir, because we need to handle relative path with static files
 
-Service exposes ```/static``` endpoint for serving static frontend files(need for micro-frontend).
+Endpoints
+```/static``` - endpoint for serving static frontend files(need for micro-frontend).
 By default service listens to 5000 port.
+
+```/docs``` - OpenApi
 
 
 #### ```profiler-fe/Dockerfile```
@@ -35,6 +38,7 @@ Used for creating independent profiler application
 ### How to
 
 #### Run independent project (Demo purposes)
+* ```cd demo```
 * ```docker compose up -d```
 * open ```http://localhost/models``` 
 * From **dummy_model**  model use files to upload model(with contract(contract.json) and training data(train.csv))
