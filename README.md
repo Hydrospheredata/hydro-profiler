@@ -37,6 +37,125 @@ Used for creating independent profiler application
 
 ### How to
 
+### Run whole env
+
+#### Start
+* ```docker compose up -d``` - start application
+
+#### Upload data
+* open minio ```http://localhost:9001/``` (login: minioadmin, pswd: minioadmin)
+* create bucket adult
+* to **adult** bucket add  **training** bucket
+* into training bucket upload ```/demo/dummy_model/train.csv```
+* to **adult** bucket add **inference** bucket
+* * into inference bucket upload ```/demo/dummy_model/batch_1.csv```
+
+#### Register model
+* POST http://localhost:8080/api/v1/model with body
+```
+{
+    "name": "adult",
+    "version": 1,
+    "signature": {
+        "inputs": [
+            {
+                "name": "age",
+                "shape": [],
+                "dtype": "DT_INT64",
+                "profile": "NUMERICAL"
+            },
+            {
+                "name": "workclass",
+                "shape": [],
+                "dtype": "DT_STRING",
+                "profile": "CATEGORICAL"
+            },
+            {
+                "name": "fnlwgt",
+                "shape": [],
+                "dtype": "DT_INT64",
+                "profile": "NUMERICAL"
+            },
+            {
+                "name": "education",
+                "shape": [],
+                "dtype": "DT_STRING",
+                "profile": "CATEGORICAL"
+            },
+            {
+                "name": "educational-num",
+                "shape": [],
+                "dtype": "DT_STRING",
+                "profile": "CATEGORICAL"
+            },
+            {
+                "name": "marital-status",
+                "shape": [],
+                "dtype": "DT_STRING",
+                "profile": "CATEGORICAL"
+            },
+            {
+                "name": "occupation",
+                "shape": [],
+                "dtype": "DT_STRING",
+                "profile": "CATEGORICAL"
+            },
+            {
+                "name": "relationship",
+                "shape": [],
+                "dtype": "DT_STRING",
+                "profile": "CATEGORICAL"
+            },
+            {
+                "name": "race",
+                "shape": [],
+                "dtype": "DT_STRING",
+                "profile": "CATEGORICAL"
+            },
+            {
+                "name": "gender",
+                "shape": [],
+                "dtype": "DT_STRING",
+                "profile": "CATEGORICAL"
+            },
+            {
+                "name": "capital-gain",
+                "shape": [],
+                "dtype": "DT_INT64",
+                "profile": "NUMERICAL"
+            },
+            {
+                "name": "hours-per-week",
+                "shape": [],
+                "dtype": "DT_INT64",
+                "profile": "NUMERICAL"
+            },
+            {
+                "name": "native-country",
+                "shape": [],
+                "dtype": "DT_STRING",
+                "profile": "CATEGORICAL"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "income",
+                "shape": [],
+                "dtype": "DT_STRING",
+                "profile": "CATEGORICAL"
+            }
+        ]
+    },
+    "metadata": {},
+    "trainingDataPrefix": "s3://adult/training/train.csv",
+    "inferenceDataPrefix": "s3://adult/inference"
+}
+```
+
+#### Open browser
+* http://localhost:4200/models
+
+
 #### Run independent project (Demo purposes)
 * ```cd demo```
 * ```docker compose up -d```

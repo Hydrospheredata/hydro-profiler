@@ -1,7 +1,7 @@
 version: "0.1"
 services:
   shell-ui:
-    image: shell-ui
+    image: hydrosphere/shell-ui:latest
     ports:
       - "4200:8080"
   db:
@@ -21,7 +21,7 @@ services:
     command: "server /data --console-address \":9001\""
 
   monitoring-manager:
-    image: monitoring-manager:dev
+    image: hydrosphere/monitoring-manager:latest
     depends_on:
       - db
       - minio
@@ -32,7 +32,7 @@ services:
       - "8081:8081"
 
   be:
-    image: profiler:latest
+    image: hydrosphere/profiler:latest
     depends_on:
       - monitoring-manager
     ports:
