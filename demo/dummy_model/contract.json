@@ -2,117 +2,89 @@
   "inputs":[
     {
       "name": "age",
-      "shape": {
-          "dims": []
-      },
-      "dtype": 9,
-      "profile": 2
+      "shape": [],
+      "dtype": "DT_INT64",
+      "profile": "NUMERICAL"
     },
     {
       "name": "workclass",
-      "shape": {
-          "dims": []
-      },
-      "dtype": 7,
-      "profile": 1
+      "shape": [],
+      "dtype": "DT_STRING",
+      "profile": "CATEGORICAL"
     },
     {
       "name": "fnlwgt",
-      "shape": {
-          "dims": []
-      },
-      "dtype": 9,
-      "profile": 2
+      "shape": [],
+      "dtype": "DT_INT64",
+      "profile": "NUMERICAL"
     },
     {
       "name": "education",
-      "shape": {
-          "dims": []
-      },
-      "dtype": 7,
-      "profile": 1
+      "shape": [],
+      "dtype": "DT_STRING",
+      "profile": "CATEGORICAL"
     },
     {
       "name": "educational-num",
-      "shape": {
-          "dims": []
-      },
-      "dtype": 7,
-      "profile": 1
+      "shape": [],
+      "dtype": "DT_STRING",
+      "profile": "CATEGORICAL"
     },
     {
       "name": "marital-status",
-      "shape": {
-          "dims": []
-      },
-      "dtype": 7,
-      "profile": 1
+      "shape": [],
+      "dtype": "DT_STRING",
+      "profile": "CATEGORICAL"
     },
     {
       "name": "occupation",
-      "shape": {
-          "dims": []
-      },
-      "dtype": 7,
-      "profile": 1
+      "shape": [],
+      "dtype": "DT_STRING",
+      "profile": "CATEGORICAL"
     },
     {
       "name": "relationship",
-      "shape": {
-          "dims": []
-      },
-      "dtype": 7,
-      "profile": 1
+      "shape": [],
+      "dtype": "DT_STRING",
+      "profile": "CATEGORICAL"
     },
     {
       "name": "race",
-      "shape": {
-          "dims": []
-      },
-      "dtype": 7,
-      "profile": 1
+      "shape": [],
+      "dtype": "DT_STRING",
+      "profile": "CATEGORICAL"
     },
     {
       "name": "gender",
-      "shape": {
-          "dims": []
-      },
-      "dtype": 7,
-      "profile": 1
+      "shape": [],
+      "dtype": "DT_STRING",
+      "profile": "CATEGORICAL"
     },
     {
       "name": "capital-gain",
-      "shape": {
-          "dims": []
-      },
-      "dtype": 9,
-      "profile": 2
+      "shape": [],
+      "dtype": "DT_INT64",
+      "profile": "NUMERICAL"
     },
     {
       "name": "hours-per-week",
-      "shape": {
-          "dims": []
-      },
-      "dtype": 9,
-      "profile": 2
+      "shape": [],
+      "dtype": "DT_INT64",
+      "profile": "NUMERICAL"
     },
     {
       "name": "native-country",
-      "shape": {
-          "dims": []
-      },
-      "dtype": 7,
-      "profile": 1
+      "shape": [],
+      "dtype": "DT_STRING",
+      "profile": "CATEGORICAL"
     }
   ],
   "outputs": [
     {
       "name": "income",
-      "shape": {
-          "dims": []
-      },
-      "dtype": 7,
-      "profile": 1
+      "shape": [],
+      "dtype": "DT_STRING",
+      "profile": "CATEGORICAL"
     }
   ]
 }

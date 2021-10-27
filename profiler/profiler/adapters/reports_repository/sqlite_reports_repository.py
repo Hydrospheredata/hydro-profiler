@@ -8,7 +8,7 @@ import sqlite3
 
 
 class SqliteReportsRepository(ReportsRepository):
-    con = sqlite3.connect("profiler/resources/db/sqlite/profiler.db")
+    con = sqlite3.connect("profiler/resources/db/sqlite/profiler.db", check_same_thread=False)
     cur = con.cursor()
 
     def get_report(self, model_name: str, model_version:int, batch_name: str) -> Any:

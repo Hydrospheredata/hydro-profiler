@@ -1,9 +1,9 @@
 import pandas
 import threading
-import grpc_tools
 import grpc
 import s3fs
-
+from google.protobuf.json_format import MessageToDict
+from urllib.parse import urlparse
 from profiler.config.config import config
 
 from profiler.domain.model import Model
@@ -45,13 +45,17 @@ class MonitoringDataSubscriber:
         self.model_stub = ModelCatalogServiceStub(self.channel)
 
     def watch_inference_data(self):
-        req = GetInferenceDataUpdatesRequest(plugin_id="profiler_plugin")
-        for response in self.data_stub.GetInferenceDataUpdates(req):
+        init_req = GetInferenceDataUpdatesRequest.InitialRequest(plugin_id="profiler_plugin")
+        req = GetInferenceDataUpdatesRequest(init=init_req)
+        reqs = iter([req])
+        for response in self.data_stub.GetInferenceDataUpdates(reqs):
             print("Prishli dannye")
-            print(response)
-            contract = ModelSignature.parse_obj(response.signature)
+            res = MessageToDict(response)
+
+            contract = ModelSignature.parse_obj(res['signature'])
+
             model = Model(
-                name=response.model, version=response.model, contract=contract
+                name=res['model']['modelName'], version=res['model']['modelVersion'], contract=contract
             )
             inference_data = pandas.read_csv(
                 s3.open(
@@ -61,8 +65,10 @@ class MonitoringDataSubscriber:
             )
 
             # TODO: extract name from inference data file name
+            pars = urlparse(response.inference_data_objs[0])
+            name = str(pars.path.split('/')[-1])
             self._reports_use_case.generate_report(
-                model=model, batch_name="name", df=inference_data
+                model=model, batch_name=name, df=inference_data
             )
 
             # for inference_data_url in response.inference_data_objs:
@@ -73,11 +79,14 @@ class MonitoringDataSubscriber:
         req = GetModelUpdatesRequest(plugin_id="profiler_plugin")
         for response in self.model_stub.GetModelUpdates(req):
             training_data_url = response.training_data_objs[0]
+            res = MessageToDict(response)
+            print(res)
             print("Prishla model")
-            print(training_data_url)
-            contract = ModelSignature.parse_obj(response.signature)
+
+            contract = ModelSignature.parse_obj(res['signature'])
+
             model = Model(
-                name=response.model, version=response.model, contract=contract
+                name=res['model']['modelName'], version=res['model']['modelVersion'], contract=contract
             )
             training_df = pandas.read_csv(
                 s3.open(
@@ -89,10 +98,11 @@ class MonitoringDataSubscriber:
             self._metrics_use_case.generate_metrics(model, training_df)
 
     def start_watching(self):
-        inference_data_thread = threading.Thread(target=self.watch_inference_data())
+        print("Start watching...")
+        inference_data_thread = threading.Thread(target=self.watch_inference_data)
         inference_data_thread.daemon = True
         inference_data_thread.start()
 
-        models_thread = threading.Thread(target=self.watch_models())
+        models_thread = threading.Thread(target=self.watch_models)
         models_thread.daemon = True
         models_thread.start()

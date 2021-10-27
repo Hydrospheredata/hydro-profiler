@@ -5,7 +5,7 @@ from typing import Any, Dict
 from profiler.ports.aggregations_repository import AggregationsRepository
 
 class SqliteAggregationsRepository(AggregationsRepository):
-    con = sqlite3.connect("profiler/resources/db/sqlite/profiler.db")
+    con = sqlite3.connect("profiler/resources/db/sqlite/profiler.db", check_same_thread=False)
     cur = con.cursor()
 
     def get_list(self, model_name: str, model_version: int) -> Dict[str, Any]:

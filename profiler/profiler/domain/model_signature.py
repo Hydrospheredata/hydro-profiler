@@ -1,43 +1,43 @@
-from typing import List
-from enum import IntEnum
+from typing import List, Optional
+from enum import IntEnum, Enum
 from pydantic import BaseModel
 
 
-class DataType(IntEnum):
-    DT_INVALID = 0
-    DT_FLOAT = 1
-    DT_DOUBLE = 2
-    DT_INT32 = 3
-    DT_UINT8 = 4
-    DT_INT16 = 5
-    DT_INT8 = 6
-    DT_STRING = 7
-    DT_INT64 = 9
-    DT_BOOL = 10
-    DT_UINT16 = 17
-    DT_HALF = 19
-    DT_UINT32 = 22
-    DT_UINT64 = 23
-    DT_ANY = 24
+class DataType(str, Enum):
+    DT_INVALID = 'DT_INVALID'
+    DT_FLOAT = 'DT_FLOAT'
+    DT_DOUBLE = 'DT_DOUBLE'
+    DT_INT32 = 'DT_INT32'
+    DT_UINT8 = 'DT_UINT8'
+    DT_INT16 = 'DT_INT16'
+    DT_INT8 = 'DT_INT8'
+    DT_STRING = 'DT_STRING'
+    DT_INT64 = 'DT_INT64'
+    DT_BOOL = 'DT_BOOL'
+    DT_UINT16 = 'DT_UINT16'
+    DT_HALF = 'DT_HALF'
+    DT_UINT32 = 'DT_UINT32'
+    DT_UINT64 = 'DT_UINT64'
+    DT_ANY = 'DT_ANY'
 
 
-class DataProfileType(IntEnum):
-    NONE = 0
-    CATEGORICAL = 1
-    NOMINAL = 11
-    ORDINAL = 12
-    NUMERICAL = 2
-    CONTINUOUS = 21
-    INTERVAL = 22
-    RATIO = 23
-    IMAGE = 3
-    VIDEO = 4
-    AUDIO = 5
-    TEXT = 6
+class DataProfileType(str, Enum):
+    NONE = 'NONE'
+    CATEGORICAL = 'CATEGORICAL'
+    NOMINAL = 'NOMINAL'
+    ORDINAL = 'ORDINAL'
+    NUMERICAL = 'NUMERICAL'
+    CONTINUOUS = 'CONTINUOUS'
+    INTERVAL = 'INTERVAL'
+    RATIO = 'RATIO'
+    IMAGE = 'IMAGE'
+    VIDEO = 'VIDEO'
+    AUDIO = 'AUDIO'
+    TEXT = 'TEXT'
 
 
 class TensorShape(BaseModel):
-    dims: List[int]
+    dims: Optional[List[int]]
 
 
 class ModelField(BaseModel):

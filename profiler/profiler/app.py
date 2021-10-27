@@ -1,3 +1,6 @@
+import threading
+import time
+
 import grpc
 from yoyo.backends import DatabaseBackend
 import pandas
@@ -160,8 +163,9 @@ if __name__ == "__main__":
             except Exception as e:
                 pass
 
-        # monitoring_data_grpc.start_watching()
+        monitoring_data_grpc.start_watching()
 
+        print("Start server...")
         uvicorn.run(app, host=config.http_host, port=config.http_port, log_level="info")
     except Exception as e:
         print("Could not start application")

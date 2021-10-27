@@ -13,7 +13,7 @@ import sqlite3
 
 
 class SqliteMetricsRepository(MetricsRepository):
-    con = sqlite3.connect("profiler/resources/db/sqlite/profiler.db")
+    con = sqlite3.connect("profiler/resources/db/sqlite/profiler.db", check_same_thread=False)
     cur = con.cursor()
 
     def all(self):
