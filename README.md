@@ -40,9 +40,8 @@ Can be used as independent project composed with profiler backend.
 #### ```docker-compose.yml```
 Used for creating independent profiler application
 
-### How to
-
-### Run whole env
+## How to
+### Run whole project(with monitoring-manager)
 
 #### Start
 * ```docker compose up -d``` - start application
@@ -161,7 +160,7 @@ Used for creating independent profiler application
 * http://localhost:4200/models
 
 
-#### Run independent project (Demo purposes)
+### Run independent project (Demo purposes)
 * ```cd demo```
 * ```docker compose up -d```
 * open ```http://localhost/models``` 
