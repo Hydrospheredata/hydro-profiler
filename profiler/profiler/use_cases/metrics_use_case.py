@@ -15,18 +15,12 @@ from profiler.domain.model import Model
 class MetricsUseCase:
     _metrics_repo: MetricsRepository
 
-    def __init__(
-        self, metrics_repo: MetricsRepository
-    ) -> None:
+    def __init__(self, metrics_repo: MetricsRepository):
         self._metrics_repo = metrics_repo
 
     def generate_metrics(self, model: Model, t_df: DataFrame):
-        def __init__(self, column, datatype) -> None:
-            self.column = column
-            self.datatype = datatype
-
         try:
-            r = {}
+            metrics = {}
             for field in model.contract.merged_features():
                 feature = field.name
                 if field.profile == DataProfileType.NUMERICAL:
@@ -38,7 +32,7 @@ class MetricsUseCase:
                     perc_01 = t_df[feature].quantile(0.01)
                     perc_99 = t_df[feature].quantile(0.99)
 
-                    r.update(
+                    metrics.update(
                         {
                             feature: [
                                 {
@@ -56,13 +50,13 @@ class MetricsUseCase:
                                     "config": IQRMetric(
                                         perc_25=perc_25, perc_75=perc_75
                                     ).dict(),
-                                }
+                                },
                             ]
                         }
                     )
                 elif field.profile == DataProfileType.CATEGORICAL:
                     categories = t_df[feature].unique().tolist()
-                    r.update(
+                    metrics.update(
                         {
                             feature: [
                                 {
@@ -74,6 +68,7 @@ class MetricsUseCase:
                             ]
                         }
                     )
-            self._metrics_repo.save(model, r)
+            self._metrics_repo.save(model, metrics)
+            print(f"Metrics were stored for model {model.name}:{model.version}")
         except FileExistsError as err:
             print(err)

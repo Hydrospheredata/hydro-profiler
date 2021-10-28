@@ -26,12 +26,10 @@ export class AddDialogComponent {
   ) {}
 
   handleContract(evt: any) {
-    console.log(evt.target.files[0]);
     this.contract = evt.target.files[0];
   }
 
   handleTraining(evt: any) {
-    console.log(evt.target.files[0]);
     this.training = evt.target.files[0];
   }
 

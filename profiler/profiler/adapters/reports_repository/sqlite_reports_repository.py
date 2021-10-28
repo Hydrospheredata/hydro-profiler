@@ -1,8 +1,6 @@
 import json
 from profiler.ports.reports_repository import ReportsRepository
-from typing import Any, List, Dict
-from profiler.domain.production_batch import ProductionBatch
-from profiler.domain.model import Model
+from typing import Any
 
 import sqlite3
 
@@ -26,3 +24,4 @@ class SqliteReportsRepository(ReportsRepository):
             "INSERT INTO reports VALUES (?, ?, ?, ?)", (model_name, model_version, batch_name, data, )
         )
         self.con.commit()
+        print(f"Report was stored for {model_name}:{model_version}/{batch_name}")

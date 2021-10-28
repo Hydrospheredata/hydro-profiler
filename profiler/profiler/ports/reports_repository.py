@@ -8,5 +8,5 @@ class ReportsRepository(ABC):
         pass
 
     @abstractmethod
-    def save(self, model_name: str, model_version: int, batch_name: str, report: Dict[str, any]):
+    def save(self, model_name: str, model_version: int, batch_name: str, report: list):
         pass

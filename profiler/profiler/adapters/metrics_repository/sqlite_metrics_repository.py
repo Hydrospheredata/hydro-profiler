@@ -20,8 +20,11 @@ class SqliteMetricsRepository(MetricsRepository):
         return self.cur.execute("SELECT * FROM metrics")
 
     def by_name(self, name: str, version: int):
-        self.cur.execute("SELECT metrics FROM metrics WHERE model_name=? AND model_version=?", (name, version,))
-        res = self.cur.fetchone()[0]
+        con = sqlite3.connect("profiler/resources/db/sqlite/profiler.db", check_same_thread=False)
+        cur = con.cursor()
+        cur.execute("SELECT metrics FROM metrics WHERE model_name=? AND model_version=?", (name, version,))
+        print(f"Try to take metrics from {name}:{version}")
+        res = cur.fetchone()[0]
         parsed = json.loads(res)
         r = {}
 
@@ -40,9 +43,11 @@ class SqliteMetricsRepository(MetricsRepository):
         for feature, metrics in parsed.items():
             r.update({feature: list(map(recognizeMetric, metrics))})
 
+        con.close()
         return r
 
     def save(self, model: Model, metrics: Dict[str, List[Any]]):
         data = json.dumps(metrics)
         self.cur.execute("INSERT INTO metrics VALUES (?, ?, ?)", (model.name, model.version, data))
         self.con.commit()
+        print("Model stored")

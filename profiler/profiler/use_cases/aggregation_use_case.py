@@ -8,9 +8,9 @@ from profiler.ports.aggregations_repository import AggregationsRepository
 from functools import reduce
 
 
-
 def calculate_score(overall: Overall) -> float:
     return float(overall.succeed / overall.count)
+
 
 class AggregationUseCase:
     _repo: AggregationsRepository

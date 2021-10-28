@@ -45,17 +45,21 @@ class MonitoringDataSubscriber:
         self.model_stub = ModelCatalogServiceStub(self.channel)
 
     def watch_inference_data(self):
-        init_req = GetInferenceDataUpdatesRequest.InitialRequest(plugin_id="profiler_plugin")
+        init_req = GetInferenceDataUpdatesRequest.InitialRequest(
+            plugin_id="profiler_plugin"
+        )
         req = GetInferenceDataUpdatesRequest(init=init_req)
         reqs = iter([req])
         for response in self.data_stub.GetInferenceDataUpdates(reqs):
-            print("Prishli dannye")
+            print("Got inference data")
             res = MessageToDict(response)
 
-            contract = ModelSignature.parse_obj(res['signature'])
+            contract = ModelSignature.parse_obj(res["signature"])
 
             model = Model(
-                name=res['model']['modelName'], version=res['model']['modelVersion'], contract=contract
+                name=res["model"]["modelName"],
+                version=res["model"]["modelVersion"],
+                contract=contract,
             )
             inference_data = pandas.read_csv(
                 s3.open(
@@ -64,29 +68,25 @@ class MonitoringDataSubscriber:
                 )
             )
 
-            # TODO: extract name from inference data file name
             pars = urlparse(response.inference_data_objs[0])
-            name = str(pars.path.split('/')[-1])
+            name = str(pars.path.split("/")[-1])
             self._reports_use_case.generate_report(
                 model=model, batch_name=name, df=inference_data
             )
 
-            # for inference_data_url in response.inference_data_objs:
-            #   df = pandas.read_csv(inference_data_url)
-            # report use case
-
     def watch_models(self):
         req = GetModelUpdatesRequest(plugin_id="profiler_plugin")
         for response in self.model_stub.GetModelUpdates(req):
+            print("Got model")
             training_data_url = response.training_data_objs[0]
             res = MessageToDict(response)
-            print(res)
-            print("Prishla model")
 
-            contract = ModelSignature.parse_obj(res['signature'])
+            contract = ModelSignature.parse_obj(res["signature"])
 
             model = Model(
-                name=res['model']['modelName'], version=res['model']['modelVersion'], contract=contract
+                name=res["model"]["modelName"],
+                version=res["model"]["modelVersion"],
+                contract=contract,
             )
             training_df = pandas.read_csv(
                 s3.open(

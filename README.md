@@ -51,7 +51,7 @@ Used for creating independent profiler application
 * * into inference bucket upload ```/demo/dummy_model/batch_1.csv```
 
 #### Register model
-* POST http://localhost:8080/api/v1/model with body
+* POST `http://localhost:8080/api/v1/model` with body
 ```
 {
     "name": "adult",

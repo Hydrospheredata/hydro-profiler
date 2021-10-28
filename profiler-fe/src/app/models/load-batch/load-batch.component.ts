@@ -20,9 +20,7 @@ export class LoadBatchComponent {
     private service: ModelsService,
     public dialogRef: MatDialogRef<LoadBatchComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { modelName: string; modelVersion: number },
-  ) {
-    console.log(data);
-  }
+  ) {}
 
   handleBatch(evt: any) {
     this.batch = evt.target.files[0];

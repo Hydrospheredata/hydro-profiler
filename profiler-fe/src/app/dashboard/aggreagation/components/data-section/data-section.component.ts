@@ -30,8 +30,6 @@ export class DataSectionComponent {
   }
 
   cellColor(score: number) {
-    console.log(score);
-    // const score = featureScore[name].score;
     const color = d3.piecewise(d3.interpolateRgb.gamma(1.5), ['#ef4e4e', '#f7c948', '#65d6ad']);
     return score != undefined ? color(score) : 'lightgrey';
   }

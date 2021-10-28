@@ -1,31 +1,42 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { RouterQuery } from '@datorama/akita-ng-router-store';
 import { DashboardQuery } from '../state/dashboard.query';
 import { DashboardService } from '../state/dashboard.service';
-import { tap } from 'rxjs/operators';
-import { ActivatedRoute, Router } from '@angular/router';
+import { filter, takeUntil, tap } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Component({
   templateUrl: './batch-report-page.component.html',
 })
-export class BatchReportPageComponent implements OnInit {
-  report$ = this.query.batch$.pipe(tap(console.log));
+export class BatchReportPageComponent implements OnInit, OnDestroy {
+  report$ = this.query.batch$;
+  private destroy: Subject<any> = new Subject<any>();
 
   constructor(
     private query: DashboardQuery,
     private service: DashboardService,
     private routerQuery: RouterQuery,
-    private route: ActivatedRoute,
   ) {}
 
   ngOnInit() {
-    this.route.params.subscribe(console.log);
-
+    console.log('on init');
     this.routerQuery
       .selectParams(['modelName', 'modelVersion', 'batchName'])
+      .pipe(
+        tap(console.log),
+        filter(([modelName, modelVersion, batchName]) => {
+          return modelName !== undefined && modelVersion !== undefined && batchName !== undefined;
+        }),
+        takeUntil(this.destroy),
+      )
       .subscribe(([modelName, modelVersion, batchName]) => {
-        console.log(modelName, batchName), this.service.resetBatch();
+        this.service.resetBatch();
         this.service.getBatch(modelName, modelVersion, batchName);
       });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy.next();
+    this.destroy.complete();
   }
 }

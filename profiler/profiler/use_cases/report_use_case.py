@@ -31,6 +31,7 @@ class ReportUseCase:
         return self._reports_repo.get_report(model_name=model_name, model_version=model_version, batch_name=batch_name)
 
     def generate_report(self, model: Model, batch_name: str, df: DataFrame):
+        print("Reports use case")
         metrics_dict = self._metrics_repo.by_name(name=model.name, version=model.version)
 
         report = []
