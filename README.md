@@ -15,6 +15,11 @@
 Dockerfile for backend part of profiler.
 This image can be used as part of Hydrosphere architecture or as independent project composed with profiler-fe.
 
+**Environment variables:**
+* `INDEPENDENT_PROFILER_MODE` - `bool` by default `False`
+* `AWS_ACCESS_KEY_ID` - `string`
+* `AWS_SECRET_ACCESS_KEY` - `string`
+
 **Important**
 
 Build it with command ```docker build . -t profiler -f profiler/Dockerfile``` from root dir, because we need to handle relative path with static files

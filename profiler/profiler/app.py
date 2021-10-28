@@ -1,6 +1,3 @@
-import threading
-import time
-
 import grpc
 from yoyo.backends import DatabaseBackend
 import pandas
@@ -65,7 +62,9 @@ report_use_case = report_use_case.ReportUseCase(
     agg_use_case=aggregation_use_case,
 )
 channel = grpc.insecure_channel(config.manager_addr)
-monitoring_data_grpc = MonitoringDataSubscriber(channel, metrics_use_case, report_use_case)
+monitoring_data_grpc = MonitoringDataSubscriber(
+    channel, metrics_use_case, report_use_case
+)
 
 
 app.mount(
@@ -138,32 +137,35 @@ def migrate(db_uri, migrations_path):
 #  TODO (Pasha): add exceptions
 if __name__ == "__main__":
     try:
+        print(f"Independent mode: {config.profiler_independent_mode}")
+
         migrate(
             "sqlite:///profiler/resources/db/sqlite/profiler.db",
             "profiler/resources/db/sqlite/migrations",
         )
-        plugin_manager = PluginManagementServiceStub(channel)
+        if not config.profiler_independent_mode:
+            plugin_manager = PluginManagementServiceStub(channel)
 
-        registration_request = RegisterPluginRequest(
-            plugin_id = "profiler",
-            description = "Profiler plugin for inference data",
-            routePath = "profiler",
-            ngModuleName = "DashboardModule",
-            remoteName = "hydrosphereProfiler",
-            exposedModule = "./Module",
-            addr = f"http://be:{config.http_port}"
-        )
-        print("Registering...")
-        registering = True
-        while registering:
-            try:
-                plugin_manager.RegisterPlugin(registration_request)
-                registering = False
-                print("Success")
-            except Exception as e:
-                pass
+            registration_request = RegisterPluginRequest(
+                plugin_id="profiler",
+                description="Profiler plugin for inference data",
+                routePath="profiler",
+                ngModuleName="DashboardModule",
+                remoteName="hydrosphereProfiler",
+                exposedModule="./Module",
+                addr=f"http://be:{config.http_port}",
+            )
+            print("Registering plugin...")
+            registering = True
+            while registering:
+                try:
+                    plugin_manager.RegisterPlugin(registration_request)
+                    registering = False
+                    print("Success")
+                except Exception as e:
+                    pass
 
-        monitoring_data_grpc.start_watching()
+            monitoring_data_grpc.start_watching()
 
         print("Start server...")
         uvicorn.run(app, host=config.http_host, port=config.http_port, log_level="info")

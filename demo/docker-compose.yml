@@ -8,4 +8,6 @@ services:
     image: hydrosphere/profiler:latest
     ports:
       - "5000:5000"
+    environment:
+      - "PROFILER_INDEPENDENT_MODE=True"
 

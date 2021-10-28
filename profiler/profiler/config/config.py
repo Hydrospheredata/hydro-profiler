@@ -10,7 +10,7 @@ class Config(BaseSettings):
     aws_secret_access_key = "minioadmin"
 
     manager_addr: str = "monitoring-manager:8081"
-    independent_profiler: bool = False
+    profiler_independent_mode: bool = False
 
     class Config:
         case_sensitive = False
