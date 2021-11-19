@@ -1,26 +1,26 @@
-import pandas
+import logging
+import queue
 import threading
-import grpc
+
+import pandas
 import s3fs
 from google.protobuf.json_format import MessageToDict
-from urllib.parse import urlparse
 from profiler.config.config import config
-
 from profiler.domain.model import Model
 from profiler.domain.model_signature import ModelSignature
-
-from profiler.protobuf.monitoring_manager_pb2_grpc import (
-    ModelCatalogServiceStub,
-    DataStorageServiceStub,
-)
-
 from profiler.protobuf.monitoring_manager_pb2 import (
-    GetModelUpdatesRequest,
+    AnalyzedAck,
     GetInferenceDataUpdatesRequest,
+    GetModelUpdatesRequest,
 )
-
+from profiler.protobuf.monitoring_manager_pb2_grpc import (
+    DataStorageServiceStub,
+    ModelCatalogServiceStub,
+)
 from profiler.use_cases.metrics_use_case import MetricsUseCase
 from profiler.use_cases.report_use_case import ReportUseCase
+
+import grpc
 
 s3 = s3fs.S3FileSystem(client_kwargs={"endpoint_url": config.minio_endpoint})
 
@@ -31,6 +31,7 @@ class MonitoringDataSubscriber:
     channel: grpc.Channel
     data_stub: DataStorageServiceStub
     model_stub: ModelCatalogServiceStub
+    plugin_name: str = "profiler_plugin"
 
     def __init__(
         self,
@@ -45,40 +46,60 @@ class MonitoringDataSubscriber:
         self.model_stub = ModelCatalogServiceStub(self.channel)
 
     def watch_inference_data(self):
-        init_req = GetInferenceDataUpdatesRequest.InitialRequest(
-            plugin_id="profiler_plugin"
-        )
-        req = GetInferenceDataUpdatesRequest(init=init_req)
-        reqs = iter([req])
+        ack_queue = queue.Queue(100)
+        init_req = GetInferenceDataUpdatesRequest(plugin_id=self.plugin_name)
+        ack_queue.put(init_req)
+
+        def qgetter():
+            item = ack_queue.get()
+            print("Sending message to the manager")
+            return item
+
+        reqs = iter(qgetter, None)
         for response in self.data_stub.GetInferenceDataUpdates(reqs):
-            print("Got inference data")
-            res = MessageToDict(response)
+            try:
+                print("Got inference data")
+                res = MessageToDict(response)
 
-            contract = ModelSignature.parse_obj(res["signature"])
+                contract = ModelSignature.parse_obj(res["signature"])
 
-            model = Model(
-                name=res["model"]["modelName"],
-                version=res["model"]["modelVersion"],
-                contract=contract,
-            )
-            inference_data = pandas.read_csv(
-                s3.open(
-                    response.inference_data_objs[0],
-                    mode="rb",
+                model = Model(
+                    name=res["model"]["modelName"],
+                    version=res["model"]["modelVersion"],
+                    contract=contract,
                 )
-            )
 
-            pars = urlparse(response.inference_data_objs[0])
-            name = str(pars.path.split("/")[-1])
-            self._reports_use_case.generate_report(
-                model=model, batch_name=name, df=inference_data
-            )
+                for data_obj in response.inference_data_objs:
+                    # TODO(bulat): need to use data_obj timestamp somewhere
+                    inference_data = pandas.read_csv(
+                        s3.open(
+                            data_obj.key,
+                            mode="rb",
+                        )
+                    )
+                    row_reports = self._reports_use_case.generate_report(
+                        model=model, data_obj=data_obj, df=inference_data
+                    )
+
+                    resp = GetInferenceDataUpdatesRequest(
+                        plugin_id=self.plugin_name,
+                        ack=AnalyzedAck(
+                            model_name=model.name,
+                            model_version=model.version,
+                            inference_data_obj=data_obj,
+                            row_reports=row_reports,
+                        ),
+                    )
+
+                    ack_queue.put(resp)
+            except Exception:
+                logging.exception("Error while handling inference data event")
 
     def watch_models(self):
         req = GetModelUpdatesRequest(plugin_id="profiler_plugin")
         for response in self.model_stub.GetModelUpdates(req):
             print("Got model")
-            training_data_url = response.training_data_objs[0]
+            training_data_url = response.training_data_objs[0].key
             res = MessageToDict(response)
 
             contract = ModelSignature.parse_obj(res["signature"])

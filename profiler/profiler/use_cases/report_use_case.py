@@ -1,12 +1,16 @@
-from profiler.domain.overall import Overall, merge_overall
-from profiler.ports.reports_repository import ReportsRepository
-from profiler.domain.model import Model
-from profiler.ports.metrics_repository import MetricsRepository
-from profiler.ports.models_repository import ModelsRepository
-from profiler.use_cases.aggregation_use_case import AggregationUseCase
+from functools import reduce
 
 from pandas.core.frame import DataFrame
-from functools import reduce
+from profiler.domain.model import Model
+from profiler.domain.overall import Overall, merge_overall
+from profiler.ports.metrics_repository import MetricsRepository
+from profiler.ports.models_repository import ModelsRepository
+from profiler.ports.reports_repository import ReportsRepository
+from profiler.protobuf.monitoring_manager_pb2 import (
+    DataObject,
+    RowReport,
+)
+from profiler.use_cases.aggregation_use_case import AggregationUseCase
 
 
 class ReportUseCase:
@@ -20,7 +24,7 @@ class ReportUseCase:
         models_repo: ModelsRepository,
         metrics_repo: MetricsRepository,
         reports_repo: ReportsRepository,
-        agg_use_case: AggregationUseCase
+        agg_use_case: AggregationUseCase,
     ) -> None:
         self._models_repo = models_repo
         self._metrics_repo = metrics_repo
@@ -28,11 +32,15 @@ class ReportUseCase:
         self._aggregation_use_case = agg_use_case
 
     def get_report(self, model_name: str, model_version: int, batch_name: str):
-        return self._reports_repo.get_report(model_name=model_name, model_version=model_version, batch_name=batch_name)
+        return self._reports_repo.get_report(
+            model_name=model_name, model_version=model_version, batch_name=batch_name
+        )
 
-    def generate_report(self, model: Model, batch_name: str, df: DataFrame):
+    def generate_report(self, model: Model, data_obj: DataObject, df: DataFrame):
         print("Reports use case")
-        metrics_dict = self._metrics_repo.by_name(name=model.name, version=model.version)
+        metrics_dict = self._metrics_repo.by_name(
+            name=model.name, version=model.version
+        )
 
         report = []
 
@@ -56,7 +64,9 @@ class ReportUseCase:
                 )
 
                 _feature_overall = reduce(calculate_overall, checks, Overall())
-                _feature_overall_score = reduce(calculate_feature_score, checks, Overall())
+                _feature_overall_score = reduce(
+                    calculate_feature_score, checks, Overall()
+                )
 
                 row_overall = merge_overall(row_overall, _feature_overall)
 
@@ -69,14 +79,39 @@ class ReportUseCase:
                     "_raw_checks": raw_metrics,
                     "_feature_overall": feature_overall,
                     "_row_overall": row_overall.dict(),
-                    "_feature_overall_score": feature_overall_score
+                    "_feature_overall_score": feature_overall_score,
                 }
             )
             report.append(result)
 
-        self._reports_repo.save(model_name=model.name, model_version=model.version, batch_name=batch_name, report=report)
-        self._aggregation_use_case.generate_aggregation(model=model, batch_name=batch_name, report=report)
+        self._reports_repo.save(
+            model_name=model.name,
+            model_version=model.version,
+            batch_name=data_obj.key,
+            report=report,
+        )
+        self._aggregation_use_case.generate_aggregation(
+            model=model, batch_name=data_obj.key, report=report
+        )
         print("report was generated and stored")
+
+        row_reports = []
+
+        for row in report:
+            for feature, checks in row["_raw_checks"].items():
+                for check in checks:
+                    is_good = check["status"] == "succeed"
+                    if not is_good:
+                        row_report = RowReport(
+                            row_id=row["_id"],
+                            col=feature,
+                            description=f"${check['description']} ({check['metric_type']})",
+                            is_good=is_good,
+                        )
+                        row_reports.append(row_report)
+
+        return row_reports
+
 
 def calculate_overall(over: Overall, check):
     status = check["status"]
