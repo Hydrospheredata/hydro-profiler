@@ -1,0 +1,35 @@
+name: ci for backend profiler
+
+on:
+  push:
+    branches: 
+      - master
+    paths:
+      - profiler/**
+  pull_request:
+    branches: 
+      - master
+    paths:
+      - profiler/**
+
+jobs:
+  Test:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+    
+      - name: Setup Python
+        uses: actions/setup-python@v2.2.2
+        with:
+          python-version: 3.8
+
+      - name: Setup poetry
+        uses: abatilo/actions-poetry@v2.1.0
+        
+      - name: Install dependencies
+        run: "cd profiler && poetry install"
+
+      - name: Test code
+        run: "cd profiler && poetry run pytest tests"
