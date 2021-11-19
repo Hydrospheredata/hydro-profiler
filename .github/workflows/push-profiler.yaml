@@ -4,8 +4,8 @@ on:
   push:
     branches: 
       - master
-    paths:
-      - profiler/**
+    # paths:
+    #   - profiler/**
 
 jobs:
   Build_Push:
