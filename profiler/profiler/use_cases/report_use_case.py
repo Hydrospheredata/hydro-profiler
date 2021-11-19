@@ -105,7 +105,7 @@ class ReportUseCase:
                         row_report = RowReport(
                             row_id=row["_id"],
                             col=feature,
-                            description=f"${check['description']} ({check['metric_type']})",
+                            description=f"{check['description']} ({check['metric_type']})",
                             is_good=is_good,
                         )
                         row_reports.append(row_report)
