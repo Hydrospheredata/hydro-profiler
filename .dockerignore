@@ -1,0 +1,8 @@
+profiler/profiler/resources/db/sqlite/profiler.db
+profiler/profiler/resources/static/*
+.vscode
+**/node_modules
+**/.gitignore
+**/Dockerfile
+docker-compose.yml
+**README.md
