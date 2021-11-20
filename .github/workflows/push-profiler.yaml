@@ -11,7 +11,7 @@ jobs:
 
     env:
       IMAGE: profiler # name of the built image
-      REGISTRY: nufusrufus
+      REGISTRY: hydrosphere
     
     steps:
       - name: Checkout Repo
