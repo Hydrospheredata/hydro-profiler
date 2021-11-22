@@ -12,7 +12,6 @@ RUN npm run build
 
 FROM python:3.8.12-slim-bullseye as python-base
 LABEL maintainer="support@hydrosphere.io"
-
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     POETRY_PATH=/opt/poetry \
@@ -31,6 +30,7 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends \
 
 
 FROM python-base AS build
+
 # non-interactive env vars https://bugs.launchpad.net/ubuntu/+source/ansible/+bug/1833013
 ENV DEBIAN_FRONTEND=noninteractive \
     DEBCONF_NONINTERACTIVE_SEEN=true \
@@ -62,5 +62,6 @@ COPY --from=build $VENV_PATH $VENV_PATH
 COPY --chown=app:app profiler/start.sh start.sh
 COPY --chown=app:app profiler/profiler ./profiler
 COPY --from=static-fe --chown=app:app frontend/dist/ ./profiler/resources/static/
+
 
 ENTRYPOINT ["bash", "start.sh"]
