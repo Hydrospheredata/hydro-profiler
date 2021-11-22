@@ -82,6 +82,7 @@ class MonitoringDataSubscriber:
             res = MessageToDict(response)
 
             contract = ModelSignature.parse_obj(res["signature"])
+            print(contract)
 
             model = Model(
                 name=res["model"]["modelName"],

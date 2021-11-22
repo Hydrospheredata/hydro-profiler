@@ -49,7 +49,7 @@ class ModelField(BaseModel):
 
 class ModelSignature(BaseModel):
     inputs: List[ModelField]
-    outputs: List[ModelField]
+    outputs: Optional[List[ModelField]] = []
 
     def merged_features(self) -> List[ModelField]:
         return [*self.inputs, *self.outputs]
