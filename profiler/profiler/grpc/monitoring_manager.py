@@ -52,7 +52,7 @@ class MonitoringDataSubscriber:
         reqs = iter([req])
         for response in self.data_stub.GetInferenceDataUpdates(reqs):
             print("Got inference data")
-            res = MessageToDict(response)
+            res = MessageToDict(response, including_default_value_fields=True)
 
             contract = ModelSignature.parse_obj(res["signature"])
 
@@ -79,7 +79,7 @@ class MonitoringDataSubscriber:
         for response in self.model_stub.GetModelUpdates(req):
             print("Got model")
             training_data_url = response.training_data_objs[0]
-            res = MessageToDict(response)
+            res = MessageToDict(response, including_default_value_fields=True)
 
             contract = ModelSignature.parse_obj(res["signature"])
             print(contract)
