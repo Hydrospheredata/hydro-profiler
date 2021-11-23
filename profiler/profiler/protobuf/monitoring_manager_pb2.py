@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x18monitoring_manager.proto\x12\x12monitoring_manager\x1a\x1fgoogle/protobuf/timestamp.proto\"q\n\x0eModelSignature\x12.\n\x06inputs\x18\x02 \x03(\x0b\x32\x1e.monitoring_manager.ModelField\x12/\n\x07outputs\x18\x03 \x03(\x0b\x32\x1e.monitoring_manager.ModelField\"\xad\x01\n\nModelField\x12\x0c\n\x04name\x18\x01 \x01(\t\x12.\n\x05shape\x18\x02 \x01(\x0b\x32\x1f.monitoring_manager.TensorShape\x12+\n\x05\x64type\x18\x04 \x01(\x0e\x32\x1c.monitoring_manager.DataType\x12\x34\n\x07profile\x18\x05 \x01(\x0e\x32#.monitoring_manager.DataProfileType\"\x1b\n\x0bTensorShape\x12\x0c\n\x04\x64ims\x18\x01 \x03(\x03\"\xa1\x01\n\x15RegisterPluginRequest\x12\x11\n\tplugin_id\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\x11\n\troutePath\x18\x05 \x01(\t\x12\x14\n\x0cngModuleName\x18\x06 \x01(\t\x12\x12\n\nremoteName\x18\x08 \x01(\t\x12\x15\n\rexposedModule\x18\t \x01(\t\x12\x0c\n\x04\x61\x64\x64r\x18\n \x01(\t\"\x18\n\x16RegisterPluginResponse\"+\n\x16GetModelUpdatesRequest\x12\x11\n\tplugin_id\x18\x01 \x01(\t\"\xb8\x01\n\x17GetModelUpdatesResponse\x12*\n\x05model\x18\x01 \x01(\x0b\x32\x1b.monitoring_manager.ModelId\x12\x35\n\tsignature\x18\x02 \x01(\x0b\x32\".monitoring_manager.ModelSignature\x12:\n\x12training_data_objs\x18\x03 \x03(\x0b\x32\x1e.monitoring_manager.DataObject\"a\n\x1eGetInferenceDataUpdatesRequest\x12\x11\n\tplugin_id\x18\x01 \x01(\t\x12,\n\x03\x61\x63k\x18\x02 \x01(\x0b\x32\x1f.monitoring_manager.AnalyzedAck\"\xc1\x01\n\x1fGetInferenceDataUpdatesResponse\x12*\n\x05model\x18\x01 \x01(\x0b\x32\x1b.monitoring_manager.ModelId\x12\x35\n\tsignature\x18\x02 \x01(\x0b\x32\".monitoring_manager.ModelSignature\x12;\n\x13inference_data_objs\x18\x03 \x03(\x0b\x32\x1e.monitoring_manager.DataObject\"4\n\x07ModelId\x12\x12\n\nmodel_name\x18\x01 \x01(\t\x12\x15\n\rmodel_version\x18\x02 \x01(\x04\"\xd0\x02\n\x0b\x41nalyzedAck\x12\x12\n\nmodel_name\x18\x01 \x01(\t\x12\x15\n\rmodel_version\x18\x02 \x01(\x04\x12:\n\x12inference_data_obj\x18\x03 \x01(\x0b\x32\x1e.monitoring_manager.DataObject\x12\x32\n\x0brow_reports\x18\x04 \x03(\x0b\x32\x1d.monitoring_manager.RowReport\x12L\n\x0f\x66\x65\x61ture_reports\x18\x05 \x03(\x0b\x32\x33.monitoring_manager.AnalyzedAck.FeatureReportsEntry\x1aX\n\x13\x46\x65\x61tureReportsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x30\n\x05value\x18\x02 \x01(\x0b\x32!.monitoring_manager.FeatureReport:\x02\x38\x01\"\xaa\x01\n\tRowReport\x12\x0e\n\x06row_id\x18\x01 \x01(\x04\x12\x0b\n\x03\x63ol\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\x0f\n\x07is_good\x18\x04 \x01(\x08\x12\x11\n\x07int_val\x18\n \x01(\x03H\x00\x12\x14\n\nstring_val\x18\x0b \x01(\tH\x00\x12\x14\n\ndouble_val\x18\x0c \x01(\x01H\x00\x12\x12\n\x08\x62ool_val\x18\r \x01(\x08H\x00\x42\x07\n\x05value\"8\n\rFeatureReport\x12\'\n\x04rows\x18\x01 \x03(\x0b\x32\x19.monitoring_manager.FRRow\"-\n\x05\x46RRow\x12\x13\n\x0b\x64\x65scription\x18\x01 \x01(\t\x12\x0f\n\x07is_good\x18\x02 \x01(\x08\"M\n\nDataObject\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x32\n\x0elastModifiedAt\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.Timestamp*\xde\x01\n\x08\x44\x61taType\x12\x0e\n\nDT_INVALID\x10\x00\x12\x0c\n\x08\x44T_FLOAT\x10\x01\x12\r\n\tDT_DOUBLE\x10\x02\x12\x0c\n\x08\x44T_INT32\x10\x03\x12\x0c\n\x08\x44T_UINT8\x10\x04\x12\x0c\n\x08\x44T_INT16\x10\x05\x12\x0b\n\x07\x44T_INT8\x10\x06\x12\r\n\tDT_STRING\x10\x07\x12\x0c\n\x08\x44T_INT64\x10\t\x12\x0b\n\x07\x44T_BOOL\x10\n\x12\r\n\tDT_UINT16\x10\x11\x12\x0b\n\x07\x44T_HALF\x10\x13\x12\r\n\tDT_UINT32\x10\x16\x12\r\n\tDT_UINT64\x10\x17\x12\n\n\x06\x44T_ANY\x10\x18*\xa9\x01\n\x0f\x44\x61taProfileType\x12\x08\n\x04NONE\x10\x00\x12\x0f\n\x0b\x43\x41TEGORICAL\x10\x01\x12\x0b\n\x07NOMINAL\x10\x0b\x12\x0b\n\x07ORDINAL\x10\x0c\x12\r\n\tNUMERICAL\x10\x02\x12\x0e\n\nCONTINUOUS\x10\x15\x12\x0c\n\x08INTERVAL\x10\x16\x12\t\n\x05RATIO\x10\x17\x12\t\n\x05IMAGE\x10\x03\x12\t\n\x05VIDEO\x10\x04\x12\t\n\x05\x41UDIO\x10\x05\x12\x08\n\x04TEXT\x10\x06\x32\x82\x01\n\x17PluginManagementService\x12g\n\x0eRegisterPlugin\x12).monitoring_manager.RegisterPluginRequest\x1a*.monitoring_manager.RegisterPluginResponse2\x83\x01\n\x13ModelCatalogService\x12l\n\x0fGetModelUpdates\x12*.monitoring_manager.GetModelUpdatesRequest\x1a+.monitoring_manager.GetModelUpdatesResponse0\x01\x32\x9d\x01\n\x12\x44\x61taStorageService\x12\x86\x01\n\x17GetInferenceDataUpdates\x12\x32.monitoring_manager.GetInferenceDataUpdatesRequest\x1a\x33.monitoring_manager.GetInferenceDataUpdatesResponse(\x01\x30\x01\x62\x06proto3'
+  serialized_pb=b'\n\x18monitoring_manager.proto\x12\x12monitoring_manager\x1a\x1fgoogle/protobuf/timestamp.proto\"q\n\x0eModelSignature\x12.\n\x06inputs\x18\x02 \x03(\x0b\x32\x1e.monitoring_manager.ModelField\x12/\n\x07outputs\x18\x03 \x03(\x0b\x32\x1e.monitoring_manager.ModelField\"\xad\x01\n\nModelField\x12\x0c\n\x04name\x18\x01 \x01(\t\x12.\n\x05shape\x18\x02 \x01(\x0b\x32\x1f.monitoring_manager.TensorShape\x12+\n\x05\x64type\x18\x04 \x01(\x0e\x32\x1c.monitoring_manager.DataType\x12\x34\n\x07profile\x18\x05 \x01(\x0e\x32#.monitoring_manager.DataProfileType\"\x1b\n\x0bTensorShape\x12\x0c\n\x04\x64ims\x18\x01 \x03(\x03\"\xa1\x01\n\x15RegisterPluginRequest\x12\x11\n\tplugin_id\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\x11\n\troutePath\x18\x05 \x01(\t\x12\x14\n\x0cngModuleName\x18\x06 \x01(\t\x12\x12\n\nremoteName\x18\x08 \x01(\t\x12\x15\n\rexposedModule\x18\t \x01(\t\x12\x0c\n\x04\x61\x64\x64r\x18\n \x01(\t\"\x18\n\x16RegisterPluginResponse\"+\n\x16GetModelUpdatesRequest\x12\x11\n\tplugin_id\x18\x01 \x01(\t\"\xb8\x01\n\x17GetModelUpdatesResponse\x12*\n\x05model\x18\x01 \x01(\x0b\x32\x1b.monitoring_manager.ModelId\x12\x35\n\tsignature\x18\x02 \x01(\x0b\x32\".monitoring_manager.ModelSignature\x12:\n\x12training_data_objs\x18\x03 \x03(\x0b\x32\x1e.monitoring_manager.DataObject\"a\n\x1eGetInferenceDataUpdatesRequest\x12\x11\n\tplugin_id\x18\x01 \x01(\t\x12,\n\x03\x61\x63k\x18\x02 \x01(\x0b\x32\x1f.monitoring_manager.AnalyzedAck\"\xc1\x01\n\x1fGetInferenceDataUpdatesResponse\x12*\n\x05model\x18\x01 \x01(\x0b\x32\x1b.monitoring_manager.ModelId\x12\x35\n\tsignature\x18\x02 \x01(\x0b\x32\".monitoring_manager.ModelSignature\x12;\n\x13inference_data_objs\x18\x03 \x03(\x0b\x32\x1e.monitoring_manager.DataObject\"4\n\x07ModelId\x12\x12\n\nmodel_name\x18\x01 \x01(\t\x12\x15\n\rmodel_version\x18\x02 \x01(\x04\"\xd6\x02\n\x0b\x41nalyzedAck\x12\x12\n\nmodel_name\x18\x01 \x01(\t\x12\x15\n\rmodel_version\x18\x02 \x01(\x04\x12:\n\x12inference_data_obj\x18\x03 \x01(\x0b\x32\x1e.monitoring_manager.DataObject\x12L\n\x0f\x66\x65\x61ture_reports\x18\x04 \x03(\x0b\x32\x33.monitoring_manager.AnalyzedAck.FeatureReportsEntry\x12\x38\n\x0b\x62\x61tch_stats\x18\x05 \x01(\x0b\x32#.monitoring_manager.BatchStatistics\x1aX\n\x13\x46\x65\x61tureReportsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x30\n\x05value\x18\x02 \x01(\x0b\x32!.monitoring_manager.FeatureReport:\x02\x38\x01\"M\n\x0f\x42\x61tchStatistics\x12\x11\n\tsus_ratio\x18\x01 \x01(\x01\x12\x13\n\x0bsus_verdict\x18\x02 \x01(\t\x12\x12\n\nfail_ratio\x18\x03 \x01(\x01\"8\n\rFeatureReport\x12\'\n\x04rows\x18\x01 \x03(\x0b\x32\x19.monitoring_manager.FRRow\"-\n\x05\x46RRow\x12\x13\n\x0b\x64\x65scription\x18\x01 \x01(\t\x12\x0f\n\x07is_good\x18\x02 \x01(\x08\"M\n\nDataObject\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x32\n\x0elastModifiedAt\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.Timestamp*\xde\x01\n\x08\x44\x61taType\x12\x0e\n\nDT_INVALID\x10\x00\x12\x0c\n\x08\x44T_FLOAT\x10\x01\x12\r\n\tDT_DOUBLE\x10\x02\x12\x0c\n\x08\x44T_INT32\x10\x03\x12\x0c\n\x08\x44T_UINT8\x10\x04\x12\x0c\n\x08\x44T_INT16\x10\x05\x12\x0b\n\x07\x44T_INT8\x10\x06\x12\r\n\tDT_STRING\x10\x07\x12\x0c\n\x08\x44T_INT64\x10\t\x12\x0b\n\x07\x44T_BOOL\x10\n\x12\r\n\tDT_UINT16\x10\x11\x12\x0b\n\x07\x44T_HALF\x10\x13\x12\r\n\tDT_UINT32\x10\x16\x12\r\n\tDT_UINT64\x10\x17\x12\n\n\x06\x44T_ANY\x10\x18*\xa9\x01\n\x0f\x44\x61taProfileType\x12\x08\n\x04NONE\x10\x00\x12\x0f\n\x0b\x43\x41TEGORICAL\x10\x01\x12\x0b\n\x07NOMINAL\x10\x0b\x12\x0b\n\x07ORDINAL\x10\x0c\x12\r\n\tNUMERICAL\x10\x02\x12\x0e\n\nCONTINUOUS\x10\x15\x12\x0c\n\x08INTERVAL\x10\x16\x12\t\n\x05RATIO\x10\x17\x12\t\n\x05IMAGE\x10\x03\x12\t\n\x05VIDEO\x10\x04\x12\t\n\x05\x41UDIO\x10\x05\x12\x08\n\x04TEXT\x10\x06\x32\x82\x01\n\x17PluginManagementService\x12g\n\x0eRegisterPlugin\x12).monitoring_manager.RegisterPluginRequest\x1a*.monitoring_manager.RegisterPluginResponse2\x83\x01\n\x13ModelCatalogService\x12l\n\x0fGetModelUpdates\x12*.monitoring_manager.GetModelUpdatesRequest\x1a+.monitoring_manager.GetModelUpdatesResponse0\x01\x32\x9d\x01\n\x12\x44\x61taStorageService\x12\x86\x01\n\x17GetInferenceDataUpdates\x12\x32.monitoring_manager.GetInferenceDataUpdatesRequest\x1a\x33.monitoring_manager.GetInferenceDataUpdatesResponse(\x01\x30\x01\x62\x06proto3'
   ,
   dependencies=[google_dot_protobuf_dot_timestamp__pb2.DESCRIPTOR,])
 
@@ -110,8 +110,8 @@ _DATATYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=1869,
-  serialized_end=2091,
+  serialized_start=1781,
+  serialized_end=2003,
 )
 _sym_db.RegisterEnumDescriptor(_DATATYPE)
 
@@ -186,8 +186,8 @@ _DATAPROFILETYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=2094,
-  serialized_end=2263,
+  serialized_start=2006,
+  serialized_end=2175,
 )
 _sym_db.RegisterEnumDescriptor(_DATAPROFILETYPE)
 
@@ -681,8 +681,8 @@ _ANALYZEDACK_FEATUREREPORTSENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1421,
-  serialized_end=1509,
+  serialized_start=1427,
+  serialized_end=1515,
 )
 
 _ANALYZEDACK = _descriptor.Descriptor(
@@ -715,16 +715,16 @@ _ANALYZEDACK = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='row_reports', full_name='monitoring_manager.AnalyzedAck.row_reports', index=3,
+      name='feature_reports', full_name='monitoring_manager.AnalyzedAck.feature_reports', index=3,
       number=4, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='feature_reports', full_name='monitoring_manager.AnalyzedAck.feature_reports', index=4,
-      number=5, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
+      name='batch_stats', full_name='monitoring_manager.AnalyzedAck.batch_stats', index=4,
+      number=5, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
@@ -741,71 +741,36 @@ _ANALYZEDACK = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=1173,
-  serialized_end=1509,
+  serialized_end=1515,
 )
 
 
-_ROWREPORT = _descriptor.Descriptor(
-  name='RowReport',
-  full_name='monitoring_manager.RowReport',
+_BATCHSTATISTICS = _descriptor.Descriptor(
+  name='BatchStatistics',
+  full_name='monitoring_manager.BatchStatistics',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='row_id', full_name='monitoring_manager.RowReport.row_id', index=0,
-      number=1, type=4, cpp_type=4, label=1,
-      has_default_value=False, default_value=0,
+      name='sus_ratio', full_name='monitoring_manager.BatchStatistics.sus_ratio', index=0,
+      number=1, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='col', full_name='monitoring_manager.RowReport.col', index=1,
+      name='sus_verdict', full_name='monitoring_manager.BatchStatistics.sus_verdict', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='description', full_name='monitoring_manager.RowReport.description', index=2,
-      number=3, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='is_good', full_name='monitoring_manager.RowReport.is_good', index=3,
-      number=4, type=8, cpp_type=7, label=1,
-      has_default_value=False, default_value=False,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='int_val', full_name='monitoring_manager.RowReport.int_val', index=4,
-      number=10, type=3, cpp_type=2, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='string_val', full_name='monitoring_manager.RowReport.string_val', index=5,
-      number=11, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='double_val', full_name='monitoring_manager.RowReport.double_val', index=6,
-      number=12, type=1, cpp_type=5, label=1,
+      name='fail_ratio', full_name='monitoring_manager.BatchStatistics.fail_ratio', index=2,
+      number=3, type=1, cpp_type=5, label=1,
       has_default_value=False, default_value=float(0),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='bool_val', full_name='monitoring_manager.RowReport.bool_val', index=7,
-      number=13, type=8, cpp_type=7, label=1,
-      has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
@@ -820,14 +785,9 @@ _ROWREPORT = _descriptor.Descriptor(
   syntax='proto3',
   extension_ranges=[],
   oneofs=[
-    _descriptor.OneofDescriptor(
-      name='value', full_name='monitoring_manager.RowReport.value',
-      index=0, containing_type=None,
-      create_key=_descriptor._internal_create_key,
-    fields=[]),
   ],
-  serialized_start=1512,
-  serialized_end=1682,
+  serialized_start=1517,
+  serialized_end=1594,
 )
 
 
@@ -858,8 +818,8 @@ _FEATUREREPORT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1684,
-  serialized_end=1740,
+  serialized_start=1596,
+  serialized_end=1652,
 )
 
 
@@ -897,8 +857,8 @@ _FRROW = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1742,
-  serialized_end=1787,
+  serialized_start=1654,
+  serialized_end=1699,
 )
 
 
@@ -936,8 +896,8 @@ _DATAOBJECT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1789,
-  serialized_end=1866,
+  serialized_start=1701,
+  serialized_end=1778,
 )
 
 _MODELSIGNATURE.fields_by_name['inputs'].message_type = _MODELFIELD
@@ -955,20 +915,8 @@ _GETINFERENCEDATAUPDATESRESPONSE.fields_by_name['inference_data_objs'].message_t
 _ANALYZEDACK_FEATUREREPORTSENTRY.fields_by_name['value'].message_type = _FEATUREREPORT
 _ANALYZEDACK_FEATUREREPORTSENTRY.containing_type = _ANALYZEDACK
 _ANALYZEDACK.fields_by_name['inference_data_obj'].message_type = _DATAOBJECT
-_ANALYZEDACK.fields_by_name['row_reports'].message_type = _ROWREPORT
 _ANALYZEDACK.fields_by_name['feature_reports'].message_type = _ANALYZEDACK_FEATUREREPORTSENTRY
-_ROWREPORT.oneofs_by_name['value'].fields.append(
-  _ROWREPORT.fields_by_name['int_val'])
-_ROWREPORT.fields_by_name['int_val'].containing_oneof = _ROWREPORT.oneofs_by_name['value']
-_ROWREPORT.oneofs_by_name['value'].fields.append(
-  _ROWREPORT.fields_by_name['string_val'])
-_ROWREPORT.fields_by_name['string_val'].containing_oneof = _ROWREPORT.oneofs_by_name['value']
-_ROWREPORT.oneofs_by_name['value'].fields.append(
-  _ROWREPORT.fields_by_name['double_val'])
-_ROWREPORT.fields_by_name['double_val'].containing_oneof = _ROWREPORT.oneofs_by_name['value']
-_ROWREPORT.oneofs_by_name['value'].fields.append(
-  _ROWREPORT.fields_by_name['bool_val'])
-_ROWREPORT.fields_by_name['bool_val'].containing_oneof = _ROWREPORT.oneofs_by_name['value']
+_ANALYZEDACK.fields_by_name['batch_stats'].message_type = _BATCHSTATISTICS
 _FEATUREREPORT.fields_by_name['rows'].message_type = _FRROW
 _DATAOBJECT.fields_by_name['lastModifiedAt'].message_type = google_dot_protobuf_dot_timestamp__pb2._TIMESTAMP
 DESCRIPTOR.message_types_by_name['ModelSignature'] = _MODELSIGNATURE
@@ -982,7 +930,7 @@ DESCRIPTOR.message_types_by_name['GetInferenceDataUpdatesRequest'] = _GETINFEREN
 DESCRIPTOR.message_types_by_name['GetInferenceDataUpdatesResponse'] = _GETINFERENCEDATAUPDATESRESPONSE
 DESCRIPTOR.message_types_by_name['ModelId'] = _MODELID
 DESCRIPTOR.message_types_by_name['AnalyzedAck'] = _ANALYZEDACK
-DESCRIPTOR.message_types_by_name['RowReport'] = _ROWREPORT
+DESCRIPTOR.message_types_by_name['BatchStatistics'] = _BATCHSTATISTICS
 DESCRIPTOR.message_types_by_name['FeatureReport'] = _FEATUREREPORT
 DESCRIPTOR.message_types_by_name['FRRow'] = _FRROW
 DESCRIPTOR.message_types_by_name['DataObject'] = _DATAOBJECT
@@ -1075,12 +1023,12 @@ AnalyzedAck = _reflection.GeneratedProtocolMessageType('AnalyzedAck', (_message.
 _sym_db.RegisterMessage(AnalyzedAck)
 _sym_db.RegisterMessage(AnalyzedAck.FeatureReportsEntry)
 
-RowReport = _reflection.GeneratedProtocolMessageType('RowReport', (_message.Message,), {
-  'DESCRIPTOR' : _ROWREPORT,
+BatchStatistics = _reflection.GeneratedProtocolMessageType('BatchStatistics', (_message.Message,), {
+  'DESCRIPTOR' : _BATCHSTATISTICS,
   '__module__' : 'monitoring_manager_pb2'
-  # @@protoc_insertion_point(class_scope:monitoring_manager.RowReport)
+  # @@protoc_insertion_point(class_scope:monitoring_manager.BatchStatistics)
   })
-_sym_db.RegisterMessage(RowReport)
+_sym_db.RegisterMessage(BatchStatistics)
 
 FeatureReport = _reflection.GeneratedProtocolMessageType('FeatureReport', (_message.Message,), {
   'DESCRIPTOR' : _FEATUREREPORT,
@@ -1113,8 +1061,8 @@ _PLUGINMANAGEMENTSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=2266,
-  serialized_end=2396,
+  serialized_start=2178,
+  serialized_end=2308,
   methods=[
   _descriptor.MethodDescriptor(
     name='RegisterPlugin',
@@ -1139,8 +1087,8 @@ _MODELCATALOGSERVICE = _descriptor.ServiceDescriptor(
   index=1,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=2399,
-  serialized_end=2530,
+  serialized_start=2311,
+  serialized_end=2442,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetModelUpdates',
@@ -1165,8 +1113,8 @@ _DATASTORAGESERVICE = _descriptor.ServiceDescriptor(
   index=2,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=2533,
-  serialized_end=2690,
+  serialized_start=2445,
+  serialized_end=2602,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetInferenceDataUpdates',
