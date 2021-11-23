@@ -1,0 +1,25 @@
+name: ci
+
+on:
+  pull_request:
+    
+jobs:
+  Test:
+    name: Run Karma Tests
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install npm dependency
+        run: npm install 
+
+      - name: Run Jasmine tests
+        run: npm run test-headless
+
+      - name: Comment Test Coverage
+        uses: AthleticNet/comment-test-coverage@1.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: coverage/coverage-summary.json
+          title: Karma Test Coverage
