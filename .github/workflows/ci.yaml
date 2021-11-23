@@ -12,10 +12,12 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install npm dependency
-        run: npm install 
+        shell: bash
+        run: "cd profiler-fe && npm install"
 
       - name: Run Jasmine tests
-        run: npm run test-headless
+        shell: bash
+        run: "cd profiler-fe && npm run test-headless"
 
       - name: Comment Test Coverage
         uses: AthleticNet/comment-test-coverage@1.1
