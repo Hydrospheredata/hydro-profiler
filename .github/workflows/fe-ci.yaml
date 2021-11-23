@@ -1,7 +1,11 @@
-name: ci
+name: Frontend CI
 
 on:
   pull_request:
+    paths:
+      - "profiler-fe/**"
+      - "!profiler-fe/docker/**"
+      - "!profiler-fe/Dockerfile"
     
 jobs:
   Test:
