@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DataSectionComponent } from './data-section.component';
+import {RouterTestingModule} from "@angular/router/testing";
 
 describe('DataSectionComponent', () => {
   let component: DataSectionComponent;
@@ -9,6 +10,7 @@ describe('DataSectionComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DataSectionComponent],
+      imports: [RouterTestingModule]
     }).compileComponents();
   });
 

@@ -61,7 +61,7 @@ class IncludeMetric(BaseMetric):
         return {
             "metric_type": MetricType.IN,
             "status": CheckType.FAILED,
-            "description": f"category {category} not in list {self.categories}",
+            "description": f"Category {category} not in categories",
             "count_score": self.count_score,
         }
 
@@ -69,7 +69,7 @@ class IncludeMetric(BaseMetric):
         return {
             "metric_type": MetricType.IN,
             "status": CheckType.SUCCESS,
-            "description": f"category {category} in categories {self.categories}",
+            "description": f"Training categories includes {category}",
             "count_score": self.count_score,
         }
 
