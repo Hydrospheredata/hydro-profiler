@@ -13,18 +13,25 @@ from profiler.adapters.models_repository.sqlite_models_repository import (
 from profiler.adapters.reports_repository.sqlite_reports_repository import (
     SqliteReportsRepository,
 )
+from profiler.adapters.metrics_repository.sqlite_metrics_repository import (
+    SqliteMetricsRepository,
+)
+
+from profiler.adapters.overall_reports_repo.sqlite_overall_reports_repository import (
+    SqliteOverallReportsRepository,
+)
+
 from profiler.domain.model import Model
 from profiler.grpc.monitoring_manager import MonitoringDataSubscriber
 from profiler.protobuf.monitoring_manager_pb2 import RegisterPluginRequest
 from profiler.protobuf.monitoring_manager_pb2_grpc import PluginManagementServiceStub
 from profiler.use_cases.aggregation_use_case import AggregationUseCase
+from profiler.use_cases.overall_reports_use_case import OverallReportsUseCase
 from profiler.use_cases import metrics_use_case, report_use_case
 from profiler.domain.model_signature import (
     ModelSignature,
 )
-from profiler.adapters.metrics_repository.sqlite_metrics_repository import (
-    SqliteMetricsRepository,
-)
+
 from profiler.config.config import config
 
 
@@ -47,7 +54,7 @@ metrics_repo = SqliteMetricsRepository()
 models_repo = SqliteModelsRepository()
 reports_repo = SqliteReportsRepository()
 aggregations_repo = SqliteAggregationsRepository()
-
+overall_reports_repository = SqliteOverallReportsRepository()
 
 aggregation_use_case = AggregationUseCase(
     repo=aggregations_repo,
@@ -61,9 +68,13 @@ report_use_case = report_use_case.ReportUseCase(
     reports_repo=reports_repo,
     agg_use_case=aggregation_use_case,
 )
+overall_reports_use_case = OverallReportsUseCase(
+    overall_reports_repo=overall_reports_repository
+)
+
 channel = grpc.insecure_channel(config.manager_addr)
 monitoring_data_grpc = MonitoringDataSubscriber(
-    channel, metrics_use_case, report_use_case
+    channel, metrics_use_case, report_use_case, overall_reports_use_case
 )
 
 
@@ -87,6 +98,14 @@ async def register_model(
     models_repo.save(model=model)
     metrics_use_case.generate_metrics(model=model, t_df=df)
 
+    report = report_use_case.generate_report(model=model, batch_name="training", df=df)
+    overall_reports_use_case.generate_overall_report(
+        model_name=name,
+        model_version=version,
+        batch_name="training",
+        report=report,
+    )
+
     return model
 
 
@@ -99,7 +118,15 @@ async def process_batch(
 ):
     df = pandas.read_csv(batch.file)
     model = models_repo.get_by_name(model_name, model_version)
-    report_use_case.generate_report(model=model, batch_name=batch_name, df=df)
+    report = report_use_case.generate_report(model=model, batch_name=batch_name, df=df)
+    report_use_case.save_report(model_name, model_version, batch_name, report)
+
+    overall_reports_use_case.generate_overall_report(
+        model_name=model_name,
+        model_version=model_version,
+        batch_name=batch_name,
+        report=report,
+    )
 
     return f"Report for batch {batch_name} was generated "
 
@@ -119,7 +146,15 @@ async def get_report(model_name: str, model_version: int, batch_name: str):
     return report_use_case.get_report(model_name, model_version, batch_name)
 
 
+@app.get("/overall_report/{model_name}/{model_version}/{batch_name}")
+async def get_overall_report(model_name: str, model_version: int, batch_name: str):
+    return overall_reports_use_case.calculate_batch_stats(
+        model_name=model_name, model_version=model_version, batch_name=batch_name
+    )
+
+
 def migrate(db_uri, migrations_path):
+    print("Start migrations")
     parsed_uri = yoyo.connections.parse_uri(db_uri)
     scheme, _, _, _, _, database, _ = parsed_uri
     if scheme == "sqlite":

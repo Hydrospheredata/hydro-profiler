@@ -135,3 +135,16 @@ class IQRMetric(BaseMetric):
             return self.success(value, lower_bound, upper_bound)
         else:
             return self.fail(value, lower_bound, upper_bound)
+
+
+def recognize_metric(x):
+    if x["type"] == MetricType.MIN_MAX:
+        return MinMaxMetric.parse_obj(x["config"])
+    elif x["type"] == MetricType.IN:
+        return IncludeMetric.parse_obj(x["config"])
+    elif x["type"] == MetricType.IQR:
+        return IQRMetric.parse_obj(x["config"])
+    elif x["type"] == MetricType.PERCENTILE:
+        return PercentileMetric.parse_obj(x["config"])
+    else:
+        return None

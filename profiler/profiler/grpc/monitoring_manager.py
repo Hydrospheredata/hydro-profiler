@@ -1,6 +1,7 @@
 import logging
 import queue
 import threading
+from numpy.core.fromnumeric import prod
 
 import pandas
 import s3fs
@@ -8,6 +9,8 @@ from google.protobuf.json_format import MessageToDict
 from profiler.config.config import config
 from profiler.domain.model import Model
 from profiler.domain.model_signature import ModelSignature
+from profiler.ports.models_repository import ModelsRepository
+from profiler.ports.reports_repository import ReportsRepository
 from profiler.protobuf.monitoring_manager_pb2 import (
     AnalyzedAck,
     GetInferenceDataUpdatesRequest,
@@ -18,7 +21,10 @@ from profiler.protobuf.monitoring_manager_pb2_grpc import (
     ModelCatalogServiceStub,
 )
 from profiler.use_cases.metrics_use_case import MetricsUseCase
-from profiler.use_cases.report_use_case import ReportUseCase
+from profiler.use_cases.overall_reports_use_case import OverallReportsUseCase
+from profiler.use_cases.report_use_case import (
+    ReportUseCase,
+)
 
 import grpc
 
@@ -28,6 +34,7 @@ s3 = s3fs.S3FileSystem(client_kwargs={"endpoint_url": config.minio_endpoint})
 class MonitoringDataSubscriber:
     _metrics_use_case: MetricsUseCase
     _reports_use_case: ReportUseCase
+    _overall_reports_use_case: OverallReportsUseCase
     channel: grpc.Channel
     data_stub: DataStorageServiceStub
     model_stub: ModelCatalogServiceStub
@@ -38,10 +45,12 @@ class MonitoringDataSubscriber:
         channel: grpc.Channel,
         metrics_use_case: MetricsUseCase,
         reports_use_case: ReportUseCase,
+        overall_reports_use_case: OverallReportsUseCase,
     ):
         self.channel = channel
         self._metrics_use_case = metrics_use_case
         self._reports_use_case = reports_use_case
+        self._overall_reports_use_case = overall_reports_use_case
         self.data_stub = DataStorageServiceStub(self.channel)
         self.model_stub = ModelCatalogServiceStub(self.channel)
 
@@ -77,8 +86,26 @@ class MonitoringDataSubscriber:
                             mode="rb",
                         )
                     )
-                    row_reports = self._reports_use_case.generate_report(
-                        model=model, data_obj=data_obj, df=inference_data
+
+                    report = self._reports_use_case.generate_report(
+                        model=model, batch_name=data_obj.key, df=inference_data
+                    )
+                    # store report
+                    self._reports_use_case.save_report(
+                        model.name, model.version, data_obj.key, report
+                    )
+
+                    self._overall_reports_use_case.generate_overall_report(
+                        model_name=model.name,
+                        model_version=model.version,
+                        batch_name=data_obj.key,
+                        report=report,
+                    )
+
+                    batch_stats = self._overall_reports_use_case.calculate_batch_stats(
+                        model_name=model.name,
+                        model_version=model.version,
+                        batch_name=data_obj.key,
                     )
 
                     resp = GetInferenceDataUpdatesRequest(
@@ -86,8 +113,7 @@ class MonitoringDataSubscriber:
                         ack=AnalyzedAck(
                             model_name=model.name,
                             model_version=model.version,
-                            inference_data_obj=data_obj,
-                            row_reports=row_reports,
+                            batch_stats=batch_stats,
                         ),
                     )
 
@@ -117,6 +143,20 @@ class MonitoringDataSubscriber:
             )
 
             self._metrics_use_case.generate_metrics(model, training_df)
+
+            # generate and store report for training data for Overall report
+            report = self._reports_use_case.generate_report(
+                model, "training", training_df
+            )
+            self._reports_use_case.save_report(
+                model.name, model.version, "training", report
+            )
+            self._overall_reports_use_case.generate_overall_report(
+                model_name=model.name,
+                model_version=model.version,
+                batch_name="training",
+                report=report,
+            )
 
     def start_watching(self):
         print("Start watching...")

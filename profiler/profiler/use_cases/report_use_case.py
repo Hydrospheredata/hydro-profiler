@@ -1,4 +1,5 @@
 from functools import reduce
+from typing import Any, List
 
 from pandas.core.frame import DataFrame
 from profiler.domain.model import Model
@@ -6,10 +7,7 @@ from profiler.domain.overall import Overall, merge_overall
 from profiler.ports.metrics_repository import MetricsRepository
 from profiler.ports.models_repository import ModelsRepository
 from profiler.ports.reports_repository import ReportsRepository
-from profiler.protobuf.monitoring_manager_pb2 import (
-    DataObject,
-    RowReport,
-)
+
 from profiler.use_cases.aggregation_use_case import AggregationUseCase
 
 
@@ -36,7 +34,18 @@ class ReportUseCase:
             model_name=model_name, model_version=model_version, batch_name=batch_name
         )
 
-    def generate_report(self, model: Model, data_obj: DataObject, df: DataFrame):
+    def save_report(
+        self, model_name: str, model_version: int, batch_name: str, report: List[Any]
+    ):
+        print("Save report")
+        self._reports_repo.save(
+            model_name=model_name,
+            model_version=model_version,
+            batch_name=batch_name,
+            report=report,
+        )
+
+    def generate_report(self, model: Model, batch_name: str, df: DataFrame):
         print("Reports use case")
         metrics_dict = self._metrics_repo.by_name(
             name=model.name, version=model.version
@@ -84,33 +93,58 @@ class ReportUseCase:
             )
             report.append(result)
 
-        self._reports_repo.save(
-            model_name=model.name,
-            model_version=model.version,
-            batch_name=data_obj.key,
-            report=report,
-        )
         self._aggregation_use_case.generate_aggregation(
-            model=model, batch_name=data_obj.key, report=report
+            model=model, batch_name=batch_name, report=report
         )
-        print("report was generated and stored")
 
-        row_reports = []
+        return report
 
-        for row in report:
-            for feature, checks in row["_raw_checks"].items():
-                for check in checks:
-                    is_good = check["status"] == "succeed"
-                    if not is_good:
-                        row_report = RowReport(
-                            row_id=row["_id"],
-                            col=feature,
-                            description=f"{check['description']} ({check['metric_type']})",
-                            is_good=is_good,
-                        )
-                        row_reports.append(row_report)
+    def overall_report(self, model_name: str, model_version: int, prod_batch_name: str):
+        production_report = self._reports_repo.get_report(
+            model_name=model_name,
+            model_version=model_version,
+            batch_name=prod_batch_name,
+        )
+        train_report = self._reports_repo.get_report(
+            model_name=model_name,
+            model_version=model_version,
+            batch_name="training",
+        )
 
-        return row_reports
+        prod_sus_perc = calculate_suspicious_percent(production_report)
+        train_sus_perc = calculate_suspicious_percent(train_report)
+        rsr = prod_sus_perc / train_sus_perc
+        failed_ratio = calculate_failed_ratio(production_report)
+
+        return {
+            "sus_ratio": rsr,
+            "sus_verdict": "good",
+            "fail_ratio": failed_ratio,
+        }
+
+
+def calculate_suspicious_percent(report: List[Any]):
+    rows_count = len(report)
+    suspicious_count = reduce(
+        (lambda count, row: count + row["_row_overall"]["suspicious"]), report, 0
+    )
+
+    if rows_count == 0 or suspicious_count == 0:
+        return 0
+
+    return (suspicious_count / rows_count) * 100
+
+
+def calculate_failed_ratio(report):
+    rows_count = len(report)
+    failed_count = reduce(
+        (lambda count, row: count + row["_row_overall"]["failed"]), report, 0
+    )
+
+    if rows_count == 0 or failed_count == 0:
+        return 0
+
+    return failed_count / rows_count
 
 
 def calculate_overall(over: Overall, check):
@@ -124,6 +158,7 @@ def calculate_overall(over: Overall, check):
     return over
 
 
+# Used for aggregation cells
 def calculate_feature_score(over: Overall, check) -> Overall:
     status = check["status"]
     count_score = check["count_score"]
