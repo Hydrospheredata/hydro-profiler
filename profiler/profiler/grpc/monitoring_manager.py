@@ -1,7 +1,6 @@
 import logging
 import queue
 import threading
-from numpy.core.fromnumeric import prod
 
 import pandas
 import s3fs
@@ -9,8 +8,6 @@ from google.protobuf.json_format import MessageToDict
 from profiler.config.config import config
 from profiler.domain.model import Model
 from profiler.domain.model_signature import ModelSignature
-from profiler.ports.models_repository import ModelsRepository
-from profiler.ports.reports_repository import ReportsRepository
 from profiler.protobuf.monitoring_manager_pb2 import (
     AnalyzedAck,
     GetInferenceDataUpdatesRequest,
@@ -68,7 +65,7 @@ class MonitoringDataSubscriber:
         for response in self.data_stub.GetInferenceDataUpdates(reqs):
             try:
                 print("Got inference data")
-                res = MessageToDict(response)
+                res = MessageToDict(response, including_default_value_fields=True)
 
                 contract = ModelSignature.parse_obj(res["signature"])
 
@@ -126,9 +123,10 @@ class MonitoringDataSubscriber:
         for response in self.model_stub.GetModelUpdates(req):
             print("Got model")
             training_data_url = response.training_data_objs[0].key
-            res = MessageToDict(response)
+            res = MessageToDict(response, including_default_value_fields=True)
 
             contract = ModelSignature.parse_obj(res["signature"])
+            print(contract)
 
             model = Model(
                 name=res["model"]["modelName"],

@@ -47,4 +47,4 @@ class SqliteMetricsRepository(MetricsRepository):
             "INSERT INTO metrics VALUES (?, ?, ?)", (model.name, model.version, data)
         )
         self.con.commit()
-        print("Model stored")
+        print("Metrics stored")
