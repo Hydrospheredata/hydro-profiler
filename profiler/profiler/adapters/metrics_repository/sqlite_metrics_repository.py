@@ -1,10 +1,6 @@
 import json
 from profiler.domain.feature_metric import (
-    IQRMetric,
-    IncludeMetric,
-    MinMaxMetric,
-    PercentileMetric,
-    MetricType,
+    recognize_metric,
 )
 from typing import List, Dict, Any
 from profiler.ports.metrics_repository import MetricsRepository
@@ -35,30 +31,15 @@ class SqliteMetricsRepository(MetricsRepository):
             ),
         )
         print(f"Try to take metrics from {name}:{version}")
-        try:
-            res = cur.fetchone()[0]
-            parsed = json.loads(res)
-            r = {}
+        res = cur.fetchone()[0]
+        parsed = json.loads(res)
+        r = {}
 
-            def recognizeMetric(x):
-                if x["type"] == MetricType.MIN_MAX:
-                    return MinMaxMetric.parse_obj(x["config"])
-                elif x["type"] == MetricType.IN:
-                    return IncludeMetric.parse_obj(x["config"])
-                elif x["type"] == MetricType.IQR:
-                    return IQRMetric.parse_obj(x["config"])
-                elif x["type"] == MetricType.PERCENTILE:
-                    return PercentileMetric.parse_obj(x["config"])
-                else:
-                    return None
+        for feature, metrics in parsed.items():
+            r.update({feature: list(map(recognize_metric, metrics))})
 
-            for feature, metrics in parsed.items():
-                r.update({feature: list(map(recognizeMetric, metrics))})
-
-            con.close()
-            return r
-        except Exception as e:
-            print(e)
+        con.close()
+        return r
 
     def save(self, model: Model, metrics: Dict[str, List[Any]]):
         data = json.dumps(metrics)

@@ -32,18 +32,27 @@ class AggregationUseCase:
         feature_overall = reduce(o, model.contract.merged_features(), {})
 
         for row in report:
-            score_by_feature = row['_feature_overall_score']
+            score_by_feature = row["_feature_overall_score"]
             for feature, overall in score_by_feature.items():
-                feature_overall.update({feature: merge_overall(feature_overall[feature], Overall.parse_obj(overall))})
+                feature_overall.update(
+                    {
+                        feature: merge_overall(
+                            feature_overall[feature], Overall.parse_obj(overall)
+                        )
+                    }
+                )
 
         for feat, over in feature_overall.items():
             feature_overall.update({feat: calculate_score(over)})
 
         agg = {
-            'keys': list(map(lambda m: m.name, model.contract.merged_features())),
-            'scores': feature_overall
+            "keys": list(map(lambda m: m.name, model.contract.merged_features())),
+            "scores": feature_overall,
         }
 
-        self._repo.save(model_name=model.name, model_version=model.version, batch_name=batch_name, aggregation=agg)
-
-
+        self._repo.save(
+            model_name=model.name,
+            model_version=model.version,
+            batch_name=batch_name,
+            aggregation=agg,
+        )

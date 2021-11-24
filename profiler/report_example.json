@@ -1,0 +1,343 @@
+{
+    "_id": 1,
+    "_raw_checks": {
+        "age": [
+            {
+                "metric_type": "MinMax",
+                "status": "succeed",
+                "description": "value 38 in range [17, 90]",
+                "count_score": true
+            },
+            {
+                "metric_type": "Percentile(1, 99)",
+                "status": "succeed",
+                "description": "value 38 in range [17, 74]",
+                "count_score": false
+            },
+            {
+                "metric_type": "IQR",
+                "status": "succeed",
+                "description": "value 38 in range [-2.0, 78.0]",
+                "count_score": false
+            }
+        ],
+        "workclass": [
+            {
+                "metric_type": "Include",
+                "status": "succeed",
+                "description": "category Private in categories ['Private', 'Local-gov', '?', 'Self-emp-not-inc', 'Federal-gov', 'State-gov', 'Self-emp-inc', 'Without-pay', 'Never-worked']",
+                "count_score": true
+            }
+        ],
+        "fnlwgt": [
+            {
+                "metric_type": "MinMax",
+                "status": "succeed",
+                "description": "value 89814 in range [12285, 1490400]",
+                "count_score": true
+            },
+            {
+                "metric_type": "Percentile(1, 99)",
+                "status": "succeed",
+                "description": "value 89814 in range [27166, 509484]",
+                "count_score": false
+            },
+            {
+                "metric_type": "IQR",
+                "status": "succeed",
+                "description": "value 89814 in range [-62588.0, 417780.0]",
+                "count_score": false
+            }
+        ],
+        "education": [
+            {
+                "metric_type": "Include",
+                "status": "succeed",
+                "description": "category HS-grad in categories ['11th', 'HS-grad', 'Assoc-acdm', 'Some-college', '10th', 'Prof-school', '7th-8th', 'Bachelors', 'Masters', 'Doctorate', '5th-6th', 'Assoc-voc', '9th', '12th', '1st-4th', 'Preschool']",
+                "count_score": true
+            }
+        ],
+        "educational-num": [
+            {
+                "metric_type": "Include",
+                "status": "succeed",
+                "description": "category 9 in categories ['7', '9', '12', '10', '6', '15', '4', '13', '14', '16', '3', '11', '5', '8', '2', '1']",
+                "count_score": true
+            }
+        ],
+        "marital-status": [
+            {
+                "metric_type": "Include",
+                "status": "succeed",
+                "description": "category Married-civ-spouse in categories ['Never-married', 'Married-civ-spouse', 'Widowed', 'Divorced', 'Separated', 'Married-spouse-absent', 'Married-AF-spouse']",
+                "count_score": true
+            }
+        ],
+        "occupation": [
+            {
+                "metric_type": "Include",
+                "status": "succeed",
+                "description": "category Farming-fishing in categories ['Machine-op-inspct', 'Farming-fishing', 'Protective-serv', '?', 'Other-service', 'Prof-specialty', 'Craft-repair', 'Adm-clerical', 'Exec-managerial', 'Tech-support', 'Sales', 'Priv-house-serv', 'Transport-moving', 'Handlers-cleaners', 'Armed-Forces']",
+                "count_score": true
+            }
+        ],
+        "relationship": [
+            {
+                "metric_type": "Include",
+                "status": "succeed",
+                "description": "category Husband in categories ['Own-child', 'Husband', 'Not-in-family', 'Unmarried', 'Wife', 'Other-relative']",
+                "count_score": true
+            }
+        ],
+        "race": [
+            {
+                "metric_type": "Include",
+                "status": "succeed",
+                "description": "category White in categories ['Black', 'White', 'Asian-Pac-Islander', 'Other', 'Amer-Indian-Eskimo']",
+                "count_score": true
+            }
+        ],
+        "gender": [
+            {
+                "metric_type": "Include",
+                "status": "succeed",
+                "description": "category Male in categories ['Male', 'Female']",
+                "count_score": true
+            }
+        ],
+        "capital-gain": [
+            {
+                "metric_type": "MinMax",
+                "status": "succeed",
+                "description": "value 0 in range [0, 99999]",
+                "count_score": true
+            },
+            {
+                "metric_type": "Percentile(1, 99)",
+                "status": "succeed",
+                "description": "value 0 in range [0, 15024]",
+                "count_score": false
+            },
+            {
+                "metric_type": "IQR",
+                "status": "succeed",
+                "description": "value 0 in range [0.0, 0.0]",
+                "count_score": false
+            }
+        ],
+        "hours-per-week": [
+            {
+                "metric_type": "MinMax",
+                "status": "succeed",
+                "description": "value 50 in range [1, 99]",
+                "count_score": true
+            },
+            {
+                "metric_type": "Percentile(1, 99)",
+                "status": "succeed",
+                "description": "value 50 in range [8, 80]",
+                "count_score": false
+            },
+            {
+                "metric_type": "IQR",
+                "status": "succeed",
+                "description": "value 50 in range [32.5, 52.5]",
+                "count_score": false
+            }
+        ],
+        "native-country": [
+            {
+                "metric_type": "Include",
+                "status": "succeed",
+                "description": "category United-States in categories ['United-States', '?', 'Peru', 'Guatemala', 'Mexico', 'Dominican-Republic', 'Ireland', 'Germany', 'Philippines', 'Thailand', 'Haiti', 'El-Salvador', 'Puerto-Rico', 'Vietnam', 'South', 'Columbia', 'Japan', 'India', 'Cambodia', 'Poland', 'Laos', 'England', 'Cuba', 'Taiwan', 'Italy', 'Canada', 'Portugal', 'China', 'Nicaragua', 'Honduras', 'Iran', 'Scotland', 'Jamaica', 'Ecuador', 'Yugoslavia', 'Hungary', 'Hong', 'Greece', 'Trinadad&Tobago', 'Outlying-US(Guam-USVI-etc)', 'France', 'Holand-Netherlands']",
+                "count_score": true
+            }
+        ],
+        "income": [
+            {
+                "metric_type": "Include",
+                "status": "succeed",
+                "description": "category <=50K in categories ['<=50K', '>50K']",
+                "count_score": true
+            }
+        ]
+    },
+    "_feature_overall": {
+        "age": {
+            "failed": 0,
+            "suspicious": 0,
+            "succeed": 3,
+            "count": 3
+        },
+        "workclass": {
+            "failed": 0,
+            "suspicious": 0,
+            "succeed": 1,
+            "count": 1
+        },
+        "fnlwgt": {
+            "failed": 0,
+            "suspicious": 0,
+            "succeed": 3,
+            "count": 3
+        },
+        "education": {
+            "failed": 0,
+            "suspicious": 0,
+            "succeed": 1,
+            "count": 1
+        },
+        "educational-num": {
+            "failed": 0,
+            "suspicious": 0,
+            "succeed": 1,
+            "count": 1
+        },
+        "marital-status": {
+            "failed": 0,
+            "suspicious": 0,
+            "succeed": 1,
+            "count": 1
+        },
+        "occupation": {
+            "failed": 0,
+            "suspicious": 0,
+            "succeed": 1,
+            "count": 1
+        },
+        "relationship": {
+            "failed": 0,
+            "suspicious": 0,
+            "succeed": 1,
+            "count": 1
+        },
+        "race": {
+            "failed": 0,
+            "suspicious": 0,
+            "succeed": 1,
+            "count": 1
+        },
+        "gender": {
+            "failed": 0,
+            "suspicious": 0,
+            "succeed": 1,
+            "count": 1
+        },
+        "capital-gain": {
+            "failed": 0,
+            "suspicious": 0,
+            "succeed": 3,
+            "count": 3
+        },
+        "hours-per-week": {
+            "failed": 0,
+            "suspicious": 0,
+            "succeed": 3,
+            "count": 3
+        },
+        "native-country": {
+            "failed": 0,
+            "suspicious": 0,
+            "succeed": 1,
+            "count": 1
+        },
+        "income": {
+            "failed": 0,
+            "suspicious": 0,
+            "succeed": 1,
+            "count": 1
+        }
+    },
+    "_row_overall": {
+        "failed": 0,
+        "suspicious": 0,
+        "succeed": 22,
+        "count": 22
+    },
+    "_feature_overall_score": {
+        "age": {
+            "failed": 0,
+            "suspicious": 0,
+            "succeed": 1,
+            "count": 1
+        },
+        "workclass": {
+            "failed": 0,
+            "suspicious": 0,
+            "succeed": 1,
+            "count": 1
+        },
+        "fnlwgt": {
+            "failed": 0,
+            "suspicious": 0,
+            "succeed": 1,
+            "count": 1
+        },
+        "education": {
+            "failed": 0,
+            "suspicious": 0,
+            "succeed": 1,
+            "count": 1
+        },
+        "educational-num": {
+            "failed": 0,
+            "suspicious": 0,
+            "succeed": 1,
+            "count": 1
+        },
+        "marital-status": {
+            "failed": 0,
+            "suspicious": 0,
+            "succeed": 1,
+            "count": 1
+        },
+        "occupation": {
+            "failed": 0,
+            "suspicious": 0,
+            "succeed": 1,
+            "count": 1
+        },
+        "relationship": {
+            "failed": 0,
+            "suspicious": 0,
+            "succeed": 1,
+            "count": 1
+        },
+        "race": {
+            "failed": 0,
+            "suspicious": 0,
+            "succeed": 1,
+            "count": 1
+        },
+        "gender": {
+            "failed": 0,
+            "suspicious": 0,
+            "succeed": 1,
+            "count": 1
+        },
+        "capital-gain": {
+            "failed": 0,
+            "suspicious": 0,
+            "succeed": 1,
+            "count": 1
+        },
+        "hours-per-week": {
+            "failed": 0,
+            "suspicious": 0,
+            "succeed": 1,
+            "count": 1
+        },
+        "native-country": {
+            "failed": 0,
+            "suspicious": 0,
+            "succeed": 1,
+            "count": 1
+        },
+        "income": {
+            "failed": 0,
+            "suspicious": 0,
+            "succeed": 1,
+            "count": 1
+        }
+    }
+}

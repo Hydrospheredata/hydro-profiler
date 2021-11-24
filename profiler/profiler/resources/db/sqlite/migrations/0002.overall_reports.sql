@@ -1,0 +1,1 @@
+CREATE TABLE "overall_reports" ("model_name" varchar NOT NULL,"model_version" integer NOT NULL,"batch_name" varchar NOT NULL,"suspicious_percent" real NOT NULL, "failed_percent" real NOT_NULL);

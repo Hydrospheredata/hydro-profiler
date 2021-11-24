@@ -12,6 +12,7 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
+from google.protobuf import timestamp_pb2 as google_dot_protobuf_dot_timestamp__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
@@ -20,8 +21,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x18monitoring_manager.proto\x12\x12monitoring_manager\"q\n\x0eModelSignature\x12.\n\x06inputs\x18\x02 \x03(\x0b\x32\x1e.monitoring_manager.ModelField\x12/\n\x07outputs\x18\x03 \x03(\x0b\x32\x1e.monitoring_manager.ModelField\"\xad\x01\n\nModelField\x12\x0c\n\x04name\x18\x01 \x01(\t\x12.\n\x05shape\x18\x02 \x01(\x0b\x32\x1f.monitoring_manager.TensorShape\x12+\n\x05\x64type\x18\x04 \x01(\x0e\x32\x1c.monitoring_manager.DataType\x12\x34\n\x07profile\x18\x05 \x01(\x0e\x32#.monitoring_manager.DataProfileType\"\x1b\n\x0bTensorShape\x12\x0c\n\x04\x64ims\x18\x01 \x03(\x03\"\xa1\x01\n\x15RegisterPluginRequest\x12\x11\n\tplugin_id\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\x11\n\troutePath\x18\x05 \x01(\t\x12\x14\n\x0cngModuleName\x18\x06 \x01(\t\x12\x12\n\nremoteName\x18\x08 \x01(\t\x12\x15\n\rexposedModule\x18\t \x01(\t\x12\x0c\n\x04\x61\x64\x64r\x18\n \x01(\t\"\x18\n\x16RegisterPluginResponse\"+\n\x16GetModelUpdatesRequest\x12\x11\n\tplugin_id\x18\x01 \x01(\t\"\x98\x01\n\x17GetModelUpdatesResponse\x12*\n\x05model\x18\x01 \x01(\x0b\x32\x1b.monitoring_manager.ModelId\x12\x35\n\tsignature\x18\x02 \x01(\x0b\x32\".monitoring_manager.ModelSignature\x12\x1a\n\x12training_data_objs\x18\x03 \x03(\t\"\xca\x02\n\x1eGetInferenceDataUpdatesRequest\x12Q\n\x04init\x18\x01 \x01(\x0b\x32\x41.monitoring_manager.GetInferenceDataUpdatesRequest.InitialRequestH\x00\x12\x45\n\x03\x61\x63k\x18\x02 \x01(\x0b\x32\x36.monitoring_manager.GetInferenceDataUpdatesRequest.AckH\x00\x1aO\n\x0eInitialRequest\x12\x11\n\tplugin_id\x18\x01 \x01(\t\x12*\n\x05model\x18\x02 \x01(\x0b\x32\x1b.monitoring_manager.ModelId\x1a\x35\n\x03\x41\x63k\x12\x11\n\tplugin_id\x18\x01 \x01(\t\x12\x1b\n\x13inference_data_objs\x18\x02 \x03(\tB\x06\n\x04\x64\x61ta\"\xa1\x01\n\x1fGetInferenceDataUpdatesResponse\x12*\n\x05model\x18\x01 \x01(\x0b\x32\x1b.monitoring_manager.ModelId\x12\x35\n\tsignature\x18\x02 \x01(\x0b\x32\".monitoring_manager.ModelSignature\x12\x1b\n\x13inference_data_objs\x18\x03 \x03(\t\"4\n\x07ModelId\x12\x12\n\nmodel_name\x18\x01 \x01(\t\x12\x15\n\rmodel_version\x18\x02 \x01(\x04*\xde\x01\n\x08\x44\x61taType\x12\x0e\n\nDT_INVALID\x10\x00\x12\x0c\n\x08\x44T_FLOAT\x10\x01\x12\r\n\tDT_DOUBLE\x10\x02\x12\x0c\n\x08\x44T_INT32\x10\x03\x12\x0c\n\x08\x44T_UINT8\x10\x04\x12\x0c\n\x08\x44T_INT16\x10\x05\x12\x0b\n\x07\x44T_INT8\x10\x06\x12\r\n\tDT_STRING\x10\x07\x12\x0c\n\x08\x44T_INT64\x10\t\x12\x0b\n\x07\x44T_BOOL\x10\n\x12\r\n\tDT_UINT16\x10\x11\x12\x0b\n\x07\x44T_HALF\x10\x13\x12\r\n\tDT_UINT32\x10\x16\x12\r\n\tDT_UINT64\x10\x17\x12\n\n\x06\x44T_ANY\x10\x18*\xa9\x01\n\x0f\x44\x61taProfileType\x12\x08\n\x04NONE\x10\x00\x12\x0f\n\x0b\x43\x41TEGORICAL\x10\x01\x12\x0b\n\x07NOMINAL\x10\x0b\x12\x0b\n\x07ORDINAL\x10\x0c\x12\r\n\tNUMERICAL\x10\x02\x12\x0e\n\nCONTINUOUS\x10\x15\x12\x0c\n\x08INTERVAL\x10\x16\x12\t\n\x05RATIO\x10\x17\x12\t\n\x05IMAGE\x10\x03\x12\t\n\x05VIDEO\x10\x04\x12\t\n\x05\x41UDIO\x10\x05\x12\x08\n\x04TEXT\x10\x06\x32\x82\x01\n\x17PluginManagementService\x12g\n\x0eRegisterPlugin\x12).monitoring_manager.RegisterPluginRequest\x1a*.monitoring_manager.RegisterPluginResponse2\x83\x01\n\x13ModelCatalogService\x12l\n\x0fGetModelUpdates\x12*.monitoring_manager.GetModelUpdatesRequest\x1a+.monitoring_manager.GetModelUpdatesResponse0\x01\x32\x9d\x01\n\x12\x44\x61taStorageService\x12\x86\x01\n\x17GetInferenceDataUpdates\x12\x32.monitoring_manager.GetInferenceDataUpdatesRequest\x1a\x33.monitoring_manager.GetInferenceDataUpdatesResponse(\x01\x30\x01\x62\x06proto3'
-)
+  serialized_pb=b'\n\x18monitoring_manager.proto\x12\x12monitoring_manager\x1a\x1fgoogle/protobuf/timestamp.proto\"q\n\x0eModelSignature\x12.\n\x06inputs\x18\x02 \x03(\x0b\x32\x1e.monitoring_manager.ModelField\x12/\n\x07outputs\x18\x03 \x03(\x0b\x32\x1e.monitoring_manager.ModelField\"\xad\x01\n\nModelField\x12\x0c\n\x04name\x18\x01 \x01(\t\x12.\n\x05shape\x18\x02 \x01(\x0b\x32\x1f.monitoring_manager.TensorShape\x12+\n\x05\x64type\x18\x04 \x01(\x0e\x32\x1c.monitoring_manager.DataType\x12\x34\n\x07profile\x18\x05 \x01(\x0e\x32#.monitoring_manager.DataProfileType\"\x1b\n\x0bTensorShape\x12\x0c\n\x04\x64ims\x18\x01 \x03(\x03\"\xa1\x01\n\x15RegisterPluginRequest\x12\x11\n\tplugin_id\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\x11\n\troutePath\x18\x05 \x01(\t\x12\x14\n\x0cngModuleName\x18\x06 \x01(\t\x12\x12\n\nremoteName\x18\x08 \x01(\t\x12\x15\n\rexposedModule\x18\t \x01(\t\x12\x0c\n\x04\x61\x64\x64r\x18\n \x01(\t\"\x18\n\x16RegisterPluginResponse\"+\n\x16GetModelUpdatesRequest\x12\x11\n\tplugin_id\x18\x01 \x01(\t\"\xb8\x01\n\x17GetModelUpdatesResponse\x12*\n\x05model\x18\x01 \x01(\x0b\x32\x1b.monitoring_manager.ModelId\x12\x35\n\tsignature\x18\x02 \x01(\x0b\x32\".monitoring_manager.ModelSignature\x12:\n\x12training_data_objs\x18\x03 \x03(\x0b\x32\x1e.monitoring_manager.DataObject\"a\n\x1eGetInferenceDataUpdatesRequest\x12\x11\n\tplugin_id\x18\x01 \x01(\t\x12,\n\x03\x61\x63k\x18\x02 \x01(\x0b\x32\x1f.monitoring_manager.AnalyzedAck\"\xc1\x01\n\x1fGetInferenceDataUpdatesResponse\x12*\n\x05model\x18\x01 \x01(\x0b\x32\x1b.monitoring_manager.ModelId\x12\x35\n\tsignature\x18\x02 \x01(\x0b\x32\".monitoring_manager.ModelSignature\x12;\n\x13inference_data_objs\x18\x03 \x03(\x0b\x32\x1e.monitoring_manager.DataObject\"4\n\x07ModelId\x12\x12\n\nmodel_name\x18\x01 \x01(\t\x12\x15\n\rmodel_version\x18\x02 \x01(\x04\"\xd6\x02\n\x0b\x41nalyzedAck\x12\x12\n\nmodel_name\x18\x01 \x01(\t\x12\x15\n\rmodel_version\x18\x02 \x01(\x04\x12:\n\x12inference_data_obj\x18\x03 \x01(\x0b\x32\x1e.monitoring_manager.DataObject\x12L\n\x0f\x66\x65\x61ture_reports\x18\x04 \x03(\x0b\x32\x33.monitoring_manager.AnalyzedAck.FeatureReportsEntry\x12\x38\n\x0b\x62\x61tch_stats\x18\x05 \x01(\x0b\x32#.monitoring_manager.BatchStatistics\x1aX\n\x13\x46\x65\x61tureReportsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x30\n\x05value\x18\x02 \x01(\x0b\x32!.monitoring_manager.FeatureReport:\x02\x38\x01\"M\n\x0f\x42\x61tchStatistics\x12\x11\n\tsus_ratio\x18\x01 \x01(\x01\x12\x13\n\x0bsus_verdict\x18\x02 \x01(\t\x12\x12\n\nfail_ratio\x18\x03 \x01(\x01\"8\n\rFeatureReport\x12\'\n\x04rows\x18\x01 \x03(\x0b\x32\x19.monitoring_manager.FRRow\"-\n\x05\x46RRow\x12\x13\n\x0b\x64\x65scription\x18\x01 \x01(\t\x12\x0f\n\x07is_good\x18\x02 \x01(\x08\"M\n\nDataObject\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x32\n\x0elastModifiedAt\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.Timestamp*\xde\x01\n\x08\x44\x61taType\x12\x0e\n\nDT_INVALID\x10\x00\x12\x0c\n\x08\x44T_FLOAT\x10\x01\x12\r\n\tDT_DOUBLE\x10\x02\x12\x0c\n\x08\x44T_INT32\x10\x03\x12\x0c\n\x08\x44T_UINT8\x10\x04\x12\x0c\n\x08\x44T_INT16\x10\x05\x12\x0b\n\x07\x44T_INT8\x10\x06\x12\r\n\tDT_STRING\x10\x07\x12\x0c\n\x08\x44T_INT64\x10\t\x12\x0b\n\x07\x44T_BOOL\x10\n\x12\r\n\tDT_UINT16\x10\x11\x12\x0b\n\x07\x44T_HALF\x10\x13\x12\r\n\tDT_UINT32\x10\x16\x12\r\n\tDT_UINT64\x10\x17\x12\n\n\x06\x44T_ANY\x10\x18*\xa9\x01\n\x0f\x44\x61taProfileType\x12\x08\n\x04NONE\x10\x00\x12\x0f\n\x0b\x43\x41TEGORICAL\x10\x01\x12\x0b\n\x07NOMINAL\x10\x0b\x12\x0b\n\x07ORDINAL\x10\x0c\x12\r\n\tNUMERICAL\x10\x02\x12\x0e\n\nCONTINUOUS\x10\x15\x12\x0c\n\x08INTERVAL\x10\x16\x12\t\n\x05RATIO\x10\x17\x12\t\n\x05IMAGE\x10\x03\x12\t\n\x05VIDEO\x10\x04\x12\t\n\x05\x41UDIO\x10\x05\x12\x08\n\x04TEXT\x10\x06\x32\x82\x01\n\x17PluginManagementService\x12g\n\x0eRegisterPlugin\x12).monitoring_manager.RegisterPluginRequest\x1a*.monitoring_manager.RegisterPluginResponse2\x83\x01\n\x13ModelCatalogService\x12l\n\x0fGetModelUpdates\x12*.monitoring_manager.GetModelUpdatesRequest\x1a+.monitoring_manager.GetModelUpdatesResponse0\x01\x32\x9d\x01\n\x12\x44\x61taStorageService\x12\x86\x01\n\x17GetInferenceDataUpdates\x12\x32.monitoring_manager.GetInferenceDataUpdatesRequest\x1a\x33.monitoring_manager.GetInferenceDataUpdatesResponse(\x01\x30\x01\x62\x06proto3'
+  ,
+  dependencies=[google_dot_protobuf_dot_timestamp__pb2.DESCRIPTOR,])
 
 _DATATYPE = _descriptor.EnumDescriptor(
   name='DataType',
@@ -108,8 +110,8 @@ _DATATYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=1310,
-  serialized_end=1532,
+  serialized_start=1781,
+  serialized_end=2003,
 )
 _sym_db.RegisterEnumDescriptor(_DATATYPE)
 
@@ -184,8 +186,8 @@ _DATAPROFILETYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=1535,
-  serialized_end=1704,
+  serialized_start=2006,
+  serialized_end=2175,
 )
 _sym_db.RegisterEnumDescriptor(_DATAPROFILETYPE)
 
@@ -254,8 +256,8 @@ _MODELSIGNATURE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=48,
-  serialized_end=161,
+  serialized_start=81,
+  serialized_end=194,
 )
 
 
@@ -307,8 +309,8 @@ _MODELFIELD = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=164,
-  serialized_end=337,
+  serialized_start=197,
+  serialized_end=370,
 )
 
 
@@ -339,8 +341,8 @@ _TENSORSHAPE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=339,
-  serialized_end=366,
+  serialized_start=372,
+  serialized_end=399,
 )
 
 
@@ -413,8 +415,8 @@ _REGISTERPLUGINREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=369,
-  serialized_end=530,
+  serialized_start=402,
+  serialized_end=563,
 )
 
 
@@ -438,8 +440,8 @@ _REGISTERPLUGINRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=532,
-  serialized_end=556,
+  serialized_start=565,
+  serialized_end=589,
 )
 
 
@@ -470,8 +472,8 @@ _GETMODELUPDATESREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=558,
-  serialized_end=601,
+  serialized_start=591,
+  serialized_end=634,
 )
 
 
@@ -499,7 +501,7 @@ _GETMODELUPDATESRESPONSE = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='training_data_objs', full_name='monitoring_manager.GetModelUpdatesResponse.training_data_objs', index=2,
-      number=3, type=9, cpp_type=9, label=3,
+      number=3, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -516,86 +518,10 @@ _GETMODELUPDATESRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=604,
-  serialized_end=756,
+  serialized_start=637,
+  serialized_end=821,
 )
 
-
-_GETINFERENCEDATAUPDATESREQUEST_INITIALREQUEST = _descriptor.Descriptor(
-  name='InitialRequest',
-  full_name='monitoring_manager.GetInferenceDataUpdatesRequest.InitialRequest',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='plugin_id', full_name='monitoring_manager.GetInferenceDataUpdatesRequest.InitialRequest.plugin_id', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='model', full_name='monitoring_manager.GetInferenceDataUpdatesRequest.InitialRequest.model', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=947,
-  serialized_end=1026,
-)
-
-_GETINFERENCEDATAUPDATESREQUEST_ACK = _descriptor.Descriptor(
-  name='Ack',
-  full_name='monitoring_manager.GetInferenceDataUpdatesRequest.Ack',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  create_key=_descriptor._internal_create_key,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='plugin_id', full_name='monitoring_manager.GetInferenceDataUpdatesRequest.Ack.plugin_id', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='inference_data_objs', full_name='monitoring_manager.GetInferenceDataUpdatesRequest.Ack.inference_data_objs', index=1,
-      number=2, type=9, cpp_type=9, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=1028,
-  serialized_end=1081,
-)
 
 _GETINFERENCEDATAUPDATESREQUEST = _descriptor.Descriptor(
   name='GetInferenceDataUpdatesRequest',
@@ -606,9 +532,9 @@ _GETINFERENCEDATAUPDATESREQUEST = _descriptor.Descriptor(
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='init', full_name='monitoring_manager.GetInferenceDataUpdatesRequest.init', index=0,
-      number=1, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
+      name='plugin_id', full_name='monitoring_manager.GetInferenceDataUpdatesRequest.plugin_id', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
@@ -622,7 +548,7 @@ _GETINFERENCEDATAUPDATESREQUEST = _descriptor.Descriptor(
   ],
   extensions=[
   ],
-  nested_types=[_GETINFERENCEDATAUPDATESREQUEST_INITIALREQUEST, _GETINFERENCEDATAUPDATESREQUEST_ACK, ],
+  nested_types=[],
   enum_types=[
   ],
   serialized_options=None,
@@ -630,14 +556,9 @@ _GETINFERENCEDATAUPDATESREQUEST = _descriptor.Descriptor(
   syntax='proto3',
   extension_ranges=[],
   oneofs=[
-    _descriptor.OneofDescriptor(
-      name='data', full_name='monitoring_manager.GetInferenceDataUpdatesRequest.data',
-      index=0, containing_type=None,
-      create_key=_descriptor._internal_create_key,
-    fields=[]),
   ],
-  serialized_start=759,
-  serialized_end=1089,
+  serialized_start=823,
+  serialized_end=920,
 )
 
 
@@ -665,7 +586,7 @@ _GETINFERENCEDATAUPDATESRESPONSE = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='inference_data_objs', full_name='monitoring_manager.GetInferenceDataUpdatesResponse.inference_data_objs', index=2,
-      number=3, type=9, cpp_type=9, label=3,
+      number=3, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -682,8 +603,8 @@ _GETINFERENCEDATAUPDATESRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1092,
-  serialized_end=1253,
+  serialized_start=923,
+  serialized_end=1116,
 )
 
 
@@ -721,8 +642,262 @@ _MODELID = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1255,
-  serialized_end=1307,
+  serialized_start=1118,
+  serialized_end=1170,
+)
+
+
+_ANALYZEDACK_FEATUREREPORTSENTRY = _descriptor.Descriptor(
+  name='FeatureReportsEntry',
+  full_name='monitoring_manager.AnalyzedAck.FeatureReportsEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='monitoring_manager.AnalyzedAck.FeatureReportsEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='monitoring_manager.AnalyzedAck.FeatureReportsEntry.value', index=1,
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=b'8\001',
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1427,
+  serialized_end=1515,
+)
+
+_ANALYZEDACK = _descriptor.Descriptor(
+  name='AnalyzedAck',
+  full_name='monitoring_manager.AnalyzedAck',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='model_name', full_name='monitoring_manager.AnalyzedAck.model_name', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='model_version', full_name='monitoring_manager.AnalyzedAck.model_version', index=1,
+      number=2, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='inference_data_obj', full_name='monitoring_manager.AnalyzedAck.inference_data_obj', index=2,
+      number=3, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='feature_reports', full_name='monitoring_manager.AnalyzedAck.feature_reports', index=3,
+      number=4, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='batch_stats', full_name='monitoring_manager.AnalyzedAck.batch_stats', index=4,
+      number=5, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[_ANALYZEDACK_FEATUREREPORTSENTRY, ],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1173,
+  serialized_end=1515,
+)
+
+
+_BATCHSTATISTICS = _descriptor.Descriptor(
+  name='BatchStatistics',
+  full_name='monitoring_manager.BatchStatistics',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='sus_ratio', full_name='monitoring_manager.BatchStatistics.sus_ratio', index=0,
+      number=1, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='sus_verdict', full_name='monitoring_manager.BatchStatistics.sus_verdict', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='fail_ratio', full_name='monitoring_manager.BatchStatistics.fail_ratio', index=2,
+      number=3, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1517,
+  serialized_end=1594,
+)
+
+
+_FEATUREREPORT = _descriptor.Descriptor(
+  name='FeatureReport',
+  full_name='monitoring_manager.FeatureReport',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='rows', full_name='monitoring_manager.FeatureReport.rows', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1596,
+  serialized_end=1652,
+)
+
+
+_FRROW = _descriptor.Descriptor(
+  name='FRRow',
+  full_name='monitoring_manager.FRRow',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='description', full_name='monitoring_manager.FRRow.description', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='is_good', full_name='monitoring_manager.FRRow.is_good', index=1,
+      number=2, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1654,
+  serialized_end=1699,
+)
+
+
+_DATAOBJECT = _descriptor.Descriptor(
+  name='DataObject',
+  full_name='monitoring_manager.DataObject',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='monitoring_manager.DataObject.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='lastModifiedAt', full_name='monitoring_manager.DataObject.lastModifiedAt', index=1,
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1701,
+  serialized_end=1778,
 )
 
 _MODELSIGNATURE.fields_by_name['inputs'].message_type = _MODELFIELD
@@ -732,19 +907,18 @@ _MODELFIELD.fields_by_name['dtype'].enum_type = _DATATYPE
 _MODELFIELD.fields_by_name['profile'].enum_type = _DATAPROFILETYPE
 _GETMODELUPDATESRESPONSE.fields_by_name['model'].message_type = _MODELID
 _GETMODELUPDATESRESPONSE.fields_by_name['signature'].message_type = _MODELSIGNATURE
-_GETINFERENCEDATAUPDATESREQUEST_INITIALREQUEST.fields_by_name['model'].message_type = _MODELID
-_GETINFERENCEDATAUPDATESREQUEST_INITIALREQUEST.containing_type = _GETINFERENCEDATAUPDATESREQUEST
-_GETINFERENCEDATAUPDATESREQUEST_ACK.containing_type = _GETINFERENCEDATAUPDATESREQUEST
-_GETINFERENCEDATAUPDATESREQUEST.fields_by_name['init'].message_type = _GETINFERENCEDATAUPDATESREQUEST_INITIALREQUEST
-_GETINFERENCEDATAUPDATESREQUEST.fields_by_name['ack'].message_type = _GETINFERENCEDATAUPDATESREQUEST_ACK
-_GETINFERENCEDATAUPDATESREQUEST.oneofs_by_name['data'].fields.append(
-  _GETINFERENCEDATAUPDATESREQUEST.fields_by_name['init'])
-_GETINFERENCEDATAUPDATESREQUEST.fields_by_name['init'].containing_oneof = _GETINFERENCEDATAUPDATESREQUEST.oneofs_by_name['data']
-_GETINFERENCEDATAUPDATESREQUEST.oneofs_by_name['data'].fields.append(
-  _GETINFERENCEDATAUPDATESREQUEST.fields_by_name['ack'])
-_GETINFERENCEDATAUPDATESREQUEST.fields_by_name['ack'].containing_oneof = _GETINFERENCEDATAUPDATESREQUEST.oneofs_by_name['data']
+_GETMODELUPDATESRESPONSE.fields_by_name['training_data_objs'].message_type = _DATAOBJECT
+_GETINFERENCEDATAUPDATESREQUEST.fields_by_name['ack'].message_type = _ANALYZEDACK
 _GETINFERENCEDATAUPDATESRESPONSE.fields_by_name['model'].message_type = _MODELID
 _GETINFERENCEDATAUPDATESRESPONSE.fields_by_name['signature'].message_type = _MODELSIGNATURE
+_GETINFERENCEDATAUPDATESRESPONSE.fields_by_name['inference_data_objs'].message_type = _DATAOBJECT
+_ANALYZEDACK_FEATUREREPORTSENTRY.fields_by_name['value'].message_type = _FEATUREREPORT
+_ANALYZEDACK_FEATUREREPORTSENTRY.containing_type = _ANALYZEDACK
+_ANALYZEDACK.fields_by_name['inference_data_obj'].message_type = _DATAOBJECT
+_ANALYZEDACK.fields_by_name['feature_reports'].message_type = _ANALYZEDACK_FEATUREREPORTSENTRY
+_ANALYZEDACK.fields_by_name['batch_stats'].message_type = _BATCHSTATISTICS
+_FEATUREREPORT.fields_by_name['rows'].message_type = _FRROW
+_DATAOBJECT.fields_by_name['lastModifiedAt'].message_type = google_dot_protobuf_dot_timestamp__pb2._TIMESTAMP
 DESCRIPTOR.message_types_by_name['ModelSignature'] = _MODELSIGNATURE
 DESCRIPTOR.message_types_by_name['ModelField'] = _MODELFIELD
 DESCRIPTOR.message_types_by_name['TensorShape'] = _TENSORSHAPE
@@ -755,6 +929,11 @@ DESCRIPTOR.message_types_by_name['GetModelUpdatesResponse'] = _GETMODELUPDATESRE
 DESCRIPTOR.message_types_by_name['GetInferenceDataUpdatesRequest'] = _GETINFERENCEDATAUPDATESREQUEST
 DESCRIPTOR.message_types_by_name['GetInferenceDataUpdatesResponse'] = _GETINFERENCEDATAUPDATESRESPONSE
 DESCRIPTOR.message_types_by_name['ModelId'] = _MODELID
+DESCRIPTOR.message_types_by_name['AnalyzedAck'] = _ANALYZEDACK
+DESCRIPTOR.message_types_by_name['BatchStatistics'] = _BATCHSTATISTICS
+DESCRIPTOR.message_types_by_name['FeatureReport'] = _FEATUREREPORT
+DESCRIPTOR.message_types_by_name['FRRow'] = _FRROW
+DESCRIPTOR.message_types_by_name['DataObject'] = _DATAOBJECT
 DESCRIPTOR.enum_types_by_name['DataType'] = _DATATYPE
 DESCRIPTOR.enum_types_by_name['DataProfileType'] = _DATAPROFILETYPE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -809,27 +988,11 @@ GetModelUpdatesResponse = _reflection.GeneratedProtocolMessageType('GetModelUpda
 _sym_db.RegisterMessage(GetModelUpdatesResponse)
 
 GetInferenceDataUpdatesRequest = _reflection.GeneratedProtocolMessageType('GetInferenceDataUpdatesRequest', (_message.Message,), {
-
-  'InitialRequest' : _reflection.GeneratedProtocolMessageType('InitialRequest', (_message.Message,), {
-    'DESCRIPTOR' : _GETINFERENCEDATAUPDATESREQUEST_INITIALREQUEST,
-    '__module__' : 'monitoring_manager_pb2'
-    # @@protoc_insertion_point(class_scope:monitoring_manager.GetInferenceDataUpdatesRequest.InitialRequest)
-    })
-  ,
-
-  'Ack' : _reflection.GeneratedProtocolMessageType('Ack', (_message.Message,), {
-    'DESCRIPTOR' : _GETINFERENCEDATAUPDATESREQUEST_ACK,
-    '__module__' : 'monitoring_manager_pb2'
-    # @@protoc_insertion_point(class_scope:monitoring_manager.GetInferenceDataUpdatesRequest.Ack)
-    })
-  ,
   'DESCRIPTOR' : _GETINFERENCEDATAUPDATESREQUEST,
   '__module__' : 'monitoring_manager_pb2'
   # @@protoc_insertion_point(class_scope:monitoring_manager.GetInferenceDataUpdatesRequest)
   })
 _sym_db.RegisterMessage(GetInferenceDataUpdatesRequest)
-_sym_db.RegisterMessage(GetInferenceDataUpdatesRequest.InitialRequest)
-_sym_db.RegisterMessage(GetInferenceDataUpdatesRequest.Ack)
 
 GetInferenceDataUpdatesResponse = _reflection.GeneratedProtocolMessageType('GetInferenceDataUpdatesResponse', (_message.Message,), {
   'DESCRIPTOR' : _GETINFERENCEDATAUPDATESRESPONSE,
@@ -845,7 +1008,51 @@ ModelId = _reflection.GeneratedProtocolMessageType('ModelId', (_message.Message,
   })
 _sym_db.RegisterMessage(ModelId)
 
+AnalyzedAck = _reflection.GeneratedProtocolMessageType('AnalyzedAck', (_message.Message,), {
 
+  'FeatureReportsEntry' : _reflection.GeneratedProtocolMessageType('FeatureReportsEntry', (_message.Message,), {
+    'DESCRIPTOR' : _ANALYZEDACK_FEATUREREPORTSENTRY,
+    '__module__' : 'monitoring_manager_pb2'
+    # @@protoc_insertion_point(class_scope:monitoring_manager.AnalyzedAck.FeatureReportsEntry)
+    })
+  ,
+  'DESCRIPTOR' : _ANALYZEDACK,
+  '__module__' : 'monitoring_manager_pb2'
+  # @@protoc_insertion_point(class_scope:monitoring_manager.AnalyzedAck)
+  })
+_sym_db.RegisterMessage(AnalyzedAck)
+_sym_db.RegisterMessage(AnalyzedAck.FeatureReportsEntry)
+
+BatchStatistics = _reflection.GeneratedProtocolMessageType('BatchStatistics', (_message.Message,), {
+  'DESCRIPTOR' : _BATCHSTATISTICS,
+  '__module__' : 'monitoring_manager_pb2'
+  # @@protoc_insertion_point(class_scope:monitoring_manager.BatchStatistics)
+  })
+_sym_db.RegisterMessage(BatchStatistics)
+
+FeatureReport = _reflection.GeneratedProtocolMessageType('FeatureReport', (_message.Message,), {
+  'DESCRIPTOR' : _FEATUREREPORT,
+  '__module__' : 'monitoring_manager_pb2'
+  # @@protoc_insertion_point(class_scope:monitoring_manager.FeatureReport)
+  })
+_sym_db.RegisterMessage(FeatureReport)
+
+FRRow = _reflection.GeneratedProtocolMessageType('FRRow', (_message.Message,), {
+  'DESCRIPTOR' : _FRROW,
+  '__module__' : 'monitoring_manager_pb2'
+  # @@protoc_insertion_point(class_scope:monitoring_manager.FRRow)
+  })
+_sym_db.RegisterMessage(FRRow)
+
+DataObject = _reflection.GeneratedProtocolMessageType('DataObject', (_message.Message,), {
+  'DESCRIPTOR' : _DATAOBJECT,
+  '__module__' : 'monitoring_manager_pb2'
+  # @@protoc_insertion_point(class_scope:monitoring_manager.DataObject)
+  })
+_sym_db.RegisterMessage(DataObject)
+
+
+_ANALYZEDACK_FEATUREREPORTSENTRY._options = None
 
 _PLUGINMANAGEMENTSERVICE = _descriptor.ServiceDescriptor(
   name='PluginManagementService',
@@ -854,8 +1061,8 @@ _PLUGINMANAGEMENTSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=1707,
-  serialized_end=1837,
+  serialized_start=2178,
+  serialized_end=2308,
   methods=[
   _descriptor.MethodDescriptor(
     name='RegisterPlugin',
@@ -880,8 +1087,8 @@ _MODELCATALOGSERVICE = _descriptor.ServiceDescriptor(
   index=1,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=1840,
-  serialized_end=1971,
+  serialized_start=2311,
+  serialized_end=2442,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetModelUpdates',
@@ -906,8 +1113,8 @@ _DATASTORAGESERVICE = _descriptor.ServiceDescriptor(
   index=2,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=1974,
-  serialized_end=2131,
+  serialized_start=2445,
+  serialized_end=2602,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetInferenceDataUpdates',

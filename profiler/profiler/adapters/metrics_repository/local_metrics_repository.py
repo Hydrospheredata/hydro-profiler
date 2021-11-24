@@ -1,10 +1,6 @@
 from profiler.domain.feature_metric import (
     BaseMetric,
-    IQRMetric,
-    IncludeMetric,
-    MetricType,
-    MinMaxMetric,
-    PercentileMetric,
+    recognize_metric,
 )
 from typing import List, Dict, Any
 from profiler.ports.metrics_repository import MetricsRepository
@@ -20,20 +16,8 @@ class LocalMetricsRepository(MetricsRepository):
     def by_name(self, model_name: str) -> Dict[str, List[BaseMetric]]:
         r = {}
 
-        def recognizeMetric(x):
-            if x["type"] == MetricType.MIN_MAX:
-                return MinMaxMetric.parse_obj(x["config"])
-            elif x["type"] == MetricType.IN:
-                return IncludeMetric.parse_obj(x["config"])
-            elif x["type"] == MetricType.IQR:
-                return IQRMetric.parse_obj(x["config"])
-            elif x["type"] == MetricType.PERCENTILE:
-                return PercentileMetric.parse_obj(x["config"])
-            else:
-                return None
-
         for feature, metrics in self.__metrics[model_name].items():
-            r.update({feature: list(map(recognizeMetric, metrics))})
+            r.update({feature: list(map(recognize_metric, metrics))})
 
         return r
 
