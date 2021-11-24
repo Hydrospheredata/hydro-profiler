@@ -3,15 +3,12 @@ FROM node:14.16.1 AS static-fe
 
 WORKDIR /frontend
 
-RUN apt-get update && apt-get install -y --no-install-recommends git && \
-    rm -rf /var/lib/apt/lists/*
-
 COPY profiler-fe/package.json profiler-fe/package-lock.json ./
 RUN npm install
 
 COPY profiler-fe ./
 RUN npm run build
-RUN ls
+
 
 FROM python:3.8.12-slim-bullseye as python-base
 LABEL maintainer="support@hydrosphere.io"
@@ -53,9 +50,6 @@ RUN apt-get update && \
 COPY profiler/poetry.lock  profiler/pyproject.toml ./
 RUN poetry install --no-interaction --no-ansi -vvv
 
-ARG GIT_HEAD_COMMIT
-ARG GIT_CURRENT_BRANCH
-COPY profiler ./
 
 FROM python-base as runtime
 
@@ -65,9 +59,9 @@ USER app
 WORKDIR /app
 
 COPY --from=build $VENV_PATH $VENV_PATH
-COPY --chown=app:app profiler/profiler ./profiler
-RUN rm -rf ./profiler/resources/static/profiler-fe
-COPY --from=static-fe --chown=app:app frontend/dist/ ./profiler/resources/static/
 COPY --chown=app:app profiler/start.sh start.sh
+COPY --chown=app:app profiler/profiler ./profiler
+COPY --from=static-fe --chown=app:app frontend/dist/ ./profiler/resources/static/
+
 
 ENTRYPOINT ["bash", "start.sh"]

@@ -1,0 +1,31 @@
+name: Frontend CI
+
+on:
+  pull_request:
+    paths:
+      - "profiler-fe/**"
+      - "!profiler-fe/docker/**"
+      - "!profiler-fe/Dockerfile"
+    
+jobs:
+  Test:
+    name: Run Karma Tests
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install npm dependency
+        shell: bash
+        run: "cd profiler-fe && npm install"
+
+      - name: Run Jasmine tests
+        shell: bash
+        run: "cd profiler-fe && npm run test-headless"
+
+      - name: Comment Test Coverage
+        uses: AthleticNet/comment-test-coverage@1.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: profiler-fe/coverage/profiler-fe/coverage-summary.json
+          title: Karma Test Coverage

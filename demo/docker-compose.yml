@@ -1,7 +1,9 @@
 version: "0.1"
 services:
   fe:
-    image: hydrosphere/profiler-fe:latest
+    build:
+      context: ../profiler-fe
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
   be:
