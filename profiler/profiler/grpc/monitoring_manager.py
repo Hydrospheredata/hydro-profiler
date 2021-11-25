@@ -6,10 +6,12 @@ import pandas
 import s3fs
 from google.protobuf.json_format import MessageToDict
 from profiler.config.config import config
+from profiler.domain.batch_statistics import BatchStatistics
 from profiler.domain.model import Model
 from profiler.domain.model_signature import ModelSignature
 from profiler.protobuf.monitoring_manager_pb2 import (
     AnalyzedAck,
+    BatchStatistics as GBatchStatistics,
     GetInferenceDataUpdatesRequest,
     GetModelUpdatesRequest,
 )
@@ -24,6 +26,8 @@ from profiler.use_cases.report_use_case import (
 )
 
 import grpc
+
+from profiler.utils.inference_url_parser import extract_file_name
 
 s3 = s3fs.S3FileSystem(client_kwargs={"endpoint_url": config.minio_endpoint})
 
@@ -65,6 +69,7 @@ class MonitoringDataSubscriber:
         for response in self.data_stub.GetInferenceDataUpdates(reqs):
             try:
                 print("Got inference data")
+
                 res = MessageToDict(response, including_default_value_fields=True)
 
                 contract = ModelSignature.parse_obj(res["signature"])
@@ -75,58 +80,69 @@ class MonitoringDataSubscriber:
                     contract=contract,
                 )
 
-                for data_obj in response.inference_data_objs:
-                    # TODO(bulat): need to use data_obj timestamp somewhere
-                    inference_data = pandas.read_csv(
-                        s3.open(
-                            data_obj.key,
-                            mode="rb",
+                print("Try to find overall report for training data")
+                training_overall_report = self._overall_reports_use_case.get_report(
+                    model.name, model.version, "training"
+                )
+                print(f"Train rep: {training_overall_report}")
+
+                if training_overall_report:
+                    for data_obj in response.inference_data_objs:
+                        # TODO(bulat): need to use data_obj timestamp somewhere
+                        inference_data = pandas.read_csv(
+                            s3.open(
+                                data_obj.key,
+                                mode="rb",
+                            )
                         )
-                    )
 
-                    report = self._reports_use_case.generate_report(
-                        model=model, batch_name=data_obj.key, df=inference_data
-                    )
-                    # store report
-                    self._reports_use_case.save_report(
-                        model.name, model.version, data_obj.key, report
-                    )
+                        batch_name = extract_file_name(data_obj.key)
 
-                    self._overall_reports_use_case.generate_overall_report(
-                        model_name=model.name,
-                        model_version=model.version,
-                        batch_name=data_obj.key,
-                        report=report,
-                    )
+                        report = self._reports_use_case.generate_report(
+                            model, batch_name, inference_data
+                        )
+                        self._reports_use_case.save_report(model, batch_name, report)
 
-                    batch_stats = self._overall_reports_use_case.calculate_batch_stats(
-                        model_name=model.name,
-                        model_version=model.version,
-                        batch_name=data_obj.key,
-                    )
+                        self._overall_reports_use_case.generate_overall_report(
+                            model.name, model.version, batch_name, report
+                        )
 
-                    resp = GetInferenceDataUpdatesRequest(
-                        plugin_id=self.plugin_name,
-                        ack=AnalyzedAck(
-                            model_name=model.name,
-                            model_version=model.version,
-                            batch_stats=batch_stats,
-                        ),
-                    )
+                        batch_stats: BatchStatistics = (
+                            self._overall_reports_use_case.calculate_batch_stats(
+                                model.name,
+                                model.version,
+                                batch_name,
+                            )
+                        )
 
-                    ack_queue.put(resp)
+                        resp = GetInferenceDataUpdatesRequest(
+                            plugin_id=self.plugin_name,
+                            ack=AnalyzedAck(
+                                model_name=model.name,
+                                model_version=model.version,
+                                batch_stats=GBatchStatistics(
+                                    sus_ratio=batch_stats.sus_ratio,
+                                    sus_verdict=batch_stats.sus_verdict,
+                                    fail_ratio=batch_stats.fail_ratio,
+                                ),
+                            ),
+                        )
+
+                        ack_queue.put(resp)
+                else:
+                    print("Could not find overall report for training data")
             except Exception:
                 logging.exception("Error while handling inference data event")
 
     def watch_models(self):
         req = GetModelUpdatesRequest(plugin_id="profiler_plugin")
         for response in self.model_stub.GetModelUpdates(req):
-            print("Got model")
+            print("Got model request")
             training_data_url = response.training_data_objs[0].key
+
             res = MessageToDict(response, including_default_value_fields=True)
 
             contract = ModelSignature.parse_obj(res["signature"])
-            print(contract)
 
             model = Model(
                 name=res["model"]["modelName"],
@@ -142,13 +158,11 @@ class MonitoringDataSubscriber:
 
             self._metrics_use_case.generate_metrics(model, training_df)
 
-            # generate and store report for training data for Overall report
+            # generate report for training data
             report = self._reports_use_case.generate_report(
                 model, "training", training_df
             )
-            self._reports_use_case.save_report(
-                model.name, model.version, "training", report
-            )
+
             self._overall_reports_use_case.generate_overall_report(
                 model_name=model.name,
                 model_version=model.version,

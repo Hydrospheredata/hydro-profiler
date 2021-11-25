@@ -8,6 +8,7 @@ class SqliteOverallReportsRepository(OverallReportsRepository):
     def get_overall_report(
         self, model_name: str, model_version: int, batch_name: str
     ) -> OverallReport:
+        print(f"Take overall report for {model_name}:{model_version}/{batch_name}")
         con = sqlite3.connect(
             "profiler/resources/db/sqlite/profiler.db", check_same_thread=False
         )
@@ -22,23 +23,30 @@ class SqliteOverallReportsRepository(OverallReportsRepository):
             ),
         )
 
-        (
-            model_name,
-            model_version,
-            batch_name,
-            suspicious_percent,
-            failed_percent,
-        ) = cur.fetchone()
+        result = cur.fetchone()
 
-        con.close()
+        if result:
+            print("Found overall report")
+            (
+                model_name,
+                model_version,
+                batch_name,
+                suspicious_percent,
+                failed_percent,
+            ) = result
 
-        return OverallReport(
-            model_name=model_name,
-            model_version=model_version,
-            batch_name=batch_name,
-            suspicious_percent=suspicious_percent,
-            failed_percent=failed_percent,
-        )
+            con.close()
+
+            return OverallReport(
+                model_name=model_name,
+                model_version=model_version,
+                batch_name=batch_name,
+                suspicious_percent=suspicious_percent,
+                failed_percent=failed_percent,
+            )
+        else:
+            con.close()
+            return None
 
     def save(
         self,
@@ -48,6 +56,7 @@ class SqliteOverallReportsRepository(OverallReportsRepository):
         suspicious_percent: float,
         failed_percent: float,
     ) -> None:
+        print(f"Save overall report for {model_name}:{model_version}/{batch_name}")
         con = sqlite3.connect(
             "profiler/resources/db/sqlite/profiler.db", check_same_thread=False
         )

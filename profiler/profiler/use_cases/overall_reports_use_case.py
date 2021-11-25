@@ -1,4 +1,5 @@
 from typing import Any, List
+from profiler.domain.batch_statistics import BatchStatistics
 from profiler.domain.overall_report import OverallReport
 from profiler.ports.overall_reports_repository import OverallReportsRepository
 from profiler.use_cases.report_use_case import (
@@ -16,7 +17,7 @@ class OverallReportsUseCase:
     def get_report(
         self, model_name: str, model_version: int, batch_name: str
     ) -> OverallReport:
-        self._overall_reports_repo.get_overall_report(
+        return self._overall_reports_repo.get_overall_report(
             model_name=model_name, model_version=model_version, batch_name=batch_name
         )
 
@@ -30,11 +31,13 @@ class OverallReportsUseCase:
             suspicious_percent=calculate_suspicious_percent(report),
             failed_percent=calculate_failed_ratio(report),
         )
-        print(f"Overall report for {batch_name} stored")
+        print(
+            f"Overall report was stored for {model_name}:{model_version}/{batch_name}"
+        )
 
     def calculate_batch_stats(
         self, model_name: str, model_version: int, batch_name: str
-    ):
+    ) -> BatchStatistics:
         production_report = self._overall_reports_repo.get_overall_report(
             model_name=model_name, model_version=model_version, batch_name=batch_name
         )
@@ -47,11 +50,12 @@ class OverallReportsUseCase:
         sus_ratio = (
             production_report.suspicious_percent / train_report.suspicious_percent
         )
-        return {
-            "sus_ratio": sus_ratio,
-            "sus_verdict": ratio_to_verdict(ratio=sus_ratio),
-            "fail_ratio": production_report.failed_percent,
-        }
+
+        return BatchStatistics(
+            sus_ratio=sus_ratio,
+            sus_verdict=ratio_to_verdict(ratio=sus_ratio),
+            fail_ratio=production_report.failed_percent,
+        )
 
 
 def ratio_to_verdict(ratio: float):
