@@ -29,7 +29,9 @@ import grpc
 
 from profiler.utils.inference_url_parser import extract_file_name
 
-s3 = s3fs.S3FileSystem(client_kwargs={"endpoint_url": config.minio_endpoint})
+s3 = s3fs.S3FileSystem(
+    client_kwargs={"endpoint_url": config.minio_endpoint}, use_listings_cache=False
+)
 
 
 class MonitoringDataSubscriber:
@@ -143,6 +145,7 @@ class MonitoringDataSubscriber:
         for response in self.model_stub.GetModelUpdates(req):
             print("Got model request")
             training_data_url = response.training_data_objs[0].key
+            print(f"Training data url: training_data_url")
 
             res = MessageToDict(response, including_default_value_fields=True)
 
