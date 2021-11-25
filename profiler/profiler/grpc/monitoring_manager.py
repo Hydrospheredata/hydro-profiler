@@ -5,7 +5,6 @@ import threading
 import pandas
 import s3fs
 from google.protobuf.json_format import MessageToDict
-from google.protobuf.timestamp_pb2 import Timestamp
 from profiler.config.config import config
 from profiler.domain.batch_statistics import BatchStatistics
 from profiler.domain.model import Model
@@ -13,7 +12,6 @@ from profiler.domain.model_signature import ModelSignature
 from profiler.protobuf.monitoring_manager_pb2 import (
     AnalyzedAck,
     BatchStatistics as GBatchStatistics,
-    DataObject,
     GetInferenceDataUpdatesRequest,
     GetModelUpdatesRequest,
 )
@@ -120,18 +118,12 @@ class MonitoringDataSubscriber:
                         print("Batch statistic")
                         print(batch_stats)
 
-                        modifiedAt = Timestamp()
-                        modifiedAt.FromDatetime(data_obj.lastModifiedAt.ToDatetime())
-
                         resp = GetInferenceDataUpdatesRequest(
                             plugin_id=self.plugin_name,
                             ack=AnalyzedAck(
                                 model_name=model.name,
                                 model_version=model.version,
-                                inference_data_obj=DataObject(
-                                    key=data_obj.key,
-                                    lastModifiedAt=modifiedAt,
-                                ),
+                                inference_data_obj=data_obj,
                                 batch_stats=GBatchStatistics(
                                     sus_ratio=batch_stats.sus_ratio,
                                     sus_verdict=batch_stats.sus_verdict,
