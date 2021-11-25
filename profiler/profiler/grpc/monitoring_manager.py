@@ -145,7 +145,7 @@ class MonitoringDataSubscriber:
         for response in self.model_stub.GetModelUpdates(req):
             print("Got model request")
             training_data_url = response.training_data_objs[0].key
-            print(f"Training data url: training_data_url")
+            print(f"Training data url: {training_data_url}")
 
             res = MessageToDict(response, including_default_value_fields=True)
 
