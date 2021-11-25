@@ -2,38 +2,32 @@ import json
 from profiler.ports.reports_repository import ReportsRepository
 from typing import Any
 
-import sqlite3
+from profiler.db.sqlite_context_manager import SqliteContextManager
 
 
 class SqliteReportsRepository(ReportsRepository):
-    con = sqlite3.connect(
-        "profiler/resources/db/sqlite/profiler.db", check_same_thread=False
-    )
-    cur = con.cursor()
-
     def get_report(self, model_name: str, model_version: int, batch_name: str) -> Any:
-        self.cur.execute(
-            "SELECT report FROM reports WHERE model_name=? AND model_version=? AND batch_name=?",
-            (
-                model_name,
-                model_version,
-                batch_name,
-            ),
-        )
-        x = self.cur.fetchone()[0]
-        res = json.loads(x)
+        with SqliteContextManager() as cur:
+            cur.execute(
+                "SELECT report FROM reports WHERE model_name=? AND model_version=? AND batch_name=?",
+                (
+                    model_name,
+                    model_version,
+                    batch_name,
+                ),
+            )
 
-        return res
+            return json.loads(cur.fetchone()[0])
 
     def save(self, model_name: str, model_version: int, batch_name: str, report: list):
-        data = json.dumps(report)
-        self.cur.execute(
-            "INSERT INTO reports VALUES (?, ?, ?, ?)",
-            (
-                model_name,
-                model_version,
-                batch_name,
-                data,
-            ),
-        )
-        self.con.commit()
+        with SqliteContextManager() as cur:
+            data = json.dumps(report)
+            cur.execute(
+                "INSERT INTO reports VALUES (?, ?, ?, ?)",
+                (
+                    model_name,
+                    model_version,
+                    batch_name,
+                    data,
+                ),
+            )
