@@ -119,7 +119,7 @@ async def process_batch(
     df = pandas.read_csv(batch.file)
     model = models_repo.get_by_name(model_name, model_version)
     report = report_use_case.generate_report(model=model, batch_name=batch_name, df=df)
-    report_use_case.save_report(model_name, model_version, batch_name, report)
+    report_use_case.save_report(model, batch_name, report)
 
     overall_reports_use_case.generate_overall_report(
         model_name=model_name,
@@ -178,6 +178,7 @@ if __name__ == "__main__":
             "sqlite:///profiler/resources/db/sqlite/profiler.db",
             "profiler/resources/db/sqlite/migrations",
         )
+
         if not config.profiler_independent_mode:
             plugin_manager = PluginManagementServiceStub(channel)
 
@@ -197,7 +198,7 @@ if __name__ == "__main__":
                     plugin_manager.RegisterPlugin(registration_request)
                     registering = False
                     print("Success")
-                except Exception as e:
+                except Exception:
                     pass
 
             monitoring_data_grpc.start_watching()

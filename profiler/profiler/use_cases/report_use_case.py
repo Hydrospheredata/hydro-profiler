@@ -34,19 +34,22 @@ class ReportUseCase:
             model_name=model_name, model_version=model_version, batch_name=batch_name
         )
 
-    def save_report(
-        self, model_name: str, model_version: int, batch_name: str, report: List[Any]
-    ):
-        print("Save report")
+    def save_report(self, model: Model, batch_name: str, report: List[Any]):
         self._reports_repo.save(
-            model_name=model_name,
-            model_version=model_version,
+            model_name=model.name,
+            model_version=model.version,
             batch_name=batch_name,
             report=report,
         )
 
+        self._aggregation_use_case.generate_aggregation(
+            model=model, batch_name=batch_name, report=report
+        )
+
+        print(f"Report was stored for {model.name}:{model.version}/{batch_name}")
+
     def generate_report(self, model: Model, batch_name: str, df: DataFrame):
-        print("Reports use case")
+        print(f"Generate report for {model.name}:{model.version}")
         metrics_dict = self._metrics_repo.by_name(
             name=model.name, version=model.version
         )
@@ -93,34 +96,7 @@ class ReportUseCase:
             )
             report.append(result)
 
-        self._aggregation_use_case.generate_aggregation(
-            model=model, batch_name=batch_name, report=report
-        )
-
         return report
-
-    def overall_report(self, model_name: str, model_version: int, prod_batch_name: str):
-        production_report = self._reports_repo.get_report(
-            model_name=model_name,
-            model_version=model_version,
-            batch_name=prod_batch_name,
-        )
-        train_report = self._reports_repo.get_report(
-            model_name=model_name,
-            model_version=model_version,
-            batch_name="training",
-        )
-
-        prod_sus_perc = calculate_suspicious_percent(production_report)
-        train_sus_perc = calculate_suspicious_percent(train_report)
-        rsr = prod_sus_perc / train_sus_perc
-        failed_ratio = calculate_failed_ratio(production_report)
-
-        return {
-            "sus_ratio": rsr,
-            "sus_verdict": "good",
-            "fail_ratio": failed_ratio,
-        }
 
 
 def calculate_suspicious_percent(report: List[Any]):
