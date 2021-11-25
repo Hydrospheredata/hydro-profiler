@@ -47,6 +47,9 @@ class OverallReportsUseCase:
             batch_name="training",
         )
 
+        print(train_report)
+        print(production_report)
+
         sus_ratio = (
             production_report.suspicious_percent / train_report.suspicious_percent
         )
