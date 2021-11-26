@@ -7,3 +7,5 @@ class Model(BaseModel):
     name: str
     version: int
     contract: ModelSignature
+
+
