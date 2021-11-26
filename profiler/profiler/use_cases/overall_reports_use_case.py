@@ -6,6 +6,7 @@ from profiler.use_cases.report_use_case import (
     calculate_failed_ratio,
     calculate_suspicious_percent,
 )
+from profiler.utils.safe_divide import safe_divide
 
 
 class OverallReportsUseCase:
@@ -15,14 +16,14 @@ class OverallReportsUseCase:
         self._overall_reports_repo = overall_reports_repo
 
     def get_report(
-        self, model_name: str, model_version: int, batch_name: str
+            self, model_name: str, model_version: int, batch_name: str
     ) -> OverallReport:
         return self._overall_reports_repo.get_overall_report(
             model_name=model_name, model_version=model_version, batch_name=batch_name
         )
 
     def generate_overall_report(
-        self, model_name: str, model_version: int, batch_name: str, report: List[Any]
+            self, model_name: str, model_version: int, batch_name: str, report: List[Any]
     ):
         self._overall_reports_repo.save(
             model_name=model_name,
@@ -36,7 +37,7 @@ class OverallReportsUseCase:
         )
 
     def calculate_batch_stats(
-        self, model_name: str, model_version: int, batch_name: str
+            self, model_name: str, model_version: int, batch_name: str
     ) -> BatchStatistics:
         production_report = self._overall_reports_repo.get_overall_report(
             model_name=model_name, model_version=model_version, batch_name=batch_name
@@ -50,8 +51,8 @@ class OverallReportsUseCase:
         print(train_report)
         print(production_report)
 
-        sus_ratio = (
-            production_report.suspicious_percent / train_report.suspicious_percent
+        sus_ratio = safe_divide(
+            production_report.suspicious_percent, train_report.suspicious_percent
         )
 
         return BatchStatistics(

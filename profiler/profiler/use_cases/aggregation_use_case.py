@@ -4,20 +4,21 @@ from profiler.domain.overall import Overall, merge_overall
 from profiler.domain.model import Model
 from profiler.domain.model_signature import ModelField
 from profiler.ports.aggregations_repository import AggregationsRepository
+from profiler.utils.safe_divide import safe_divide
 
 from functools import reduce
 
 
 def calculate_score(overall: Overall) -> float:
-    return float(overall.succeed / overall.count)
+    return safe_divide(overall.succeed, overall.count)
 
 
 class AggregationUseCase:
     _repo: AggregationsRepository
 
     def __init__(
-        self,
-        repo: AggregationsRepository,
+            self,
+            repo: AggregationsRepository,
     ) -> None:
         self._repo = repo
 
