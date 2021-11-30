@@ -1,4 +1,5 @@
-<div class="text-xm font-black text-gray-600 mb-2">Batch report</div>
+<div class="text-xm font-black text-gray-600 mb-1">Batch report</div>
+<div class="text-xs text-gray-600 italic mb-2">{{ batchFileName$ | async }}</div>
 <ng-container *ngIf="report$ | async as report">
-    <profiler-batch-report [report]="report"></profiler-batch-report>
+  <profiler-batch-report [report]="report"></profiler-batch-report>
 </ng-container>
