@@ -18,11 +18,11 @@ class ReportUseCase:
     _aggregation_use_case: AggregationUseCase
 
     def __init__(
-        self,
-        models_repo: ModelsRepository,
-        metrics_repo: MetricsRepository,
-        reports_repo: ReportsRepository,
-        agg_use_case: AggregationUseCase,
+            self,
+            models_repo: ModelsRepository,
+            metrics_repo: MetricsRepository,
+            reports_repo: ReportsRepository,
+            agg_use_case: AggregationUseCase,
     ) -> None:
         self._models_repo = models_repo
         self._metrics_repo = metrics_repo

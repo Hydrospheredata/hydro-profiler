@@ -2,6 +2,9 @@ import { Component, OnInit, ChangeDetectionStrategy, Input } from '@angular/core
 import { Overall, ReportItem } from 'src/app/domain/report';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Check, CheckStatus } from 'src/app/domain/check';
+import { EntityFilter } from 'src/app/utils/utility-filter';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 
 interface NormalizedCheck {
   feature: string;
@@ -20,6 +23,8 @@ interface NormalizedDataItem {
   row_color: string;
   checks: NormalizedCheck[];
 }
+
+type DataFilter = EntityFilter<NormalizedDataItem, keyof NormalizedDataItem>;
 
 @Component({
   selector: 'profiler-batch-report',
@@ -43,14 +48,48 @@ export class BatchReportComponent implements OnInit {
     failed: 0,
     count: 0,
   };
-
   dataToShow: NormalizedDataItem[] = [];
+
+  defaultFilter(): EntityFilter<NormalizedDataItem, keyof NormalizedDataItem> {
+    const filter = new EntityFilter<NormalizedDataItem, keyof NormalizedDataItem>();
+    filter.addFilter('failed')((v) => v > 0);
+    filter.addFilter('suspicious')((v) => v > 0);
+
+    return filter;
+  }
+
+  filter: BehaviorSubject<DataFilter> = new BehaviorSubject(this.defaultFilter());
+  filter$: Observable<DataFilter> = this.filter.asObservable();
+  data: BehaviorSubject<NormalizedDataItem[]> = new BehaviorSubject<NormalizedDataItem[]>([]);
+  data$: Observable<NormalizedDataItem[]> = combineLatest([
+    this.data.asObservable(),
+    this.filter$,
+  ]).pipe(
+    map(([items, filter]) => filter.filter(items)),
+    tap(console.log),
+  );
 
   constructor() {}
 
   ngOnInit(): void {
     this.statistic = this.reportRowsStatistic();
     this.dataToShow = this.normalizeData(this.report);
+    this.data.next(this.dataToShow);
+  }
+
+  isActive(kind: keyof NormalizedDataItem): boolean {
+    return this.filter.getValue().filters.has(kind);
+  }
+
+  toggleFilter(kind: keyof NormalizedDataItem) {
+    const currentFilter = this.filter.getValue();
+    if (currentFilter.filters.has(kind)) {
+      currentFilter.removeFilter(kind);
+    } else {
+      currentFilter.addFilter(kind)((value) => value > 0);
+    }
+
+    this.filter.next(currentFilter);
   }
 
   columnsToDisplay = ['row_id', 'count', 'succeed', 'suspicious', 'failed'];
@@ -142,21 +181,4 @@ export class BatchReportComponent implements OnInit {
       return { ...a, ...newOverall };
     }, overall);
   }
-
-  // getSome(el: ReportItem, key: string): string | number {
-  //   switch (key) {
-  //     case 'row_id':
-  //       return el._id
-  //     case 'count':
-  //       return el._row_overall.count
-  //     case 'succeed':
-  //       return el._row_overall.succeed
-  //     case 'suspicious':
-  //       return el._row_overall.suspicious
-  //     case 'failed':
-  //       return el._row_overall.failed
-  //     default:
-  //       return '1'
-  //   }
-  // }
 }

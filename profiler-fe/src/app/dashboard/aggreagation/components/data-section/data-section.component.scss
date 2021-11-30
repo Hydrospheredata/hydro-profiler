@@ -9,6 +9,18 @@
   }
 }
 
+.x-labels {
+  &__container {
+  }
+  &__list {
+    display: inline-block;
+    text-align: right;
+  }
+  &__label {
+    @apply text-gray-500 text-xs;
+  }
+}
+
 .agg-data {
   display: flex;
   align-items: center;

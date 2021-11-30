@@ -1,0 +1,65 @@
+{
+  "inputs": [
+    {
+      "name": "uniq_id",
+      "shape": [],
+      "dtype": "DT_STRING",
+      "profile": "NONE"
+    },
+    {
+      "name": "product_name",
+      "shape": [],
+      "dtype": "DT_STRING",
+      "profile": "CATEGORICAL"
+    },
+    {
+      "name": "manufacturer",
+      "shape": [],
+      "dtype": "DT_STRING",
+      "profile": "CATEGORICAL"
+    },
+    {
+      "name": "amazon_category_and_sub_category",
+      "shape": [],
+      "dtype": "DT_STRING",
+      "profile": "CATEGORICAL"
+    },
+    {
+      "name": "price",
+      "shape": [],
+      "dtype": "DT_DOUBLE",
+      "profile": "NUMERICAL"
+    },
+    {
+      "name": "number_available_in_stock",
+      "shape": [],
+      "dtype": "DT_DOUBLE",
+      "profile": "NUMERICAL"
+    },
+    {
+      "name": "type_available_in_stock",
+      "shape": [],
+      "dtype": "DT_STRING",
+      "profile": "CATEGORICAL"
+    },
+    {
+      "name": "number_of_reviews",
+      "shape": [],
+      "dtype": "DT_DOUBLE",
+      "profile": "NUMERICAL"
+    },
+    {
+      "name": "number_of_answered_questions",
+      "shape": [],
+      "dtype": "DT_DOUBLE",
+      "profile": "NUMERICAL"
+    },
+    {
+      "name": "average_review_rating",
+      "shape": [],
+      "dtype": "DT_DOUBLE",
+      "profile": "NUMERICAL"
+    }
+  ],
+  "outputs": []
+}

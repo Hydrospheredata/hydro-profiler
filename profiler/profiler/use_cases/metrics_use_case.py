@@ -27,29 +27,27 @@ class MetricsUseCase:
                     desc = t_df[feature].describe()
                     min = desc["min"]
                     max = desc["max"]
-                    perc_25 = desc["25%"]
-                    perc_75 = desc["75%"]
-                    perc_01 = t_df[feature].quantile(0.01)
-                    perc_99 = t_df[feature].quantile(0.99)
+                    perc_25 = float(format(desc["25%"], ".2f"))
+                    perc_75 = float(format(desc["75%"], ".2f"))
+                    perc_01 = float(format(t_df[feature].quantile(0.01), ".2f"))
+                    perc_99 = float(format(t_df[feature].quantile(0.99), ".2f"))
 
                     metrics.update(
                         {
                             feature: [
                                 {
                                     "type": MetricType.MIN_MAX.value,
-                                    "config": MinMaxMetric(min=min, max=max).dict(),
+                                    "config": MinMaxMetric(min, max).__dict__,
                                 },
                                 {
                                     "type": MetricType.PERCENTILE.value,
                                     "config": PercentileMetric(
-                                        perc_01=perc_01, perc_99=perc_99
-                                    ).dict(),
+                                        perc_01, perc_99
+                                    ).__dict__,
                                 },
                                 {
                                     "type": MetricType.IQR.value,
-                                    "config": IQRMetric(
-                                        perc_25=perc_25, perc_75=perc_75
-                                    ).dict(),
+                                    "config": IQRMetric(perc_25, perc_75).__dict__,
                                 },
                             ]
                         }
@@ -61,9 +59,7 @@ class MetricsUseCase:
                             feature: [
                                 {
                                     "type": MetricType.IN.value,
-                                    "config": IncludeMetric(
-                                        categories=categories
-                                    ).dict(),
+                                    "config": IncludeMetric(categories).__dict__,
                                 }
                             ]
                         }

@@ -1,94 +1,141 @@
-<div class="summary bg-white shadow-lg w-full flex justify-between mb-4">
-  <div class="summary__cell">
-    <div class="summary__count">{{ statistic.count }}</div>
-    <div class="summary__title">rows</div>
-  </div>
-  <div class="summary__cell">
-    <div class="summary__count text-green-600">{{ statistic.succeed }}</div>
-    <div class="summary__title">succeed</div>
-  </div>
-  <div class="summary__cell">
-    <div class="summary__count text-red-600">{{ statistic.failed }}</div>
-    <div class="summary__title">failed</div>
-  </div>
-  <div class="summary__cell">
-    <div class="summary__count text-yellow-600">{{ statistic.suspicious }}</div>
-    <div class="summary__title">suspicious</div>
-  </div>
-</div>
-
-<table mat-table [dataSource]="dataToShow" multiTemplateDataRows class="mat-elevation-z8">
-  <ng-container matColumnDef="{{ column }}" *ngFor="let column of columnsToDisplay">
-    <th mat-header-cell *matHeaderCellDef>{{ column }}</th>
-    <td mat-cell *matCellDef="let element" [ngClass]="[element['row_color']]">
-      {{ element[column] }}
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="expandedDetail">
-    <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length">
-      <div
-        class="example-element-detail"
-        [@detailExpand]="element === expandedElement ? 'expanded' : 'collapsed'"
-      >
-        <div>
-          <table mat-table [dataSource]="element.checks" class="mat-elevation-z8">
-            <ng-container matColumnDef="feature">
-              <th mat-header-cell *matHeaderCellDef>Feature</th>
-              <td mat-cell *matCellDef="let element" class="font-bold text-gray-700">
-                {{ element.feature }}
-              </td>
-            </ng-container>
-
-            <ng-container matColumnDef="status">
-              <th mat-header-cell *matHeaderCellDef>Status</th>
-              <td
-                mat-cell
-                *matCellDef="let element"
-                [ngClass]="[element.style_class]"
-                class="font-bold capitalize"
-              >
-                {{ element.status }}
-              </td>
-            </ng-container>
-
-            <ng-container matColumnDef="metricType">
-              <th mat-header-cell *matHeaderCellDef>Metric type</th>
-              <td mat-cell *matCellDef="let element" class="font-bold text-gray-700">
-                {{ element.metricType }}
-              </td>
-            </ng-container>
-
-            <ng-container matColumnDef="description">
-              <th mat-header-cell *matHeaderCellDef>Description</th>
-              <td mat-cell *matCellDef="let element" class="text-gray-700">
-                {{ element.description }}
-              </td>
-            </ng-container>
-
-            <tr
-              mat-header-row
-              *matHeaderRowDef="['feature', 'status', 'metricType', 'description']"
-            ></tr>
-            <tr
-              mat-row
-              *matRowDef="let row; columns: ['feature', 'status', 'metricType', 'description']"
-            ></tr>
-          </table>
-        </div>
+<div>
+  <div class="summary w-full flex justify-between mb-6">
+    <div class="summary__cell bg-blue-100">
+      <div class="summary__count text-blue-900 bg-opacity-40">{{ statistic.count }}</div>
+      <div class="summary__title">rows</div>
+    </div>
+    <div
+      class="summary__cell bg-green-100"
+      (click)="toggleFilter('succeed')"
+      [ngClass]="{
+        'summary__cell--active': isActive('succeed')
+      }"
+    >
+      <div class="summary__icon summary__icon--succeed">
+        <ng-container *ngTemplateOutlet="filter"></ng-container>
       </div>
-    </td>
+      <div class="summary__count text-green-600">{{ statistic.succeed }}</div>
+      <div class="summary__title">succeed</div>
+    </div>
+    <div
+      class="summary__cell bg-red-100"
+      (click)="toggleFilter('failed')"
+      [ngClass]="{
+        'summary__cell--active': isActive('failed')
+      }"
+    >
+      <div class="summary__icon summary__icon--failed">
+        <ng-container *ngTemplateOutlet="filter"></ng-container>
+      </div>
+      <div class="summary__count text-red-600">{{ statistic.failed }}</div>
+      <div class="summary__title">failed</div>
+    </div>
+    <div
+      class="summary__cell bg-yellow-100"
+      (click)="toggleFilter('suspicious')"
+      [ngClass]="{
+        'summary__cell--active': isActive('suspicious')
+      }"
+    >
+      <div class="summary__icon summary__icon--suspicious">
+        <ng-container *ngTemplateOutlet="filter"></ng-container>
+      </div>
+      <div class="summary__count text-yellow-600">{{ statistic.suspicious }}</div>
+      <div class="summary__title">suspicious</div>
+    </div>
+  </div>
+  <ng-container *ngIf="data$ | async as data">
+    <table mat-table [dataSource]="data" multiTemplateDataRows class="mat-elevation-z8">
+      <ng-container matColumnDef="{{ column }}" *ngFor="let column of columnsToDisplay">
+        <th mat-header-cell *matHeaderCellDef>{{ column }}</th>
+        <td mat-cell *matCellDef="let element" [ngClass]="[element['row_color']]">
+          {{ element[column] }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="expandedDetail">
+        <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length">
+          <div
+            class="example-element-detail"
+            [@detailExpand]="element === expandedElement ? 'expanded' : 'collapsed'"
+          >
+            <div>
+              <table mat-table [dataSource]="element.checks" class="mat-elevation-z8">
+                <ng-container matColumnDef="feature">
+                  <th mat-header-cell *matHeaderCellDef>Feature</th>
+                  <td mat-cell *matCellDef="let element" class="font-bold text-gray-700">
+                    {{ element.feature }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="status">
+                  <th mat-header-cell *matHeaderCellDef>Status</th>
+                  <td
+                    mat-cell
+                    *matCellDef="let element"
+                    [ngClass]="[element.style_class]"
+                    class="font-bold capitalize"
+                  >
+                    {{ element.status }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="metricType">
+                  <th mat-header-cell *matHeaderCellDef>Metric type</th>
+                  <td mat-cell *matCellDef="let element" class="font-bold text-gray-700">
+                    {{ element.metricType }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="description">
+                  <th mat-header-cell *matHeaderCellDef>Description</th>
+                  <td mat-cell *matCellDef="let element" class="text-gray-700">
+                    {{ element.description }}
+                  </td>
+                </ng-container>
+
+                <tr
+                  mat-header-row
+                  *matHeaderRowDef="['feature', 'status', 'metricType', 'description']"
+                ></tr>
+                <tr
+                  mat-row
+                  *matRowDef="let row; columns: ['feature', 'status', 'metricType', 'description']"
+                ></tr>
+              </table>
+            </div>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+
+      <tr
+        mat-row
+        *matRowDef="let element; columns: columnsToDisplay"
+        class="example-element-row"
+        [class.example-expanded-row]="expandedElement === element"
+        (click)="expandedElement = expandedElement === element ? null : element"
+      ></tr>
+
+      <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+    </table>
   </ng-container>
 
-  <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-
-  <tr
-    mat-row
-    *matRowDef="let element; columns: columnsToDisplay"
-    class="example-element-row"
-    [class.example-expanded-row]="expandedElement === element"
-    (click)="expandedElement = expandedElement === element ? null : element"
-  ></tr>
-
-  <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
-</table>
+  <ng-template #filter>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-6 w-6"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+      />
+    </svg>
+  </ng-template>
+</div>

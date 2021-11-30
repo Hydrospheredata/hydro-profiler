@@ -1,14 +1,27 @@
 <div class="text-xm font-black text-gray-600 mb-6">Aggregation of batches</div>
 
 <div *ngIf="aggregation">
-  <div class="bg-white p-4 pb-2 shadow-lg mb-8" *ngIf="aggregation.features.length; else notFound">
-    <profiler-data-section *ngIf=aggregation [agg]=aggregation [names]=aggregation.features>
+  <div class="bg-white p-6 pb-2 shadow-lg mb-8" *ngIf="aggregation.features.length; else notFound">
+    <profiler-data-section *ngIf="aggregation" [agg]="aggregation" [names]="aggregation.features">
     </profiler-data-section>
   </div>
 </div>
 
-<ng-template  #notFound>
-  <div class="font-bold italic text-gray-800 p-4 text-center bg-yellow-50 text-opacity-40 text-yellow-700 rounded-sm mb-4 shadow-md">
+<ng-template #notFound>
+  <div
+    class="
+      font-bold
+      italic
+      text-gray-800
+      p-4
+      text-center
+      bg-yellow-50
+      text-opacity-40 text-yellow-700
+      rounded-sm
+      mb-4
+      shadow-md
+    "
+  >
     Reports not found
   </div>
 </ng-template>
