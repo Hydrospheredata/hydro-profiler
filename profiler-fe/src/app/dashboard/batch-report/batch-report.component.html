@@ -4,40 +4,37 @@
       <div class="summary__count text-blue-900 bg-opacity-40">{{ statistic.count }}</div>
       <div class="summary__title">rows</div>
     </div>
-    <div
-      class="summary__cell bg-green-100"
-      (click)="toggleFilter('succeed')"
-      [ngClass]="{
-        'summary__cell--active': isActive('succeed')
-      }"
-    >
-      <div class="summary__icon summary__icon--succeed">
+    <div class="summary__cell bg-green-100" (click)="toggleFilter('succeed')">
+      <div
+        class="summary__icon summary__icon--succeed"
+        [ngClass]="{
+          'summary__icon--active': isActive('succeed')
+        }"
+      >
         <ng-container *ngTemplateOutlet="filter"></ng-container>
       </div>
       <div class="summary__count text-green-600">{{ statistic.succeed }}</div>
       <div class="summary__title">succeed</div>
     </div>
-    <div
-      class="summary__cell bg-red-100"
-      (click)="toggleFilter('failed')"
-      [ngClass]="{
-        'summary__cell--active': isActive('failed')
-      }"
-    >
-      <div class="summary__icon summary__icon--failed">
+    <div class="summary__cell bg-red-100" (click)="toggleFilter('failed')">
+      <div
+        class="summary__icon summary__icon--failed"
+        [ngClass]="{
+          'summary__icon--active': isActive('failed')
+        }"
+      >
         <ng-container *ngTemplateOutlet="filter"></ng-container>
       </div>
       <div class="summary__count text-red-600">{{ statistic.failed }}</div>
       <div class="summary__title">failed</div>
     </div>
-    <div
-      class="summary__cell bg-yellow-100"
-      (click)="toggleFilter('suspicious')"
-      [ngClass]="{
-        'summary__cell--active': isActive('suspicious')
-      }"
-    >
-      <div class="summary__icon summary__icon--suspicious">
+    <div class="summary__cell bg-yellow-100" (click)="toggleFilter('suspicious')">
+      <div
+        class="summary__icon summary__icon--suspicious"
+        [ngClass]="{
+          'summary__icon--active': isActive('suspicious')
+        }"
+      >
         <ng-container *ngTemplateOutlet="filter"></ng-container>
       </div>
       <div class="summary__count text-yellow-600">{{ statistic.suspicious }}</div>

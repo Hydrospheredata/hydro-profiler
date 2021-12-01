@@ -40,27 +40,32 @@ describe('filter', () => {
   });
 
   it('suspicious filter', () => {
-    overallFilter.addFilter('suspicious')((value) => value > 0);
+    overallFilter.addFilter('suspicious')((x) => x.suspicious > 0);
     const res = overallFilter.filter(list);
     expect(res.length).toEqual(1);
   });
 
   it('suspicious and failed filter', () => {
-    overallFilter.addFilter('suspicious')((value) => value > 0);
-    overallFilter.addFilter('failed')((value) => value > 0);
+    overallFilter.addFilter('suspicious')((value) => value.suspicious > 0);
+    overallFilter.addFilter('failed')((value) => value.failed > 0);
     const res = overallFilter.filter(list);
     expect(res.length).toEqual(2);
   });
 
   it('dynamically behaviour', () => {
-    overallFilter.addFilter('suspicious')((value) => value > 0);
+    overallFilter.addFilter('suspicious')((value) => value.suspicious > 0);
     expect(overallFilter.filter(list).length).toEqual(1);
 
-    overallFilter.addFilter('failed')((value) => value > 0);
+    overallFilter.addFilter('failed')((value) => value.failed > 0);
     expect(overallFilter.filter(list).length).toEqual(2);
 
     overallFilter.removeFilter('suspicious');
     overallFilter.removeFilter('failed');
     expect(overallFilter.filter(list).length).toEqual(3);
+  });
+
+  it('filter by 2 keys', () => {
+    overallFilter.addFilter('onlySuccess')((value) => value.succeed == value.count);
+    expect(overallFilter.filter(list).length).toEqual(1);
   });
 });
