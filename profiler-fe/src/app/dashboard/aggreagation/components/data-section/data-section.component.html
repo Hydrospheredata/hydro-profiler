@@ -3,6 +3,7 @@
     [ngTemplateOutlet]="rowLabels"
     [ngTemplateOutletContext]="{ $implicit: agg.features }"
   ></ng-container>
+
   <div class="agg-data__checks">
     <svg [attr.height]="canvasHeight" [attr.width]="canvasWidth">
       <g
@@ -21,17 +22,11 @@
           [attr.transform]="rowTranslate(rowIndex)"
           [attr.width]="CELL_SIZE.width"
           [attr.rx]="2"
+          [matTooltip]="column.batch_name"
         ></rect>
       </g>
     </svg>
   </div>
-</div>
-<div class="x-labels__container" #xLabelsContainer>
-  <ul class="x-labels__list" #xLabelsList>
-    <li *ngFor="let column of agg?.scores" class="x-labels__label">
-      {{ column.batch_name }}
-    </li>
-  </ul>
 </div>
 
 <ng-template #rowLabels let-names>

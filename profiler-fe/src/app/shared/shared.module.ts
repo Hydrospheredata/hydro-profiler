@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 const modules = [
   MatTableModule,
@@ -20,6 +21,7 @@ const modules = [
   MatButtonModule,
   MatDialogModule,
   MatCommonModule,
+  MatTooltipModule,
   MatIconModule,
 ];
 

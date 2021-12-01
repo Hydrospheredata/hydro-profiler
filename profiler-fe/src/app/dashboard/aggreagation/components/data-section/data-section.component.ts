@@ -16,11 +16,9 @@ import { Aggregation } from 'src/app/dashboard/state/dashboard.store';
   styleUrls: ['./data-section.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DataSectionComponent implements AfterViewInit {
+export class DataSectionComponent {
   @Input() agg: Aggregation | null = null;
   @Input() names: string[] = [];
-  @ViewChild('xLabelsContainer', { static: true }) xLabelsContainer?: ElementRef<HTMLElement>;
-  @ViewChild('xLabelsList', { static: true }) xLabelsList?: ElementRef<HTMLElement>;
 
   readonly labelsWidth: number = 160;
   readonly canvasWidth: number = 720; // 80 column limit * cell.width + padding
@@ -29,30 +27,6 @@ export class DataSectionComponent implements AfterViewInit {
   private readonly CELL_MARGIN_TOP = 2;
 
   constructor(private router: Router, private route: ActivatedRoute) {}
-
-  ngAfterViewInit() {
-    this.redrawXLabels();
-  }
-
-  redrawXLabels() {
-    const containerEl = this.xLabelsContainer?.nativeElement;
-    const listElement = this.xLabelsList?.nativeElement;
-
-    if (!containerEl || !listElement) {
-      return;
-    } else {
-      console.log(listElement.getBoundingClientRect());
-      const width = listElement.getBoundingClientRect().width;
-
-      containerEl.style.height = width + 'px';
-      containerEl.style.position = 'relative';
-      listElement.style.position = 'absolute';
-      listElement.style.transformOrigin = '0 0';
-      listElement.style.transform = `rotate(-90deg)`;
-      listElement.style.top = width - 12 + 'px';
-      listElement.style.left = this.labelsWidth + 6 + 'px';
-    }
-  }
 
   columnTranslate(index: number): string {
     return `translate(${index * this.CELL_SIZE.width + this.COLUMN_MARGIN_RIGHT * index}, 0)`;

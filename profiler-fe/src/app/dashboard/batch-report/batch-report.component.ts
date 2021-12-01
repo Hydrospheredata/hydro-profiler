@@ -52,8 +52,8 @@ export class BatchReportComponent implements OnInit {
 
   defaultFilter(): EntityFilter<NormalizedDataItem, keyof NormalizedDataItem> {
     const filter = new EntityFilter<NormalizedDataItem, keyof NormalizedDataItem>();
-    filter.addFilter('failed')((v) => v > 0);
-    filter.addFilter('suspicious')((v) => v > 0);
+    filter.addFilter('failed')((v) => v.failed > 0);
+    filter.addFilter('suspicious')((v) => v.suspicious > 0 && v.failed == 0);
 
     return filter;
   }
@@ -64,10 +64,7 @@ export class BatchReportComponent implements OnInit {
   data$: Observable<NormalizedDataItem[]> = combineLatest([
     this.data.asObservable(),
     this.filter$,
-  ]).pipe(
-    map(([items, filter]) => filter.filter(items)),
-    tap(console.log),
-  );
+  ]).pipe(map(([items, filter]) => filter.filter(items)));
 
   constructor() {}
 
@@ -86,7 +83,16 @@ export class BatchReportComponent implements OnInit {
     if (currentFilter.filters.has(kind)) {
       currentFilter.removeFilter(kind);
     } else {
-      currentFilter.addFilter(kind)((value) => value > 0);
+      switch (kind) {
+        case 'succeed':
+          currentFilter.addFilter(kind)((value) => value.succeed == value.count);
+          break;
+        case 'suspicious':
+          currentFilter.addFilter(kind)((value) => value.suspicious > 0 && value.failed == 0);
+          break;
+        default:
+          currentFilter.addFilter(kind)((value) => value[kind] > 0);
+      }
     }
 
     this.filter.next(currentFilter);

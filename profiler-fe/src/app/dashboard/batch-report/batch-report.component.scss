@@ -50,21 +50,24 @@ tr.example-element-row:not(.example-expanded-row):active {
     @apply text-left px-6 py-4 flex-1 rounded-md bg-opacity-60 relative shadow-md;
   }
   &__icon {
-    @apply absolute right-0 top-0 p-2;
+    @apply absolute right-0 top-0 p-2 cursor-pointer opacity-10 hover:opacity-90;
   }
-  &__icon--succeed {
-    @apply text-green-700 text-opacity-10;
-  }
-  &__icon--failed {
-    @apply text-red-700 text-opacity-10;
-  }
-  &__icon--suspicious {
-    @apply text-yellow-700 text-opacity-10;
-  }
-  &__cell:hover > &__icon,
-  &__cell--active > &__icon {
+  &__icon:hover {
     @apply text-opacity-90;
   }
+  &__icon--succeed {
+    @apply text-green-700;
+  }
+  &__icon--failed {
+    @apply text-red-700;
+  }
+  &__icon--suspicious {
+    @apply text-yellow-700;
+  }
+  &__icon--active {
+    @apply opacity-90 hover:opacity-10;
+  }
+
   &__cell + &__cell {
     @apply ml-4;
   }
