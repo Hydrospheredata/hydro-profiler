@@ -4,6 +4,7 @@ from profiler.domain.overall import Overall, merge_overall
 from profiler.domain.model import Model
 from profiler.domain.model_signature import ModelField
 from profiler.ports.aggregations_repository import AggregationsRepository
+from profiler.domain.model_signature import DataProfileType
 from profiler.utils.safe_divide import safe_divide
 
 from functools import reduce
@@ -17,8 +18,8 @@ class AggregationUseCase:
     _repo: AggregationsRepository
 
     def __init__(
-            self,
-            repo: AggregationsRepository,
+        self,
+        repo: AggregationsRepository,
     ) -> None:
         self._repo = repo
 
@@ -26,11 +27,14 @@ class AggregationUseCase:
         return self._repo.get_list(model_name=model_name, model_version=model_version)
 
     def generate_aggregation(self, model: Model, batch_name: str, report):
-        def o(d: Dict[str, Overall], field: ModelField) -> Dict[str, Overall]:
+        def setOverall(d: Dict[str, Overall], field: ModelField) -> Dict[str, Overall]:
+            if field.profile == DataProfileType.NONE:
+                return d
+
             d.update({field.name: Overall()})
             return d
 
-        feature_overall = reduce(o, model.contract.merged_features(), {})
+        feature_overall = reduce(setOverall, model.contract.merged_features(), {})
 
         for row in report:
             score_by_feature = row["_feature_overall_score"]

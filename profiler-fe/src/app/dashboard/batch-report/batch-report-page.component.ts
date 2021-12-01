@@ -10,6 +10,7 @@ import { Subject } from 'rxjs';
 })
 export class BatchReportPageComponent implements OnInit, OnDestroy {
   report$ = this.query.batch$;
+  batchFileName$ = this.routerQuery.selectParams('batchName');
   private destroy: Subject<any> = new Subject<any>();
 
   constructor(
@@ -19,7 +20,6 @@ export class BatchReportPageComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    console.log('on init');
     this.routerQuery
       .selectParams(['modelName', 'modelVersion', 'batchName'])
       .pipe(

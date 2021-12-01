@@ -47,15 +47,31 @@ tr.example-element-row:not(.example-expanded-row):active {
 
 .summary {
   &__cell {
-    @apply text-center p-4 flex-1;
+    @apply text-left px-6 py-4 flex-1 rounded-md bg-opacity-60 relative shadow-md;
+  }
+  &__icon {
+    @apply absolute right-0 top-0 p-2;
+  }
+  &__icon--succeed {
+    @apply text-green-700 text-opacity-10;
+  }
+  &__icon--failed {
+    @apply text-red-700 text-opacity-10;
+  }
+  &__icon--suspicious {
+    @apply text-yellow-700 text-opacity-10;
+  }
+  &__cell:hover > &__icon,
+  &__cell--active > &__icon {
+    @apply text-opacity-90;
   }
   &__cell + &__cell {
-    @apply border-l-2 border-gray-100;
+    @apply ml-4;
   }
   &__count {
-    @apply text-3xl font-bold;
+    @apply text-3xl;
   }
   &__title {
-    @apply text-sm text-gray-500;
+    @apply text-xs text-gray-600;
   }
 }

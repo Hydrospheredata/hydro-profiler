@@ -10,7 +10,7 @@ class SqliteModelsRepository(ModelsRepository):
         with SqliteContextManager() as cur:
             cur.execute("SELECT * FROM models")
             res = []
-            for (name, version, contract) in self.cur.fetchall():
+            for (name, version, contract) in cur.fetchall():
                 res.append(
                     Model(
                         name=name,
@@ -28,7 +28,7 @@ class SqliteModelsRepository(ModelsRepository):
                 (model_name, model_version),
             )
 
-            (name, version, contract) = self.cur.fetchone()
+            (name, version, contract) = cur.fetchone()
 
             return Model(
                 name=name, version=version, contract=ModelSignature.parse_raw(contract)

@@ -26,9 +26,16 @@
     </svg>
   </div>
 </div>
+<div class="x-labels__container" #xLabelsContainer>
+  <ul class="x-labels__list" #xLabelsList>
+    <li *ngFor="let column of agg?.scores" class="x-labels__label">
+      {{ column.batch_name }}
+    </li>
+  </ul>
+</div>
 
 <ng-template #rowLabels let-names>
-  <ul [ngStyle]="{ width: labelsWidth + 'px' }" class="agg-data__labels">
+  <ul [ngStyle]="{ 'min-width': labelsWidth + 'px' }" class="agg-data__labels">
     <li *ngFor="let label of names" class="agg-data__label">
       {{ label }}
     </li>

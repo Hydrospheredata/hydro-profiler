@@ -17,7 +17,7 @@ class MetricType(str, Enum):
     IQR = "IQR"
 
 
-class BaseMetric(BaseModel, ABC):
+class BaseMetric(ABC):
     count_score: bool = False
 
     @abstractmethod
@@ -26,9 +26,10 @@ class BaseMetric(BaseModel, ABC):
 
 
 class MinMaxMetric(BaseMetric):
-    count_score: bool = True
-    min: int
-    max: int
+    def __init__(self, min, max) -> None:
+        self.min = min
+        self.max = max
+        self.count_score: bool = True
 
     def fail(self, value: int):
         return {
@@ -54,8 +55,9 @@ class MinMaxMetric(BaseMetric):
 
 
 class IncludeMetric(BaseMetric):
-    categories: List[str]
-    count_score = True
+    def __init__(self, categories) -> None:
+        self.categories = categories
+        self.count_score = True
 
     def fail(self, category: str):
         return {
@@ -81,8 +83,10 @@ class IncludeMetric(BaseMetric):
 
 
 class PercentileMetric(BaseMetric):
-    perc_01: int
-    perc_99: int
+    def __init__(self, perc_01, perc_99) -> None:
+        self.perc_01 = perc_01
+        self.perc_99 = perc_99
+        self.count_score = False
 
     def fail(self, value: int):
         return {
@@ -108,8 +112,10 @@ class PercentileMetric(BaseMetric):
 
 
 class IQRMetric(BaseMetric):
-    perc_25: int
-    perc_75: int
+    def __init__(self, perc_25, perc_75) -> None:
+        self.perc_25 = perc_25
+        self.perc_75 = perc_75
+        self.count_score = False
 
     def fail(self, value: int, lower, upper):
         return {
@@ -131,20 +137,26 @@ class IQRMetric(BaseMetric):
         IQR = self.perc_75 - self.perc_25
         lower_bound = self.perc_25 - (IQR * 1.5)
         upper_bound = self.perc_75 + (IQR * 1.5)
+
+        lower_f = format(lower_bound, ".2f")
+        upper_f = format(upper_bound, ".2f")
+
         if lower_bound <= value <= upper_bound:
-            return self.success(value, lower_bound, upper_bound)
+            return self.success(value, lower_f, upper_f)
         else:
-            return self.fail(value, lower_bound, upper_bound)
+            return self.fail(value, lower_f, upper_f)
 
 
 def recognize_metric(x):
+    config = x["config"]
+
     if x["type"] == MetricType.MIN_MAX:
-        return MinMaxMetric.parse_obj(x["config"])
+        return MinMaxMetric(config["min"], config["max"])
     elif x["type"] == MetricType.IN:
-        return IncludeMetric.parse_obj(x["config"])
+        return IncludeMetric(config["categories"])
     elif x["type"] == MetricType.IQR:
-        return IQRMetric.parse_obj(x["config"])
+        return IQRMetric(config["perc_25"], config["perc_75"])
     elif x["type"] == MetricType.PERCENTILE:
-        return PercentileMetric.parse_obj(x["config"])
+        return PercentileMetric(config["perc_01"], config["perc_99"])
     else:
         return None
