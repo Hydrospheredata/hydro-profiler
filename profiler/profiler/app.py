@@ -84,6 +84,9 @@ app.mount(
     name="static",
 )
 
+@app.get("/health")
+def hello():
+    return {}
 
 @app.post("/model")
 async def register_model(
@@ -189,7 +192,7 @@ if __name__ == "__main__":
                 ngModuleName="DashboardModule",
                 remoteName="hydrosphereProfiler",
                 exposedModule="./Module",
-                addr=f"http://be:{config.http_port}",
+                addr=f"http://{config.http_host}:{config.http_port}",
             )
             print("Registering plugin...")
             registering = True
