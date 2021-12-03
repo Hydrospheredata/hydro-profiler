@@ -75,8 +75,8 @@ class IncludeMetric(BaseMetric):
             "count_score": self.count_score,
         }
 
-    def check(self, value: str):
-        if str(value) in self.categories:
+    def check(self, value):
+        if value in self.categories:
             return self.success(value)
         else:
             return self.fail(value)
