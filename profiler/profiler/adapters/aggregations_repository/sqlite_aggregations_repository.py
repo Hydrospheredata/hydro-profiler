@@ -1,5 +1,4 @@
 import json
-import sqlite3
 from typing import Any, Dict
 
 from profiler.ports.aggregations_repository import AggregationsRepository
