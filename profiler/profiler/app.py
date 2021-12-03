@@ -207,7 +207,7 @@ if __name__ == "__main__":
             monitoring_data_grpc.start_watching()
 
         print("Start server...")
-        uvicorn.run(app, host=config.http_host, port=config.http_port, log_level="info")
+        uvicorn.run(app, host="0.0.0.0", port=config.http_port, log_level="info")
     except Exception as e:
         print("Could not start application")
         print(e)
