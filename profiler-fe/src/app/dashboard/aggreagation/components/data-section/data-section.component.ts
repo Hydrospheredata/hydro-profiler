@@ -42,7 +42,9 @@ export class DataSectionComponent {
   }
 
   onColumnClick(column: any) {
-    this.router.navigate([column.batch_name], { relativeTo: this.route });
+    const encoded = btoa(column.batch_name);
+
+    this.router.navigate([encoded], { relativeTo: this.route });
   }
 
   get canvasHeight() {
