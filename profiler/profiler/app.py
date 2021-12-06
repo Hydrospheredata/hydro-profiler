@@ -40,6 +40,8 @@ from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
+from profiler.utils.decode_url import decode_url
+
 
 app = FastAPI()
 app.add_middleware(
@@ -84,9 +86,11 @@ app.mount(
     name="static",
 )
 
+
 @app.get("/health")
 def hello():
     return {}
+
 
 @app.post("/model")
 async def register_model(
@@ -144,15 +148,19 @@ async def get_rep(model_name: str, model_version: int):
     return aggregation_use_case.get(model_name, model_version)
 
 
-@app.get("/report/{model_name}/{model_version}/{batch_name}")
-async def get_report(model_name: str, model_version: int, batch_name: str):
-    return report_use_case.get_report(model_name, model_version, batch_name)
+@app.get("/report/{model_name}/{model_version}/{encoded_file_url}")
+async def get_report(model_name: str, model_version: int, encoded_file_url: str):
+    url = decode_url(encoded_file_url)
+    return report_use_case.get_report(model_name, model_version, url)
 
 
-@app.get("/overall_report/{model_name}/{model_version}/{batch_name}")
-async def get_overall_report(model_name: str, model_version: int, batch_name: str):
+@app.get("/overall_report/{model_name}/{model_version}/{encoded_file_url}")
+async def get_overall_report(
+    model_name: str, model_version: int, encoded_file_url: str
+):
+    url = decode_url(encoded_file_url)
     return overall_reports_use_case.calculate_batch_stats(
-        model_name=model_name, model_version=model_version, batch_name=batch_name
+        model_name=model_name, model_version=model_version, batch_name=url
     )
 
 

@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { RouterQuery } from '@datorama/akita-ng-router-store';
 import { DashboardQuery } from '../state/dashboard.query';
 import { DashboardService } from '../state/dashboard.service';
-import { filter, takeUntil, tap } from 'rxjs/operators';
+import { filter, map, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 @Component({
@@ -10,7 +10,7 @@ import { Subject } from 'rxjs';
 })
 export class BatchReportPageComponent implements OnInit, OnDestroy {
   report$ = this.query.batch$;
-  batchFileName$ = this.routerQuery.selectParams('batchName');
+  batchFileName$ = this.routerQuery.selectParams('batchName').pipe(map((s) => atob(s)));
   private destroy: Subject<any> = new Subject<any>();
 
   constructor(
@@ -23,9 +23,8 @@ export class BatchReportPageComponent implements OnInit, OnDestroy {
     this.routerQuery
       .selectParams(['modelName', 'modelVersion', 'batchName'])
       .pipe(
-        tap(console.log),
         filter(([modelName, modelVersion, batchName]) => {
-          return modelName !== undefined && modelVersion !== undefined && batchName !== undefined;
+          return modelName && modelVersion && batchName;
         }),
         takeUntil(this.destroy),
       )

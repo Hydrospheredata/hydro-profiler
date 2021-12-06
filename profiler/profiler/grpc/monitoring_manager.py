@@ -26,7 +26,6 @@ from profiler.use_cases.overall_reports_use_case import OverallReportsUseCase
 from profiler.use_cases.report_use_case import (
     ReportUseCase,
 )
-from profiler.utils.inference_url_parser import extract_file_name
 
 s3 = s3fs.S3FileSystem(
     client_kwargs={"endpoint_url": config.minio_endpoint}, use_listings_cache=False
@@ -43,11 +42,11 @@ class MonitoringDataSubscriber:
     plugin_name: str = "profiler_plugin"
 
     def __init__(
-            self,
-            channel: grpc.Channel,
-            metrics_use_case: MetricsUseCase,
-            reports_use_case: ReportUseCase,
-            overall_reports_use_case: OverallReportsUseCase,
+        self,
+        channel: grpc.Channel,
+        metrics_use_case: MetricsUseCase,
+        reports_use_case: ReportUseCase,
+        overall_reports_use_case: OverallReportsUseCase,
     ):
         self.channel = channel
         self._metrics_use_case = metrics_use_case
@@ -77,9 +76,8 @@ class MonitoringDataSubscriber:
                         # TODO(bulat): need to use data_obj timestamp somewhere
                         file_url = data_obj.key
                         data_frame = self.fetch_data_frame(file_url)
-                        batch_name = extract_file_name(file_url)
 
-                        self.process_inference_data_frame(batch_name, data_frame, model)
+                        self.process_inference_data_frame(file_url, data_frame, model)
 
                         resp = GetInferenceDataUpdatesRequest(
                             plugin_id=self.plugin_name,
@@ -87,7 +85,9 @@ class MonitoringDataSubscriber:
                                 model_name=model.name,
                                 model_version=model.version,
                                 inference_data_obj=data_obj,
-                                batch_stats=self.batch_statistics_to_proto(self.get_batch_statistics(batch_name, model))
+                                batch_stats=self.batch_statistics_to_proto(
+                                    self.get_batch_statistics(file_url, model)
+                                ),
                             ),
                         )
 
@@ -124,9 +124,7 @@ class MonitoringDataSubscriber:
     def process_training_data_frame(self, batch_name, data_frame, model):
         self._metrics_use_case.generate_metrics(model, data_frame)
 
-        report = self._reports_use_case.generate_report(
-            model, batch_name, data_frame
-        )
+        report = self._reports_use_case.generate_report(model, batch_name, data_frame)
 
         self._overall_reports_use_case.generate_overall_report(
             model.name,
@@ -136,9 +134,7 @@ class MonitoringDataSubscriber:
         )
 
     def process_inference_data_frame(self, batch_name, data_frame, model):
-        report = self._reports_use_case.generate_report(
-            model, batch_name, data_frame
-        )
+        report = self._reports_use_case.generate_report(model, batch_name, data_frame)
         self._reports_use_case.save_report(model, batch_name, report)
         self._overall_reports_use_case.generate_overall_report(
             model.name, model.version, batch_name, report
@@ -167,9 +163,12 @@ class MonitoringDataSubscriber:
         )
 
     def training_overall_report_exists(self, model: Model):
-        return self._overall_reports_use_case.get_report(
-            model.name, model.version, "training"
-        ) is not None
+        return (
+            self._overall_reports_use_case.get_report(
+                model.name, model.version, "training"
+            )
+            is not None
+        )
 
     def model_from_proto(self, message):
         res = MessageToDict(message, including_default_value_fields=True)
