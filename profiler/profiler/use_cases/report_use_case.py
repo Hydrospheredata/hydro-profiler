@@ -18,11 +18,11 @@ class ReportUseCase:
     _aggregation_use_case: AggregationUseCase
 
     def __init__(
-            self,
-            models_repo: ModelsRepository,
-            metrics_repo: MetricsRepository,
-            reports_repo: ReportsRepository,
-            agg_use_case: AggregationUseCase,
+        self,
+        models_repo: ModelsRepository,
+        metrics_repo: MetricsRepository,
+        reports_repo: ReportsRepository,
+        agg_use_case: AggregationUseCase,
     ) -> None:
         self._models_repo = models_repo
         self._metrics_repo = metrics_repo
@@ -101,8 +101,17 @@ class ReportUseCase:
 
 def calculate_suspicious_percent(report: List[Any]):
     rows_count = len(report)
+
+    def calculate(acc, row):
+        if row["_row_overall"]["suspicious"] > 0:
+            return acc + 1
+        else:
+            return acc
+
     suspicious_count = reduce(
-        (lambda count, row: count + row["_row_overall"]["suspicious"]), report, 0
+        calculate,
+        report,
+        0,
     )
 
     if rows_count == 0 or suspicious_count == 0:
@@ -113,8 +122,17 @@ def calculate_suspicious_percent(report: List[Any]):
 
 def calculate_failed_ratio(report):
     rows_count = len(report)
+
+    def calculate(acc, row):
+        if row["_row_overall"]["failed"] > 0:
+            return acc + 1
+        else:
+            return acc
+
     failed_count = reduce(
-        (lambda count, row: count + row["_row_overall"]["failed"]), report, 0
+        calculate,
+        report,
+        0,
     )
 
     if rows_count == 0 or failed_count == 0:
