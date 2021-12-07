@@ -17,6 +17,6 @@ class OverallReportsRepository(ABC):
         model_version: int,
         batch_name: str,
         suspicious_percent: float,
-        failed_percent: float,
+        failed_ratio: float,
     ) -> None:
         pass

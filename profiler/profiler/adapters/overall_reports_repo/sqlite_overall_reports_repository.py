@@ -29,7 +29,7 @@ class SqliteOverallReportsRepository(OverallReportsRepository):
                     model_version,
                     batch_name,
                     suspicious_percent,
-                    failed_percent,
+                    failed_ratio,
                 ) = result
 
                 return OverallReport(
@@ -37,7 +37,7 @@ class SqliteOverallReportsRepository(OverallReportsRepository):
                     model_version=model_version,
                     batch_name=batch_name,
                     suspicious_percent=suspicious_percent,
-                    failed_percent=failed_percent,
+                    failed_ratio=failed_ratio,
                 )
             else:
                 return None
@@ -48,7 +48,7 @@ class SqliteOverallReportsRepository(OverallReportsRepository):
         model_version: int,
         batch_name: str,
         suspicious_percent: float,
-        failed_percent: float,
+        failed_ratio: float,
     ) -> None:
         with SqliteContextManager() as cur:
             print(f"Save overall report for {model_name}:{model_version}/{batch_name}")
@@ -60,6 +60,6 @@ class SqliteOverallReportsRepository(OverallReportsRepository):
                     model_version,
                     batch_name,
                     suspicious_percent,
-                    failed_percent,
+                    failed_ratio,
                 ),
             )
