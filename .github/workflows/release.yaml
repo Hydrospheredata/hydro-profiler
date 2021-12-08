@@ -1,18 +1,19 @@
-name: Build & Push Image
+name: Release
 
 on:
   push:
     branches: 
       - master
 
+env:
+  HYDRO_MONITORING_REPO: ${{ github.repository_owner }}/hydro-monitoring
+  IMAGE: profiler # name of the built image
+  REGISTRY: hydrosphere
+
 jobs:
   Build_Push:
+    name: Build and Push image to registry
     runs-on: ubuntu-20.04
-
-    env:
-      IMAGE: profiler # name of the built image
-      REGISTRY: hydrosphere
-    
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
@@ -45,7 +46,9 @@ jobs:
           context: .
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE }}:latest
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE }}:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE }}:${{ github.sha }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
       
@@ -55,3 +58,17 @@ jobs:
         run: |
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+
+  Update_Image_Version:
+    needs: Build_Push
+    name: Update image tag in hydro-monitoring repo
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Update image version in hydro-monitoring repo
+        uses: aurelien-baudet/workflow-dispatch@v2.1.1
+        with:
+          workflow: Local release
+          ref: main
+          token: ${{ secrets.HYDRO_SERVING_TOKEN }}
+          repo: ${{ env.HYDRO_MONITORING_REPO }}
+          inputs: '{"service_image_name":"${{ env.IMAGE }}", "registry_url":"${{ env.REGISTRY }}", "tag":"${{ github.sha }}"}'
