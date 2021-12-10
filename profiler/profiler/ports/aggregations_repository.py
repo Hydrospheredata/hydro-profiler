@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from datetime import datetime
 from typing import List, Any
 
 
@@ -9,6 +10,11 @@ class AggregationsRepository(ABC):
 
     @abstractmethod
     def save(
-        self, model_name: str, model_version: int, batch_name: str, aggregation: str
+        self,
+        model_name: str,
+        model_version: int,
+        batch_name: str,
+        file_timestamp: datetime,
+        aggregation: str,
     ):
         pass

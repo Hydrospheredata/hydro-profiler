@@ -3,23 +3,22 @@ from yoyo.backends import DatabaseBackend
 import pandas
 import yoyo
 import os
-
-from profiler.adapters.aggregations_repository.sqlite_aggregations_repository import (
-    SqliteAggregationsRepository,
-)
-from profiler.adapters.models_repository.sqlite_models_repository import (
-    SqliteModelsRepository,
-)
-from profiler.adapters.reports_repository.sqlite_reports_repository import (
-    SqliteReportsRepository,
-)
-from profiler.adapters.metrics_repository.sqlite_metrics_repository import (
-    SqliteMetricsRepository,
+from profiler.adapters.aggregations_repository.pg_aggregations_repository import (
+    PgAggregationsRepository,
 )
 
-from profiler.adapters.overall_reports_repo.sqlite_overall_reports_repository import (
-    SqliteOverallReportsRepository,
+from profiler.adapters.metrics_repository.pg_metrics_repository import (
+    PgMetricsRepository,
 )
+from profiler.adapters.models_repository.pg_models_repository import PgModelsRepository
+
+from profiler.adapters.overall_reports_repo.pg_overall_reports_repository import (
+    PgOverallReportsRepository,
+)
+from profiler.adapters.reports_repository.pg_reports_repository import (
+    PgReportsRepository,
+)
+from profiler.resources.db.postgres.db_migration import run_migrations
 
 from profiler.domain.model import Model
 from profiler.grpc.monitoring_manager import MonitoringDataSubscriber
@@ -52,11 +51,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-metrics_repo = SqliteMetricsRepository()
-models_repo = SqliteModelsRepository()
-reports_repo = SqliteReportsRepository()
-aggregations_repo = SqliteAggregationsRepository()
-overall_reports_repository = SqliteOverallReportsRepository()
+metrics_repo = PgMetricsRepository()
+models_repo = PgModelsRepository()
+reports_repo = PgReportsRepository()
+aggregations_repo = PgAggregationsRepository()
+overall_reports_repository = PgOverallReportsRepository()
 
 aggregation_use_case = AggregationUseCase(
     repo=aggregations_repo,
@@ -185,9 +184,15 @@ if __name__ == "__main__":
     try:
         print(f"Independent mode: {config.profiler_independent_mode}")
 
-        migrate(
-            "sqlite:///profiler/resources/db/sqlite/profiler.db",
-            "profiler/resources/db/sqlite/migrations",
+        db_user = config.postgres_user
+        db_password = config.postgres_password
+        db_host = config.postgres_host
+        db_port = config.postgres_port
+        db_name = config.postgres_db
+
+        run_migrations(
+            "profiler/resources/db/postgres",
+            f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}",
         )
 
         if not config.profiler_independent_mode:

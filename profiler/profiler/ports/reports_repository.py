@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from datetime import datetime
 
 
 class ReportsRepository(ABC):
@@ -7,5 +8,12 @@ class ReportsRepository(ABC):
         pass
 
     @abstractmethod
-    def save(self, model_name: str, model_version: int, batch_name: str, report: list):
+    def save(
+        self,
+        model_name: str,
+        model_version: int,
+        batch_name: str,
+        file_timestamp: datetime,
+        report: list,
+    ):
         pass

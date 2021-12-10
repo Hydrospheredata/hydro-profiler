@@ -1,6 +1,8 @@
+from datetime import datetime
 import logging
 import queue
 import threading
+from google.protobuf.timestamp_pb2 import Timestamp
 
 import pandas
 import s3fs
@@ -77,7 +79,15 @@ class MonitoringDataSubscriber:
                         file_url = data_obj.key
                         data_frame = self.fetch_data_frame(file_url)
 
-                        self.process_inference_data_frame(file_url, data_frame, model)
+                        # modifiedAt = Timestamp()
+                        # modifiedAt.FromDatetime(data_obj.lastModifiedAt.ToDatetime())
+
+                        self.process_inference_data_frame(
+                            file_url,
+                            data_frame,
+                            data_obj.lastModifiedAt.ToDatetime(),
+                            model,
+                        )
 
                         resp = GetInferenceDataUpdatesRequest(
                             plugin_id=self.plugin_name,
@@ -133,9 +143,11 @@ class MonitoringDataSubscriber:
             report,
         )
 
-    def process_inference_data_frame(self, batch_name, data_frame, model):
+    def process_inference_data_frame(
+        self, batch_name, data_frame, file_timestmp, model
+    ):
         report = self._reports_use_case.generate_report(model, batch_name, data_frame)
-        self._reports_use_case.save_report(model, batch_name, report)
+        self._reports_use_case.save_report(model, batch_name, file_timestmp, report)
         self._overall_reports_use_case.generate_overall_report(
             model.name, model.version, batch_name, report
         )

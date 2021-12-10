@@ -2,60 +2,68 @@
 
 [![forthebadge](https://forthebadge.com/images/badges/60-percent-of-the-time-works-every-time.svg)](https://forthebadge.com)
 
-
 ### Structure
-```/profiler-fe``` - frontend for plugin
 
-```/profiler``` - backend for plugin
+`/profiler-fe` - frontend for plugin
 
+`/profiler` - backend for plugin
 
 ### Dockerfiles
 
-#### ```profiler/Dockerfile``` 
+#### `profiler/Dockerfile`
+
 Dockerfile for backend part of profiler.
 This image can be used as part of Hydrosphere architecture or as independent project composed with profiler-fe.
 
 **Environment variables:**
-* `INDEPENDENT_PROFILER_MODE` - `bool` by default `False`
-* `AWS_ACCESS_KEY_ID` - `string`
-* `AWS_SECRET_ACCESS_KEY` - `string`
 
-**Important**
+- `INDEPENDENT_PROFILER_MODE` - `bool` by default `False`
+- `AWS_ACCESS_KEY_ID` - `string`
+- `AWS_SECRET_ACCESS_KEY` - `string`
+- `POSTGRES_USER` - `string`, default `"root"`
+- `POSTGRES_PASSWORD` - `string`, default `"root"`
+- `POSTGRES_DB`- `string`, default `"profiler_plugin"`
+- `POSTGRES_HOST` - `string`, default `"db"`
+- `POSTGRES_PORT` - `number`, default `"5432"`
 
-Build it with command ```docker build . -t profiler -f profiler/Dockerfile``` from root dir, because we need to handle relative path with static files
-
-Endpoints
-```/static``` - endpoint for serving static frontend files(need for micro-frontend).
+**Endpoints**
+`/static` - endpoint for serving static frontend files(need for micro-frontend).
 By default service listens to 5000 port.
 
-```/docs``` - OpenApi
+`/docs` - OpenApi
 
+#### `profiler-fe/Dockerfile`
 
-#### ```profiler-fe/Dockerfile```
 Dockerfile for frontend part of profiler.
 
 **DashboardModule** - exposed as part of micro-frontend architecture.
 Can be used as independent project composed with profiler backend.
 
-#### ```docker-compose.yml```
+#### `docker-compose.yml`
+
 Used for creating independent profiler application
 
 ## How to
+
 ### Run whole project(with monitoring-manager)
 
 #### Start
-* ```docker compose up -d``` - start application
+
+- `docker compose up -d` - start application
 
 #### Upload data
-* open minio ```http://localhost:9001/``` (login: minioadmin, pswd: minioadmin)
-* create bucket adult
-* to **adult** bucket add  **training** bucket
-* into training bucket upload ```/demo/dummy_model/train.csv```
-* to **adult** bucket add **inference** bucket
-* * into inference bucket upload ```/demo/dummy_model/batch_1.csv```
+
+- open minio `http://localhost:9001/` (login: minioadmin, pswd: minioadmin)
+- create bucket adult
+- to **adult** bucket add **training** bucket
+- into training bucket upload `/demo/dummy_model/train.csv`
+- to **adult** bucket add **inference** bucket
+- - into inference bucket upload `/demo/dummy_model/batch_1.csv`
 
 #### Register model
-* POST `http://localhost:8080/api/v1/model` with body
+
+- POST `http://localhost:8080/api/v1/model` with body
+
 ```
 {
     "name": "adult",
@@ -157,14 +165,14 @@ Used for creating independent profiler application
 ```
 
 #### Open browser
-* http://localhost:4200/models
 
+- http://localhost:4200/models
 
 ### Run independent project (Demo purposes)
-* ```cd demo```
-* ```docker compose up -d```
-* open ```http://localhost/models``` 
-* From **dummy_model**  model use files to upload model(with contract(contract.json) and training data(train.csv))
-* Press **Load data** to upload inference data (from **dummy_model** batch_*.csv file)
-* Click on any models row to go to dashboard
 
+- `cd demo`
+- `docker compose up -d`
+- open `http://localhost/models`
+- From **dummy_model** model use files to upload model(with contract(contract.json) and training data(train.csv))
+- Press **Load data** to upload inference data (from **dummy_model** batch\_\*.csv file)
+- Click on any models row to go to dashboard
