@@ -1,3 +1,4 @@
+from datetime import datetime
 from functools import reduce
 from typing import Any, List
 
@@ -34,16 +35,22 @@ class ReportUseCase:
             model_name=model_name, model_version=model_version, batch_name=batch_name
         )
 
-    def save_report(self, model: Model, batch_name: str, report: List[Any]):
+    def save_report(
+        self, model: Model, batch_name: str, file_timestamp: datetime, report: List[Any]
+    ):
         self._reports_repo.save(
             model_name=model.name,
             model_version=model.version,
             batch_name=batch_name,
+            file_timestamp=file_timestamp,
             report=report,
         )
 
         self._aggregation_use_case.generate_aggregation(
-            model=model, batch_name=batch_name, report=report
+            model=model,
+            batch_name=batch_name,
+            file_timestamp=file_timestamp,
+            report=report,
         )
 
         print(f"Report was stored for {model.name}:{model.version}/{batch_name}")

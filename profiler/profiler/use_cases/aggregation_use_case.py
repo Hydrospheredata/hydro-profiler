@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Dict
 
 from profiler.domain.overall import Overall, merge_overall
@@ -26,7 +27,9 @@ class AggregationUseCase:
     def get(self, model_name: str, model_version: int):
         return self._repo.get_list(model_name=model_name, model_version=model_version)
 
-    def generate_aggregation(self, model: Model, batch_name: str, report):
+    def generate_aggregation(
+        self, model: Model, batch_name: str, file_timestamp: datetime, report
+    ):
         def setOverall(d: Dict[str, Overall], field: ModelField) -> Dict[str, Overall]:
             if field.profile == DataProfileType.NONE:
                 return d
@@ -51,6 +54,7 @@ class AggregationUseCase:
             feature_overall.update({feat: calculate_score(over)})
 
         agg = {
+            "file_timestamp": file_timestamp.isoformat(),
             "keys": list(map(lambda m: m.name, model.contract.merged_features())),
             "scores": feature_overall,
         }
@@ -59,5 +63,6 @@ class AggregationUseCase:
             model_name=model.name,
             model_version=model.version,
             batch_name=batch_name,
+            file_timestamp=file_timestamp,
             aggregation=agg,
         )

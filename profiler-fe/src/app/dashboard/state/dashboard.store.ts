@@ -3,7 +3,11 @@ import { StoreConfig, Store } from '@datorama/akita';
 
 export interface Aggregation {
   features: string[];
-  scores: Array<{ batch_name: string; scores: { [featureName: string]: number } }>;
+  scores: Array<{
+    batch_name: string;
+    file_timestamp: string;
+    scores: { [featureName: string]: number };
+  }>;
 }
 
 export interface DashboardState {
