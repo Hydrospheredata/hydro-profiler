@@ -1,0 +1,96 @@
+{
+  "inputs": [
+    {
+      "name": "age",
+      "shape": [],
+      "dtype": "DT_INT64",
+      "profile": "NUMERICAL"
+    },
+    {
+      "name": "workclass",
+      "shape": [],
+      "dtype": "DT_STRING",
+      "profile": "CATEGORICAL"
+    },
+    {
+      "name": "fnlwgt",
+      "shape": [],
+      "dtype": "DT_INT64",
+      "profile": "NUMERICAL"
+    },
+    {
+      "name": "education",
+      "shape": [],
+      "dtype": "DT_STRING",
+      "profile": "CATEGORICAL"
+    },
+    {
+      "name": "educational-num",
+      "shape": [],
+      "dtype": "DT_STRING",
+      "profile": "CATEGORICAL"
+    },
+    {
+      "name": "marital-status",
+      "shape": [],
+      "dtype": "DT_STRING",
+      "profile": "CATEGORICAL"
+    },
+    {
+      "name": "occupation",
+      "shape": [],
+      "dtype": "DT_STRING",
+      "profile": "CATEGORICAL"
+    },
+    {
+      "name": "relationship",
+      "shape": [],
+      "dtype": "DT_STRING",
+      "profile": "CATEGORICAL"
+    },
+    {
+      "name": "race",
+      "shape": [],
+      "dtype": "DT_STRING",
+      "profile": "CATEGORICAL"
+    },
+    {
+      "name": "gender",
+      "shape": [],
+      "dtype": "DT_STRING",
+      "profile": "CATEGORICAL"
+    },
+    {
+      "name": "capital-gain",
+      "shape": [],
+      "dtype": "DT_INT64",
+      "profile": "NUMERICAL"
+    },
+    {
+      "name": "capital-loss",
+      "shape": [],
+      "dtype": "DT_INT64",
+      "profile": "NUMERICAL"
+    },
+    {
+      "name": "hours-per-week",
+      "shape": [],
+      "dtype": "DT_INT64",
+      "profile": "NUMERICAL"
+    },
+    {
+      "name": "native-country",
+      "shape": [],
+      "dtype": "DT_STRING",
+      "profile": "CATEGORICAL"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "income",
+      "shape": [],
+      "dtype": "DT_STRING",
+      "profile": "CATEGORICAL"
+    }
+  ]
+}

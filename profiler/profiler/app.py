@@ -1,8 +1,6 @@
+from datetime import datetime
 import grpc
-from yoyo.backends import DatabaseBackend
 import pandas
-import yoyo
-import os
 from profiler.adapters.aggregations_repository.pg_aggregations_repository import (
     PgAggregationsRepository,
 )
@@ -58,7 +56,7 @@ aggregations_repo = PgAggregationsRepository()
 overall_reports_repository = PgOverallReportsRepository()
 
 aggregation_use_case = AggregationUseCase(
-    repo=aggregations_repo,
+    repo=aggregations_repo, models_repo=models_repo
 )
 metrics_use_case = metrics_use_case.MetricsUseCase(
     metrics_repo=metrics_repo,
@@ -69,13 +67,11 @@ report_use_case = report_use_case.ReportUseCase(
     reports_repo=reports_repo,
     agg_use_case=aggregation_use_case,
 )
-overall_reports_use_case = OverallReportsUseCase(
-    overall_reports_repo=overall_reports_repository
-)
+overall_reports_use_case = OverallReportsUseCase(repo=overall_reports_repository)
 
 channel = grpc.insecure_channel(config.manager_addr)
 monitoring_data_grpc = MonitoringDataSubscriber(
-    channel, metrics_use_case, report_use_case, overall_reports_use_case
+    channel, metrics_use_case, report_use_case, overall_reports_use_case, models_repo
 )
 
 
@@ -98,19 +94,16 @@ async def register_model(
     contract: UploadFile = File(...),
     training: UploadFile = File(...),
 ):
+
     df = pandas.read_csv(training.file)
     contract = ModelSignature.parse_raw(contract.file.read())
+
     model = Model(name=name, version=version, contract=contract)
     models_repo.save(model=model)
     metrics_use_case.generate_metrics(model=model, t_df=df)
 
-    report = report_use_case.generate_report(model=model, batch_name="training", df=df)
-    overall_reports_use_case.generate_overall_report(
-        model_name=name,
-        model_version=version,
-        batch_name="training",
-        report=report,
-    )
+    report = report_use_case.generate_report(model, "training", datetime.now(), df)
+    overall_reports_use_case.generate_overall_report(report)
 
     return model
 
@@ -122,19 +115,17 @@ async def process_batch(
     batch_name: str = Form(...),
     batch: UploadFile = File(...),
 ):
-    df = pandas.read_csv(batch.file)
-    model = models_repo.get_by_name(model_name, model_version)
-    report = report_use_case.generate_report(model=model, batch_name=batch_name, df=df)
-    report_use_case.save_report(model, batch_name, report)
 
-    overall_reports_use_case.generate_overall_report(
-        model_name=model_name,
-        model_version=model_version,
-        batch_name=batch_name,
-        report=report,
-    )
-
-    return f"Report for batch {batch_name} was generated "
+    try:
+        df = pandas.read_csv(batch.file)
+        model = models_repo.get_by_name(model_name, model_version)
+        report = report_use_case.generate_report(model, batch_name, datetime.now(), df)
+        print("report generated")
+        report_use_case.save_report(report)
+        return f"Report for batch {batch_name} was generated "
+    except Exception as e:
+        print("error")
+        print(e)
 
 
 @app.get("/models")
@@ -161,22 +152,6 @@ async def get_overall_report(
     return overall_reports_use_case.calculate_batch_stats(
         model_name=model_name, model_version=model_version, batch_name=url
     )
-
-
-def migrate(db_uri, migrations_path):
-    print("Start migrations")
-    parsed_uri = yoyo.connections.parse_uri(db_uri)
-    scheme, _, _, _, _, database, _ = parsed_uri
-    if scheme == "sqlite":
-        directory = os.path.dirname(database)
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-    try:
-        connection: DatabaseBackend = yoyo.get_backend(db_uri)
-        migrations = yoyo.read_migrations(migrations_path)
-        connection.apply_migrations(connection.to_apply(migrations))
-    except Exception as e:
-        print(e)
 
 
 #  TODO (Pasha): add exceptions

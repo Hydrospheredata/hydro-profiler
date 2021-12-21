@@ -1,19 +1,14 @@
 from abc import ABC, abstractmethod
-from datetime import datetime
+from profiler.domain.model_report import ModelReport
 
 
 class ReportsRepository(ABC):
     @abstractmethod
-    def get_report(self, model_name: str, model_version: int, batch_name: str):
+    def get_report(
+        self, model_name: str, model_version: int, batch_name: str
+    ) -> ModelReport:
         pass
 
     @abstractmethod
-    def save(
-        self,
-        model_name: str,
-        model_version: int,
-        batch_name: str,
-        file_timestamp: datetime,
-        report: list,
-    ):
+    def save(self, model_report: ModelReport):
         pass

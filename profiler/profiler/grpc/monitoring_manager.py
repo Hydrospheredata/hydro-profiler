@@ -1,8 +1,6 @@
-from datetime import datetime
 import logging
 import queue
 import threading
-from google.protobuf.timestamp_pb2 import Timestamp
 
 import pandas
 import s3fs
@@ -13,6 +11,7 @@ from profiler.config.config import config
 from profiler.domain.batch_statistics import BatchStatistics
 from profiler.domain.model import Model
 from profiler.domain.model_signature import ModelSignature
+from profiler.ports.models_repository import ModelsRepository
 from profiler.protobuf.monitoring_manager_pb2 import (
     AnalyzedAck,
     BatchStatistics as GBatchStatistics,
@@ -38,6 +37,7 @@ class MonitoringDataSubscriber:
     _metrics_use_case: MetricsUseCase
     _reports_use_case: ReportUseCase
     _overall_reports_use_case: OverallReportsUseCase
+    _models_repo: ModelsRepository
     channel: grpc.Channel
     data_stub: DataStorageServiceStub
     model_stub: ModelCatalogServiceStub
@@ -49,11 +49,13 @@ class MonitoringDataSubscriber:
         metrics_use_case: MetricsUseCase,
         reports_use_case: ReportUseCase,
         overall_reports_use_case: OverallReportsUseCase,
+        models_repo: ModelsRepository,
     ):
         self.channel = channel
         self._metrics_use_case = metrics_use_case
         self._reports_use_case = reports_use_case
         self._overall_reports_use_case = overall_reports_use_case
+        self._model_repo = models_repo
         self.data_stub = DataStorageServiceStub(self.channel)
         self.model_stub = ModelCatalogServiceStub(self.channel)
 
@@ -75,12 +77,8 @@ class MonitoringDataSubscriber:
 
                 if self.training_overall_report_exists(model):
                     for data_obj in response.inference_data_objs:
-                        # TODO(bulat): need to use data_obj timestamp somewhere
                         file_url = data_obj.key
                         data_frame = self.fetch_data_frame(file_url)
-
-                        # modifiedAt = Timestamp()
-                        # modifiedAt.FromDatetime(data_obj.lastModifiedAt.ToDatetime())
 
                         self.process_inference_data_frame(
                             file_url,
@@ -114,11 +112,21 @@ class MonitoringDataSubscriber:
             print("Got model request")
 
             model = self.model_from_proto(response)
+            self._model_repo.save(model)
+
             batch_name = "training"
-            file_url = response.training_data_objs[0].key
+            data_obj = response.training_data_objs[0]
+
+            file_url = data_obj.key
+            file_timestamp = data_obj.lastModifiedAt.ToDatetime()
             data_frame = self.fetch_data_frame(file_url)
 
-            self.process_training_data_frame(batch_name, data_frame, model)
+            self.process_training_data_frame(
+                batch_name=batch_name,
+                file_timestamp=file_timestamp,
+                data_frame=data_frame,
+                model=model,
+            )
 
     def start_watching(self):
         print("Start watching...")
@@ -131,26 +139,24 @@ class MonitoringDataSubscriber:
         models_thread.daemon = True
         models_thread.start()
 
-    def process_training_data_frame(self, batch_name, data_frame, model):
+    def process_training_data_frame(
+        self, batch_name, file_timestamp, data_frame, model
+    ):
         self._metrics_use_case.generate_metrics(model, data_frame)
-
-        report = self._reports_use_case.generate_report(model, batch_name, data_frame)
-
-        self._overall_reports_use_case.generate_overall_report(
-            model.name,
-            model.version,
-            batch_name,
-            report,
+        report = self._reports_use_case.generate_report(
+            model, batch_name, file_timestamp, data_frame
         )
+
+        self._overall_reports_use_case.generate_overall_report(report)
 
     def process_inference_data_frame(
         self, batch_name, data_frame, file_timestmp, model
     ):
-        report = self._reports_use_case.generate_report(model, batch_name, data_frame)
-        self._reports_use_case.save_report(model, batch_name, file_timestmp, report)
-        self._overall_reports_use_case.generate_overall_report(
-            model.name, model.version, batch_name, report
+        report = self._reports_use_case.generate_report(
+            model, batch_name, file_timestmp, data_frame
         )
+        self._reports_use_case.save_report(report)
+        self._overall_reports_use_case.generate_overall_report(report)
 
     def fetch_data_frame(self, file_url: str):
         return pandas.read_csv(

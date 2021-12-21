@@ -1,15 +1,23 @@
 version: "0.1"
+networks:
+  extnet:
+    driver: bridge
+
 services:
-  fe:
-    build:
-      context: ../profiler-fe
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
   be:
     image: hydrosphere/profiler:latest
     ports:
       - "5000:5000"
     environment:
       - "PROFILER_INDEPENDENT_MODE=True"
-
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    networks:
+      extnet: {}
+    environment:
+      - "POSTGRES_PASSWORD=root"
+      - "POSTGRES_USER=root"
+      - "POSTGRES_DB=profiler_plugin"
+    

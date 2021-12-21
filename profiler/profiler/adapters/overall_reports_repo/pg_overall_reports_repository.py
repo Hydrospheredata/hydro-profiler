@@ -40,24 +40,16 @@ class PgOverallReportsRepository(OverallReportsRepository):
             else:
                 return None
 
-    def save(
-        self,
-        model_name: str,
-        model_version: int,
-        batch_name: str,
-        suspicious_percent: float,
-        failed_ratio: float,
-    ) -> None:
+    def save(self, overall_report: OverallReport) -> None:
         with engine.connect() as conn:
-            print(f"Save overall report for {model_name}:{model_version}/{batch_name}")
             query = text(
                 "INSERT INTO overall_reports VALUES (:model_name, :model_version, :batch_name, :suspicious_percent, :failed_ratio)"
             ).bindparams(
-                model_name=model_name,
-                model_version=model_version,
-                batch_name=batch_name,
-                suspicious_percent=suspicious_percent,
-                failed_ratio=failed_ratio,
+                model_name=overall_report.model_name,
+                model_version=overall_report.model_version,
+                batch_name=overall_report.batch_name,
+                suspicious_percent=overall_report.suspicious_percent,
+                failed_ratio=overall_report.failed_ratio,
             )
 
             conn.execute(query)

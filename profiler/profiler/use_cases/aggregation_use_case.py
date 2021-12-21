@@ -1,68 +1,42 @@
-from datetime import datetime
-from typing import Dict
-
-from profiler.domain.overall import Overall, merge_overall
-from profiler.domain.model import Model
-from profiler.domain.model_signature import ModelField
+from profiler.domain.aggregation import Aggregation, AggregationBatch
+from profiler.domain.model_report import ModelReport
 from profiler.ports.aggregations_repository import AggregationsRepository
-from profiler.domain.model_signature import DataProfileType
-from profiler.utils.safe_divide import safe_divide
-
-from functools import reduce
-
-
-def calculate_score(overall: Overall) -> float:
-    return safe_divide(overall.succeed, overall.count)
+from profiler.ports.models_repository import ModelsRepository
 
 
 class AggregationUseCase:
     _repo: AggregationsRepository
+    _models_repo: ModelsRepository
 
     def __init__(
         self,
         repo: AggregationsRepository,
+        models_repo: ModelsRepository,
     ) -> None:
         self._repo = repo
+        self._models_repo = models_repo
 
-    def get(self, model_name: str, model_version: int):
-        return self._repo.get_list(model_name=model_name, model_version=model_version)
+    def get(self, model_name: str, model_version: int) -> Aggregation:
+        model = self._models_repo.get_by_name(model_name, model_version)
+        agg = self._repo.get_aggregation(model_name, model_version)
+        features = [x.name for x in model.contract.merged_features()]
+        agg.features = features
+        return agg
 
     def generate_aggregation(
-        self, model: Model, batch_name: str, file_timestamp: datetime, report
+        self,
+        report: ModelReport,
     ):
-        def setOverall(d: Dict[str, Overall], field: ModelField) -> Dict[str, Overall]:
-            if field.profile == DataProfileType.NONE:
-                return d
+        batch_name = report.batch_name
+        file_timestamp = report.file_timestamp
 
-            d.update({field.name: Overall()})
-            return d
-
-        feature_overall = reduce(setOverall, model.contract.merged_features(), {})
-
-        for row in report:
-            score_by_feature = row["_feature_overall_score"]
-            for feature, overall in score_by_feature.items():
-                feature_overall.update(
-                    {
-                        feature: merge_overall(
-                            feature_overall[feature], Overall.parse_obj(overall)
-                        )
-                    }
-                )
-
-        for feat, over in feature_overall.items():
-            feature_overall.update({feat: calculate_score(over)})
-
-        agg = {
-            "file_timestamp": file_timestamp.isoformat(),
-            "keys": list(map(lambda m: m.name, model.contract.merged_features())),
-            "scores": feature_overall,
-        }
-
-        self._repo.save(
-            model_name=model.name,
-            model_version=model.version,
+        batch_aggregation = AggregationBatch(
+            model_name=report.model_name,
+            model_version=report.model_version,
+            rows_count=len(report.report.__root__),
             batch_name=batch_name,
             file_timestamp=file_timestamp,
-            aggregation=agg,
+            feature_overall=report.features_overall,
         )
+
+        self._repo.save(batch_aggregation)

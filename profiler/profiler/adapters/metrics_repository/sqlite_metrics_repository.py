@@ -1,6 +1,6 @@
 import json
 from profiler.domain.feature_metric import (
-    recognize_metric,
+    parse_metric,
 )
 from typing import List, Dict, Any
 from profiler.ports.metrics_repository import MetricsRepository
@@ -26,12 +26,11 @@ class SqliteMetricsRepository(MetricsRepository):
             print(f"Try to take metrics from {name}:{version}")
             res = cur.fetchone()[0]
             parsed = json.loads(res)
-            r = {}
 
-            for feature, metrics in parsed.items():
-                r.update({feature: list(map(recognize_metric, metrics))})
-
-            return r
+            return {
+                feature: list(map(parse_metric, metrics))
+                for feature, metrics in parsed.items()
+            }
 
     def save(self, model: Model, metrics: Dict[str, List[Any]]):
         with SqliteContextManager() as cur:

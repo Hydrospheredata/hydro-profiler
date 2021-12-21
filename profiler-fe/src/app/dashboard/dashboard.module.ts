@@ -9,6 +9,7 @@ import { BatchReportPageComponent } from './batch-report/batch-report-page.compo
 import { SharedModule } from '../shared/shared.module';
 import { AkitaNgRouterStoreModule } from '@datorama/akita-ng-router-store';
 import { RouterModule, Routes } from '@angular/router';
+import { ColumnComponent } from './aggreagation/components/column/column.component';
 
 export const routes: Routes = [
   {
@@ -25,6 +26,7 @@ export const routes: Routes = [
     DataSectionComponent,
     BatchReportComponent,
     BatchReportPageComponent,
+    ColumnComponent,
   ],
   imports: [CommonModule, SharedModule, RouterModule.forChild(routes), AkitaNgRouterStoreModule],
 })

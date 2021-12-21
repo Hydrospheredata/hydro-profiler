@@ -1,15 +1,19 @@
-from ports.reports_repository import ReportsRepository
-from domain.production_batch import ProductionBatch
-from domain.model import Model
-import json
+from typing import List
+from profiler.domain.model_report import ModelReport
+from profiler.ports.reports_repository import ReportsRepository
 
 
 class LocalReportsRepository(ReportsRepository):
-    def get_report(self, model_name: str, batch: str):
-        return super().get_report(model_name, batch)
+    reports: List[ModelReport]
 
-    def save(self, model_name: str, batch_name: str, report: list):
-        file = f"resources/{model_name}_{batch_name}_report.json"
+    def get_report(self, model_name: str, model_version: int, batch_name: str):
+        return [
+            x
+            for x in self.reports
+            if x.model_name == model_name
+            and x.model_version == model_version
+            and x.batch_name == batch_name
+        ][0]
 
-        with open(file, "w") as f:
-            f.write(json.dumps(report))
+    def save(self, report: ModelReport):
+        self.reports.append(report)

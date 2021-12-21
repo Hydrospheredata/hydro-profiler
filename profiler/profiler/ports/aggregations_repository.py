@@ -1,20 +1,12 @@
 from abc import ABC, abstractmethod
-from datetime import datetime
-from typing import List, Any
+from profiler.domain.aggregation import Aggregation, AggregationBatch
 
 
 class AggregationsRepository(ABC):
     @abstractmethod
-    def get_list(self, model_name: str, model_version: int) -> List[Any]:
+    def get_aggregation(self, model_name: str, model_version: int) -> Aggregation:
         pass
 
     @abstractmethod
-    def save(
-        self,
-        model_name: str,
-        model_version: int,
-        batch_name: str,
-        file_timestamp: datetime,
-        aggregation: str,
-    ):
+    def save(self, aggregation_batch: AggregationBatch):
         pass

@@ -1,10 +1,18 @@
 from datetime import datetime
-from functools import reduce
-from typing import Any, List
+from typing import List
 
 from pandas.core.frame import DataFrame
+from profiler.domain.feature_metric import CheckType
 from profiler.domain.model import Model
-from profiler.domain.overall import Overall, merge_overall
+from profiler.domain.model_report import (
+    DataRowReport,
+    DataRowStatus,
+    FeatureUnsucceedCalculator,
+    FeaturesOverall,
+    ModelReport,
+    Report,
+)
+from profiler.domain.model_signature import DataProfileType
 from profiler.ports.metrics_repository import MetricsRepository
 from profiler.ports.models_repository import ModelsRepository
 from profiler.ports.reports_repository import ReportsRepository
@@ -35,91 +43,75 @@ class ReportUseCase:
             model_name=model_name, model_version=model_version, batch_name=batch_name
         )
 
-    def save_report(
-        self, model: Model, batch_name: str, file_timestamp: datetime, report: List[Any]
-    ):
-        self._reports_repo.save(
+    def save_report(self, model_report: ModelReport):
+        self._reports_repo.save(model_report)
+        self._aggregation_use_case.generate_aggregation(model_report)
+
+    def generate_report(
+        self, model: Model, batch_name: str, file_timestamp: datetime, df: DataFrame
+    ) -> ModelReport:
+        print(f"Generate report for {model.name}:{model.version}")
+        metrics = self._metrics_repo.by_name(name=model.name, version=model.version)
+        print("metrics")
+
+        metrics_by_feature = metrics.metrics_by_feature.__root__
+        reports: List[DataRowReport] = []
+
+        features = []
+        for feature, metrics in metrics_by_feature.items():
+            features.append(feature)
+        print(features)
+        features_unsucceed_calculator = FeatureUnsucceedCalculator(features)
+
+        for index, row in df.iterrows():
+            status = DataRowStatus.HEALTHY
+            features_checks_results = {}
+
+            for feature, metrics in metrics_by_feature.items():
+                check_results = metrics.check(row[feature])
+                features_checks_results[feature] = check_results
+
+                some_failed = [x for x in check_results if x.status == CheckType.FAILED]
+
+                some_susp = [
+                    x for x in check_results if x.status == CheckType.SUSPICIOUS
+                ]
+
+                if some_failed:
+                    features_unsucceed_calculator.add_failed(feature)
+                    status = DataRowStatus.HAS_FAILED
+
+                if some_susp and not some_failed:
+                    features_unsucceed_calculator.add_suspicious(feature)
+
+                if some_susp and status == DataRowStatus.HEALTHY:
+                    status = DataRowStatus.HAS_SUSPICIOUS
+
+            reports.append(
+                DataRowReport(
+                    id=index, features_checks=features_checks_results, status=status
+                )
+            )
+
+        print("report generated")
+
+        return ModelReport(
             model_name=model.name,
             model_version=model.version,
             batch_name=batch_name,
             file_timestamp=file_timestamp,
-            report=report,
+            report=Report(__root__=reports),
+            features_overall=FeaturesOverall(
+                __root__=features_unsucceed_calculator.get_result()
+            ),
         )
 
-        self._aggregation_use_case.generate_aggregation(
-            model=model,
-            batch_name=batch_name,
-            file_timestamp=file_timestamp,
-            report=report,
-        )
 
-        print(f"Report was stored for {model.name}:{model.version}/{batch_name}")
-
-    def generate_report(self, model: Model, batch_name: str, df: DataFrame):
-        print(f"Generate report for {model.name}:{model.version}")
-        metrics_dict = self._metrics_repo.by_name(
-            name=model.name, version=model.version
-        )
-
-        report = []
-
-        for index, row in df.iterrows():
-            result = {
-                "_id": index,
-                "_raw_checks": {},
-                "_feature_overall": {},
-            }
-            raw_metrics = {}
-            feature_overall = {}
-            feature_overall_score = {}
-            row_overall = Overall()
-
-            for feature, metrics in metrics_dict.items():
-                checks = list(
-                    map(
-                        lambda metric: metric.check(row[feature]),
-                        metrics,
-                    )
-                )
-
-                _feature_overall = reduce(calculate_overall, checks, Overall())
-                _feature_overall_score = reduce(
-                    calculate_feature_score, checks, Overall()
-                )
-
-                row_overall = merge_overall(row_overall, _feature_overall)
-
-                raw_metrics.update({feature: checks})
-                feature_overall.update({feature: _feature_overall.dict()})
-                feature_overall_score.update({feature: _feature_overall_score.dict()})
-
-            result.update(
-                {
-                    "_raw_checks": raw_metrics,
-                    "_feature_overall": feature_overall,
-                    "_row_overall": row_overall.dict(),
-                    "_feature_overall_score": feature_overall_score,
-                }
-            )
-            report.append(result)
-
-        return report
-
-
-def calculate_suspicious_percent(report: List[Any]):
-    rows_count = len(report)
-
-    def calculate(acc, row):
-        if row["_row_overall"]["suspicious"] > 0:
-            return acc + 1
-        else:
-            return acc
-
-    suspicious_count = reduce(
-        calculate,
-        report,
-        0,
-    )
+def calculate_suspicious_percent(report: ModelReport):
+    rows = report.report.__root__
+    rows_count = len(rows)
+    suspicious_rows = [x for x in rows if x.status == DataRowStatus.HAS_SUSPICIOUS]
+    suspicious_count = len(suspicious_rows)
 
     if rows_count == 0 or suspicious_count == 0:
         return 0
@@ -128,45 +120,12 @@ def calculate_suspicious_percent(report: List[Any]):
 
 
 def calculate_failed_ratio(report):
-    rows_count = len(report)
-
-    def calculate(acc, row):
-        if row["_row_overall"]["failed"] > 0:
-            return acc + 1
-        else:
-            return acc
-
-    failed_count = reduce(
-        calculate,
-        report,
-        0,
-    )
+    rows = report.report.__root__
+    rows_count = len(rows)
+    failed_rows = [x for x in rows if x.status == DataRowStatus.HAS_FAILED]
+    failed_count = len(failed_rows)
 
     if rows_count == 0 or failed_count == 0:
         return 0
 
     return failed_count / rows_count
-
-
-def calculate_overall(over: Overall, check):
-    status = check["status"]
-    if status == "failed":
-        over.add_fail()
-    elif status == "suspicious":
-        over.add_suspicious()
-    else:
-        over.add_succeed()
-    return over
-
-
-# Used for aggregation cells
-def calculate_feature_score(over: Overall, check) -> Overall:
-    status = check["status"]
-    count_score = check["count_score"]
-
-    if count_score:
-        if status == "failed":
-            over.add_fail()
-        else:
-            over.add_succeed()
-    return over

@@ -11,12 +11,5 @@ class OverallReportsRepository(ABC):
         pass
 
     @abstractmethod
-    def save(
-        self,
-        model_name: str,
-        model_version: int,
-        batch_name: str,
-        suspicious_percent: float,
-        failed_ratio: float,
-    ) -> None:
+    def save(self, overall_report: OverallReport) -> None:
         pass

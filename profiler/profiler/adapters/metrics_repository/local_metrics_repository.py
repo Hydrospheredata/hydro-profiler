@@ -1,25 +1,22 @@
-from profiler.domain.feature_metric import (
-    BaseMetric,
-    recognize_metric,
-)
-from typing import List, Dict, Any
+from typing import List
+from profiler.domain.model_metrcis import ModelMetrics
 from profiler.ports.metrics_repository import MetricsRepository
-from profiler.domain.model import Model
 
 
 class LocalMetricsRepository(MetricsRepository):
-    __metrics: Dict[str, Dict[str, List[BaseMetric]]] = {}
+    metrics: List[ModelMetrics] = []
 
-    def all(self):
-        return self.__metrics
+    def all(self) -> List[ModelMetrics]:
+        return self.metrics
 
-    def by_name(self, model_name: str) -> Dict[str, List[BaseMetric]]:
-        r = {}
+    def by_name(self, name: str, version: int) -> ModelMetrics:
+        result = [
+            x
+            for x in self.metrics
+            if x.model_name == name and x.model_version == version
+        ]
 
-        for feature, metrics in self.__metrics[model_name].items():
-            r.update({feature: list(map(recognize_metric, metrics))})
+        return result[0]
 
-        return r
-
-    def save(self, model: Model, metrics: Dict[str, List[Any]]):
-        self.__metrics.update({model.name: metrics})
+    def save(self, model_metrics: ModelMetrics) -> None:
+        return self.metrics.append(model_metrics)

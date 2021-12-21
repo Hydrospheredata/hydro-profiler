@@ -23,15 +23,17 @@ class PgModelsRepository(ModelsRepository):
             return models
 
     def get_by_name(self, model_name: str, model_version: int) -> Model:
-        with engine.connect as conn:
+        with engine.connect() as conn:
             query = text(
-                "SELECT * FROM models WHERE name=:name AND version=:version"
+                "SELECT * FROM models WHERE model_name=:name AND model_version=:version"
             ).bindparams(name=model_name, version=model_version)
 
             (name, version, contract) = conn.execute(query).fetchone()
 
             return Model(
-                name=name, version=version, contract=ModelSignature.parse_raw(contract)
+                name=name,
+                version=version,
+                contract=ModelSignature.parse_raw(contract),
             )
 
     def save(self, model: Model):
@@ -39,6 +41,8 @@ class PgModelsRepository(ModelsRepository):
             query = text(
                 "INSERT INTO models VALUES (:name, :version, :contract)"
             ).bindparams(
-                name=model.name, version=model.version, contract=model.contract.json()
+                name=model.name,
+                version=model.version,
+                contract=model.contract.json(),
             )
             conn.execute(query)
