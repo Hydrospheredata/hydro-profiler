@@ -1,0 +1,9 @@
+<div *ngIf="column" class="column" [matTooltip]="tooltip(column)" [ngClass]="{}">
+  <div
+    class="rect"
+    *ngFor="let name of features; let rowIndex = index"
+    [ngStyle]="{
+      backgroundColor: colors[rowIndex]
+    }"
+  ></div>
+</div>

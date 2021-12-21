@@ -1,5 +1,5 @@
-from typing import Any, List
 from profiler.domain.batch_statistics import BatchStatistics
+from profiler.domain.model_report import ModelReport
 from profiler.domain.overall_report import OverallReport
 from profiler.ports.overall_reports_repository import OverallReportsRepository
 from profiler.use_cases.report_use_case import (
@@ -10,39 +10,35 @@ from profiler.utils.safe_divide import safe_divide
 
 
 class OverallReportsUseCase:
-    _overall_reports_repo: OverallReportsRepository
+    repo: OverallReportsRepository
 
-    def __init__(self, overall_reports_repo: OverallReportsRepository):
-        self._overall_reports_repo = overall_reports_repo
+    def __init__(self, repo: OverallReportsRepository):
+        self.repo = repo
 
     def get_report(
         self, model_name: str, model_version: int, batch_name: str
     ) -> OverallReport:
-        return self._overall_reports_repo.get_overall_report(
-            model_name=model_name, model_version=model_version, batch_name=batch_name
+        return self.repo.get_overall_report(model_name, model_version, batch_name)
+
+    def generate_overall_report(self, model_report: ModelReport):
+
+        overall_report = OverallReport(
+            model_name=model_report.model_name,
+            model_version=model_report.model_version,
+            batch_name=model_report.batch_name,
+            suspicious_percent=calculate_suspicious_percent(model_report),
+            failed_ratio=calculate_failed_ratio(model_report),
         )
 
-    def generate_overall_report(
-        self, model_name: str, model_version: int, batch_name: str, report: List[Any]
-    ):
-        self._overall_reports_repo.save(
-            model_name=model_name,
-            model_version=model_version,
-            batch_name=batch_name,
-            suspicious_percent=calculate_suspicious_percent(report),
-            failed_ratio=calculate_failed_ratio(report),
-        )
-        print(
-            f"Overall report was stored for {model_name}:{model_version}/{batch_name}"
-        )
+        self.repo.save(overall_report)
 
     def calculate_batch_stats(
         self, model_name: str, model_version: int, batch_name: str
     ) -> BatchStatistics:
-        production_report = self._overall_reports_repo.get_overall_report(
+        production_report = self.repo.get_overall_report(
             model_name=model_name, model_version=model_version, batch_name=batch_name
         )
-        train_report = self._overall_reports_repo.get_overall_report(
+        train_report = self.repo.get_overall_report(
             model_name=model_name,
             model_version=model_version,
             batch_name="training",

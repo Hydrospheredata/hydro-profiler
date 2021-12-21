@@ -7,15 +7,15 @@ export class DashboardService {
   constructor(private http: ProfilerHttpService, private store: DashboardStore) {}
 
   getAggregation(modelName: string, modelVersion: number) {
-    this.http.get<Aggregation>(`aggregation/${modelName}/${modelVersion}`).subscribe((res) => {
-      const sorted = res.scores.sort(
-        (a, b) =>
-          new Date(b.file_timestamp).getMilliseconds() -
-          new Date(a.file_timestamp).getMilliseconds(),
-      );
+    this.http
+      .get<Aggregation>(`aggregation/${modelName}/${modelVersion}`)
+      .subscribe((aggregation) => {
+        const sorted = aggregation.batches.sort(
+          (a, b) => new Date(a.file_timestamp).getTime() - new Date(b.file_timestamp).getTime(),
+        );
 
-      this.store.update({ aggregation: { ...res, scores: sorted } });
-    });
+        this.store.update({ aggregation: { ...aggregation, batches: sorted } });
+      });
   }
 
   resetBatch() {
@@ -25,6 +25,6 @@ export class DashboardService {
   getBatch(modelName: string, modelVersion: number, batchName: string) {
     this.http
       .get(`report/${modelName}/${modelVersion}/${batchName}`)
-      .subscribe((res) => this.store.update({ batchReport: res }));
+      .subscribe((res: any) => this.store.update({ batchReport: res }));
   }
 }

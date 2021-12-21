@@ -9,7 +9,13 @@ import { Subject } from 'rxjs';
   templateUrl: './batch-report-page.component.html',
 })
 export class BatchReportPageComponent implements OnInit, OnDestroy {
-  report$ = this.query.batch$;
+  report$ = this.query.batch$.pipe(
+    map((report) => {
+      if (report == null) return null;
+
+      return report;
+    }),
+  );
   batchFileName$ = this.routerQuery.selectParams('batchName').pipe(map((s) => atob(s)));
   private destroy: Subject<any> = new Subject<any>();
 

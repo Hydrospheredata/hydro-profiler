@@ -78,3 +78,105 @@ tr.example-element-row:not(.example-expanded-row):active {
     @apply text-xs text-gray-600;
   }
 }
+
+.br-table {
+  width: 100%;
+  background: white;
+  border-collapse: collapse;
+
+  & td,
+  & th {
+    @apply text-gray-600 text-xs text-left;
+  }
+
+  & > tbody > tr,
+  & > thead > tr {
+    height: 48px;
+    min-height: 48px;
+    border-bottom: 1px lightgray solid;
+  }
+
+  & td:first-child,
+  & th:first-child {
+    padding: 0px;
+    padding-left: 24px;
+  }
+
+  & > tbody > tr.expandable:hover {
+    @apply bg-blue-50 cursor-pointer;
+    & .expander {
+      opacity: 1;
+    }
+  }
+
+  & .expander {
+    @apply text-gray-700 w-4 h-4 opacity-40;
+    transform: rotate(0deg);
+    transition-duration: 0.3s;
+    transition-timing-function: cubic-bezier(0.39, 0.575, 0.565, 1);
+  }
+
+  & > tbody > tr:nth-child(even) {
+    height: 0px;
+    max-height: 0px;
+    border: none;
+    & > td {
+      padding-left: 0px;
+    }
+    & div {
+      max-height: 0px;
+      overflow: hidden;
+    }
+  }
+
+  & > tbody > tr:nth-child(odd).expanded .expander {
+    transform: rotate(180deg);
+    transition-duration: 0.5s;
+    transition-timing-function: cubic-bezier(0.39, 0.575, 0.565, 1);
+  }
+
+  & > tbody > tr:nth-child(odd).expanded + tr {
+    border-bottom: 1px lightgrey solid;
+    & div {
+      max-height: 320px;
+      overflow: scroll;
+      transition: max-height cubic-bezier(0.39, 0.575, 0.565, 1) 1s;
+    }
+  }
+}
+
+.status {
+  @apply rounded-md border-gray-400 bg-gray-100 font-bold px-2 py-1 inline-block;
+
+  &--failed {
+    @apply text-red-500 border-red-500 bg-red-50;
+  }
+  &--susp {
+    @apply text-yellow-500 border-yellow-500 bg-yellow-50;
+  }
+  &--succeed {
+    @apply text-green-500 border-green-500 bg-green-50;
+  }
+}
+
+.checks {
+  width: 100%;
+  & td,
+  & th {
+    @apply text-gray-600 text-xs text-left bg-gray-50;
+  }
+
+  & td:first-child,
+  & th:first-child {
+    @apply pl-7;
+  }
+
+  & tr {
+    height: 48px;
+    border-bottom: 1px lightgrey solid;
+  }
+
+  & > tbody > tr:last-child {
+    border: 0;
+  }
+}

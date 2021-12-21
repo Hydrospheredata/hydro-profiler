@@ -1,38 +1,22 @@
-<div *ngIf="agg" class="agg-data">
-  <ng-container
-    [ngTemplateOutlet]="rowLabels"
-    [ngTemplateOutletContext]="{ $implicit: agg.features }"
-  ></ng-container>
-
-  <div class="agg-data__checks">
-    <svg [attr.height]="canvasHeight" [attr.width]="canvasWidth">
-      <g
-        (click)="onColumnClick(column)"
-        *ngFor="let column of agg?.scores; let columnIndex = index"
-        [attr.transform]="columnTranslate(columnIndex)"
-        [ngClass]="{
-          'column--active': true
-        }"
-        class="column"
-      >
-        <rect
-          *ngFor="let name of agg.features; let rowIndex = index"
-          [attr.fill]="cellColor(column.scores[name])"
-          [attr.height]="CELL_SIZE.height"
-          [attr.transform]="rowTranslate(rowIndex)"
-          [attr.width]="CELL_SIZE.width"
-          [attr.rx]="2"
-          [matTooltip]="column.batch_name"
-        ></rect>
-      </g>
-    </svg>
+<div *ngIf="agg as agg" class="agg-data">
+  <div class="flex">
+    <div>
+      <ul class="agg-data__labels">
+        <li class="agg-data__feature-name" *ngFor="let name of agg.features">
+          {{ name }}
+        </li>
+      </ul>
+    </div>
+    <profiler-column
+      class="column"
+      [column]="column"
+      [features]="agg.features"
+      *ngFor="let column of agg?.batches"
+      (click)="onColumnClick(column)"
+      [ngClass]="{
+        'column--active': (selectedBatchName | async) === column.batch_name
+      }"
+    >
+    </profiler-column>
   </div>
 </div>
-
-<ng-template #rowLabels let-names>
-  <ul [ngStyle]="{ 'min-width': labelsWidth + 'px' }" class="agg-data__labels">
-    <li *ngFor="let label of names" class="agg-data__label">
-      {{ label }}
-    </li>
-  </ul>
-</ng-template>

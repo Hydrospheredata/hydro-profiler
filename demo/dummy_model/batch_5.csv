@@ -1,0 +1,10 @@
+age,workclass,fnlwgt,education,educational-num,marital-status,occupation,relationship,race,gender,capital-gain,capital-loss,hours-per-week,native-country,income
+151,Local-gov,174861,Some-college,10,Married-civ-spouse,Protective-serv,Husband,White,Male,0,0,40,United-States,>50K
+128,Self-emp-inc,142443,Bachelors,14,spouse,Exec-managerial,Husband,White,Male,0,0,50,United-States,<=50K
+157,Private,26716,Bachelors,13,Divorced,Craft-repair,Not-in-family,White,Male,0,0,45,United-States,<=50K
+245,Local-gov,185588,Bachelors,15,Divorced,Prof-specialty,Unmarried,White,Female,0,0,40,United-States,<=50K
+450,Private,175029,Assoc-voc,11,Married-civ-spouse,Prof-specialty,Husband,White,Male,0,0,40,United-States,>50K
+534,Self-emp-inc,34848,Bachelors,13,Married-civ-spouse,Sales,Husband,White,Male,0,0,54,United-States,<=50K
+545,Private,411273,7th-8th,4,Married,Craft-repair,Husband,Black,Male,0,0,40,United-States,<=1230K
+273,Local-gov,143437,HS-grad,9,Married-civ-spouse,Exec-managerial,Husband,White,Male,0,0,20,United-States,<=50K
+434,Private,357145,Bachelors,13,Married-civ-spouse,Prof-specialty,Wife,White,Female,0,0,50,United-States,>50K

@@ -1,0 +1,17 @@
+{
+  "inputs": [
+    {
+      "name": "age",
+      "shape": [],
+      "dtype": "DT_INT64",
+      "profile": "NUMERICAL"
+    },
+    {
+      "name": "name",
+      "shape": [],
+      "dtype": "DT_STRING",
+      "profile": "CATEGORICAL"
+    }
+  ],
+  "outputs": []
+}

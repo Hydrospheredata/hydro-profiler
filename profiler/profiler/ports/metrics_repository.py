@@ -1,19 +1,18 @@
-from profiler.domain.feature_metric import BaseMetric
-from profiler.domain.model import Model
-
-from typing import List, Dict
+from typing import List
 from abc import ABC, abstractmethod
+
+from profiler.domain.model_metrcis import ModelMetrics
 
 
 class MetricsRepository(ABC):
     @abstractmethod
-    def all(self) -> Dict[str, Dict[str, List[BaseMetric]]]:
+    def all(self) -> List[ModelMetrics]:
         pass
 
     @abstractmethod
-    def by_name(self, name: str, version: int) -> Dict[str, List[BaseMetric]]:
+    def by_name(self, name: str, version: int) -> ModelMetrics:
         pass
 
     @abstractmethod
-    def save(self, model: Model, metrics: Dict[str, List[BaseMetric]]):
+    def save(self, model_metrics: ModelMetrics) -> None:
         pass

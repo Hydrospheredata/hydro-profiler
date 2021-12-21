@@ -7,13 +7,22 @@ export interface Overall {
   count: number;
 }
 
-export interface ReportItem {
-  _id: string;
-  _raw_checks: {
-    [featureName: string]: Check[];
-  };
-  _feature_overall: {
-    [featureName: string]: Overall;
-  };
-  _row_overall: Overall;
+export enum DataRowStatus {
+  HAS_FAILED = 'has_failed',
+  HAS_SUSPICIOUS = 'has_suspicious',
+  HEALTHY = 'healthy',
+}
+
+export interface DataRowReport {
+  id: number;
+  features_checks: { [featureName: string]: any };
+  status: DataRowStatus;
+}
+
+export interface ModelReport {
+  model_name: string;
+  model_version: number;
+  batch_name: string;
+  file_timestamp: string;
+  report: DataRowReport[];
 }

@@ -1,7 +1,7 @@
 from typing import Dict, List
+from profiler.domain.model_metrcis import MetricsByFeature, ModelMetrics
 
-from profiler.domain.model import Model
-from profiler.domain.feature_metric import BaseMetric, recognize_metric
+from profiler.domain.feature_metric import BaseMetric, parse_metric
 from profiler.ports.metrics_repository import MetricsRepository
 from profiler.db.pg_engine import engine
 from sqlalchemy import text
@@ -14,29 +14,36 @@ class PgMetricsRepository(MetricsRepository):
             result = conn.execute(text("SELECT * FROM metrics"))
             return result.all()
 
-    def by_name(self, name: str, version: int) -> Dict[str, List[BaseMetric]]:
+    def by_name(self, name: str, version: int) -> ModelMetrics:
         with engine.connect() as conn:
             result = conn.execute(
                 text(
-                    "SELECT metrics FROM metrics WHERE model_name=:name AND model_version=:version"
+                    "SELECT * FROM metrics WHERE model_name=:name AND model_version=:version"
                 ).bindparams(name=name, version=version),
             ).fetchone()
 
-            parsed = json.loads(result[0])
-            r = {}
+            (name, version, metrics) = result
+            parsed = json.loads(metrics)
 
-            for feature, metrics in parsed.items():
-                r.update({feature: list(map(recognize_metric, metrics))})
+            res = ModelMetrics(
+                model_name=name,
+                model_version=version,
+                metrics_by_feature=MetricsByFeature(
+                    __root__={
+                        feature: parse_metric(metrics)
+                        for feature, metrics in parsed.items()
+                    }
+                ),
+            )
+            return res
 
-            return r
-
-    def save(self, model: Model, metrics: Dict[str, List[BaseMetric]]):
+    def save(self, model_metrics: ModelMetrics):
         with engine.connect() as conn:
             query = text(
                 "INSERT INTO metrics VALUES (:model_name, :model_version, :metrics)"
             ).bindparams(
-                model_name=model.name,
-                model_version=model.version,
-                metrics=json.dumps(metrics),
+                model_name=model_metrics.model_name,
+                model_version=model_metrics.model_version,
+                metrics=model_metrics.metrics_by_feature.json(),
             )
             conn.execute(query)
