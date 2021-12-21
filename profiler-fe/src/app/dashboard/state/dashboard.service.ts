@@ -10,6 +10,9 @@ export class DashboardService {
     this.http
       .get<Aggregation>(`aggregation/${modelName}/${modelVersion}`)
       .subscribe((aggregation) => {
+        console.log(aggregation);
+        if (aggregation == undefined) return;
+
         const sorted = aggregation.batches.sort(
           (a, b) => new Date(a.file_timestamp).getTime() - new Date(b.file_timestamp).getTime(),
         );
