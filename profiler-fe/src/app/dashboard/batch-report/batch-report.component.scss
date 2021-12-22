@@ -146,24 +146,30 @@ tr.example-element-row:not(.example-expanded-row):active {
 }
 
 .status {
-  @apply rounded-md border-gray-400 bg-gray-100 font-bold px-2 py-1 inline-block;
+  @apply font-bold;
 
   &--failed {
-    @apply text-red-500 border-red-500 bg-red-50;
+    @apply text-red-600;
   }
   &--susp {
-    @apply text-yellow-500 border-yellow-500 bg-yellow-50;
+    @apply text-yellow-600;
   }
   &--succeed {
-    @apply text-green-500 border-green-500 bg-green-50;
+    @apply text-green-600;
   }
 }
 
 .checks {
   width: 100%;
+  &__feature-name {
+    background-color: aquamarine;
+    width: 200px;
+    text-overflow: ellipsis;
+    margin-right: 12px;
+  }
   & td,
   & th {
-    @apply text-gray-600 text-xs text-left bg-gray-50;
+    @apply text-gray-800 text-xs text-left bg-gray-50;
   }
 
   & td:first-child,

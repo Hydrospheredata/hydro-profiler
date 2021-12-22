@@ -87,10 +87,10 @@
             <div>
               <table class="checks">
                 <colgroup>
-                  <col span="1" style="min-width: 160px" />
-                  <col span="1" style="min-width: 160px" />
-                  <col span="1" style="min-width: 160px" />
-                  <col span="1" style="width: 100%" />
+                  <col />
+                  <col />
+                  <col />
+                  <col class="w-full" />
                 </colgroup>
                 <thead>
                   <tr>
@@ -103,16 +103,24 @@
                 <tbody>
                   <ng-container *ngFor="let feature of row.features_checks | keyvalue">
                     <tr *ngFor="let check of feature.value">
-                      <td>{{ feature.key }}</td>
                       <td>
-                        <div class="status status--failed" *ngIf="check.status === 'failed'">
+                        <div class="w-64">
+                          {{ feature.key }}
+                        </div>
+                      </td>
+                      <td>
+                        <div class="status status--failed w-32" *ngIf="check.status === 'failed'">
                           failed
                         </div>
-                        <div class="status status--susp" *ngIf="check.status === 'suspicious'">
+                        <div class="status status--susp w-32" *ngIf="check.status === 'suspicious'">
                           suspicious
                         </div>
                       </td>
-                      <td>{{ check.metric_type }}</td>
+                      <td>
+                        <div class="w-32">
+                          {{ check.metric_type }}
+                        </div>
+                      </td>
                       <td>{{ check.description }}</td>
                     </tr>
                   </ng-container>
