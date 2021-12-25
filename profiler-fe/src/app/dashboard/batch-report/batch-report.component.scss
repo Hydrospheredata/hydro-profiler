@@ -139,7 +139,7 @@ tr.example-element-row:not(.example-expanded-row):active {
     border-bottom: 1px lightgrey solid;
     & div {
       max-height: 320px;
-      overflow: scroll;
+      overflow: auto;
       transition: max-height cubic-bezier(0.39, 0.575, 0.565, 1) 1s;
     }
   }
