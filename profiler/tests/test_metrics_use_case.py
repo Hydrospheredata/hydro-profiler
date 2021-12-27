@@ -18,7 +18,7 @@ from profiler.use_cases.metrics_use_case import MetricsUseCase
 from profiler.adapters.metrics_repository.local_metrics_repository import (
     LocalMetricsRepository,
 )
-from profiler.adapters.aggregations_repository.local_aggreagation_repository import (
+from profiler.adapters.aggregations_repository.local_aggregation_repository import (
     LocalAggregationsRepository,
 )
 
