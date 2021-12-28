@@ -43,7 +43,6 @@ export class BatchReportComponent implements OnInit {
   suspiciousCount = 0;
 
   ngOnInit(): void {
-    console.log(1);
     this.failedCount = this.report.report.filter(
       (x) => x.status == DataRowStatus.HAS_FAILED,
     ).length;

@@ -12,7 +12,6 @@ export class ProfilerHttpService {
   get<T>(url: string): Observable<T> {
     return this.routerQuery.selectData('shellBackendUrl').pipe(
       switchMap((shellUrlWithBaseHref: string) => {
-        console.log(shellUrlWithBaseHref);
         if (shellUrlWithBaseHref) {
           return this.http.get<T>(`${shellUrlWithBaseHref}plugin-proxy/profiler/${url}`);
         } else {
