@@ -6,9 +6,34 @@ tr.example-detail-row {
   height: 0;
 }
 
+tr.is_not_expandable {
+  pointer-events: none;
+}
+
 tr.example-element-row:not(.example-expanded-row):hover {
   background: whitesmoke;
+  pointer-events: all;
 }
+
+.mat-column-number {
+  width: 200px;
+}
+
+.expander {
+  @apply text-gray-700 w-4 h-4 opacity-40 absolute;
+  transform: rotate(0deg);
+  transition-duration: 0.3s;
+  transition-timing-function: cubic-bezier(0.39, 0.575, 0.565, 1);
+  left: -20px;
+  top: 16px;
+}
+
+tr.example-expanded-row .expander {
+  transform: rotate(180deg);
+  transition-duration: 0.5s;
+  transition-timing-function: cubic-bezier(0.39, 0.575, 0.565, 1);
+}
+
 
 tr.example-element-row:not(.example-expanded-row):active {
   background: #efefef;
@@ -16,6 +41,7 @@ tr.example-element-row:not(.example-expanded-row):active {
 
 .example-element-row td {
   border-bottom-width: 0;
+  position: relative;
 }
 
 .example-element-detail {
@@ -79,74 +105,8 @@ tr.example-element-row:not(.example-expanded-row):active {
   }
 }
 
-.br-table {
-  width: 100%;
-  background: white;
-  border-collapse: collapse;
-
-  & td,
-  & th {
-    @apply text-gray-600 text-xs text-left;
-  }
-
-  & > tbody > tr,
-  & > thead > tr {
-    height: 48px;
-    min-height: 48px;
-    border-bottom: 1px lightgray solid;
-  }
-
-  & td:first-child,
-  & th:first-child {
-    padding: 0px;
-    padding-left: 24px;
-  }
-
-  & > tbody > tr.expandable:hover {
-    @apply bg-blue-50 cursor-pointer;
-    & .expander {
-      opacity: 1;
-    }
-  }
-
-  & .expander {
-    @apply text-gray-700 w-4 h-4 opacity-40;
-    transform: rotate(0deg);
-    transition-duration: 0.3s;
-    transition-timing-function: cubic-bezier(0.39, 0.575, 0.565, 1);
-  }
-
-  & > tbody > tr:nth-child(even) {
-    height: 0px;
-    max-height: 0px;
-    border: none;
-    & > td {
-      padding-left: 0px;
-    }
-    & div {
-      max-height: 0px;
-      overflow: hidden;
-    }
-  }
-
-  & > tbody > tr:nth-child(odd).expanded .expander {
-    transform: rotate(180deg);
-    transition-duration: 0.5s;
-    transition-timing-function: cubic-bezier(0.39, 0.575, 0.565, 1);
-  }
-
-  & > tbody > tr:nth-child(odd).expanded + tr {
-    border-bottom: 1px lightgrey solid;
-    & div {
-      max-height: 320px;
-      overflow: auto;
-      transition: max-height cubic-bezier(0.39, 0.575, 0.565, 1) 1s;
-    }
-  }
-}
-
 .status {
-  @apply font-bold;
+  @apply font-bold text-xs;
 
   &--failed {
     @apply text-red-600;
@@ -161,6 +121,8 @@ tr.example-element-row:not(.example-expanded-row):active {
 
 .checks {
   width: 100%;
+  border: 1px lightgray solid;
+  margin-bottom: 24px;
   &__feature-name {
     background-color: aquamarine;
     width: 200px;
@@ -169,12 +131,12 @@ tr.example-element-row:not(.example-expanded-row):active {
   }
   & td,
   & th {
-    @apply text-gray-800 text-xs text-left bg-gray-50;
+    @apply bg-gray-50 text-xs text-left;
   }
 
   & td:first-child,
   & th:first-child {
-    @apply pl-7;
+    @apply pl-4
   }
 
   & tr {

@@ -63,7 +63,7 @@ metrics_use_case = metrics_use_case.MetricsUseCase(
 )
 report_use_case = report_use_case.ReportUseCase(
     models_repo=models_repo,
-    metrics_repo=metrics_repo,
+    metrics_use_case=metrics_use_case,
     reports_repo=reports_repo,
     agg_use_case=aggregation_use_case,
 )

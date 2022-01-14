@@ -10,7 +10,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-
+import {ScrollingModule} from '@angular/cdk/scrolling';
+import {MatPaginatorModule} from '@angular/material/paginator';
 const modules = [
   MatTableModule,
   MatListModule,
@@ -23,6 +24,8 @@ const modules = [
   MatCommonModule,
   MatTooltipModule,
   MatIconModule,
+  ScrollingModule,
+  MatPaginatorModule
 ];
 
 @NgModule({

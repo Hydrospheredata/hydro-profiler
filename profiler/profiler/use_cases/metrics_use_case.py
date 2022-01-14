@@ -1,10 +1,12 @@
+from typing import Dict
 from pandas import DataFrame
 import traceback
-from profiler.domain.feature_metric import (
-    CategoryMetrics,
-    NumericalMetrics,
+from profiler.domain.metric_config import (
+    CategoricalMetricConfig,
+    MetricConfig,
+    NumericalMetricConfig,
 )
-from profiler.domain.model_metrcis import MetricsByFeature, ModelMetrics
+from profiler.domain.model_metrics import ModelMetrics
 from profiler.domain.model_signature import DataProfileType
 from profiler.ports.metrics_repository import MetricsRepository
 from profiler.domain.model import Model
@@ -22,7 +24,7 @@ class MetricsUseCase:
     def generate_metrics(self, model: Model, t_df: DataFrame):
         print("generate metrics")
         try:
-            metrics: MetricsByFeature = {}
+            metrics: Dict[str, MetricConfig] = {}
             for field in model.contract.merged_features():
                 feature = field.name
                 if field.profile == DataProfileType.NUMERICAL:
@@ -36,7 +38,7 @@ class MetricsUseCase:
 
                     metrics.update(
                         {
-                            feature: NumericalMetrics(
+                            feature: NumericalMetricConfig(
                                 min=min,
                                 max=max,
                                 perc_01=perc_01,
@@ -48,12 +50,13 @@ class MetricsUseCase:
                     )
                 elif field.profile == DataProfileType.CATEGORICAL:
                     categories = t_df[feature].unique().tolist()
-                    metrics.update({feature: CategoryMetrics(categories)})
-
+                    metrics.update({feature: CategoricalMetricConfig(categories)})
+                else:
+                    print(f"Unsupported profile type {field.profile}")
             model_metrics = ModelMetrics(
-                model_name=model.name,
-                model_version=model.version,
-                metrics_by_feature=MetricsByFeature(__root__=metrics),
+                model.name,
+                model.version,
+                metrics,
             )
 
             self._metrics_repo.save(model_metrics)

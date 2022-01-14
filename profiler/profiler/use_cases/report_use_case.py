@@ -1,40 +1,36 @@
 from datetime import datetime
-from typing import List
 
 from pandas.core.frame import DataFrame
-from profiler.domain.feature_metric import CheckType
-from profiler.domain.model import Model
-from profiler.domain.model_report import (
-    DataRowReport,
-    DataRowStatus,
-    FeatureUnsucceedCalculator,
-    FeaturesOverall,
-    ModelReport,
-    Report,
+from profiler.domain.batch_report import BatchReport
+from profiler.domain.column_processor import (
+    process_categorical_column,
+    process_numerical_column,
 )
+from profiler.domain.model import Model
+
 from profiler.domain.model_signature import DataProfileType
-from profiler.ports.metrics_repository import MetricsRepository
 from profiler.ports.models_repository import ModelsRepository
 from profiler.ports.reports_repository import ReportsRepository
 
 from profiler.use_cases.aggregation_use_case import AggregationUseCase
+from profiler.use_cases.metrics_use_case import MetricsUseCase
 
 
 class ReportUseCase:
     _models_repo: ModelsRepository
-    _metrics_repo: MetricsRepository
     _reports_repo: ReportsRepository
+    _metrics_use_case: MetricsUseCase
     _aggregation_use_case: AggregationUseCase
 
     def __init__(
         self,
         models_repo: ModelsRepository,
-        metrics_repo: MetricsRepository,
         reports_repo: ReportsRepository,
+        metrics_use_case: MetricsUseCase,
         agg_use_case: AggregationUseCase,
     ) -> None:
         self._models_repo = models_repo
-        self._metrics_repo = metrics_repo
+        self._metrics_use_case = metrics_use_case
         self._reports_repo = reports_repo
         self._aggregation_use_case = agg_use_case
 
@@ -43,89 +39,43 @@ class ReportUseCase:
             model_name=model_name, model_version=model_version, batch_name=batch_name
         )
 
-    def save_report(self, model_report: ModelReport):
-        self._reports_repo.save(model_report)
-        self._aggregation_use_case.generate_aggregation(model_report)
+    def save_report(self, report: BatchReport):
+        self._reports_repo.save(report)
+        self._aggregation_use_case.generate_aggregation(report)
 
     def generate_report(
         self, model: Model, batch_name: str, file_timestamp: datetime, df: DataFrame
-    ) -> ModelReport:
-        print(f"Generate report for {model.name}:{model.version}")
-        metrics = self._metrics_repo.by_name(name=model.name, version=model.version)
-        print("metrics")
+    ) -> BatchReport:
+        metrics_by_feature = self._metrics_use_case.get_by_model(
+            model
+        ).metrics_by_feature
+        model_fields = model.contract.merged_features()
 
-        metrics_by_feature = metrics.metrics_by_feature.__root__
-        reports: List[DataRowReport] = []
-
-        features = []
-        for feature, metrics in metrics_by_feature.items():
-            features.append(feature)
-        print(features)
-        features_unsucceed_calculator = FeatureUnsucceedCalculator(features)
-
-        for index, row in df.iterrows():
-            status = DataRowStatus.HEALTHY
-            features_checks_results = {}
-
-            for feature, metrics in metrics_by_feature.items():
-                check_results = metrics.check(row[feature])
-                features_checks_results[feature] = check_results
-
-                some_failed = [x for x in check_results if x.status == CheckType.FAILED]
-
-                some_susp = [
-                    x for x in check_results if x.status == CheckType.SUSPICIOUS
-                ]
-
-                if some_failed:
-                    features_unsucceed_calculator.add_failed(feature)
-                    status = DataRowStatus.HAS_FAILED
-
-                if some_susp and not some_failed:
-                    features_unsucceed_calculator.add_suspicious(feature)
-
-                if some_susp and status == DataRowStatus.HEALTHY:
-                    status = DataRowStatus.HAS_SUSPICIOUS
-
-            reports.append(
-                DataRowReport(
-                    id=index, features_checks=features_checks_results, status=status
-                )
-            )
-
-        print("report generated")
-
-        return ModelReport(
-            model_name=model.name,
-            model_version=model.version,
-            batch_name=batch_name,
-            file_timestamp=file_timestamp,
-            report=Report(__root__=reports),
-            features_overall=FeaturesOverall(
-                __root__=features_unsucceed_calculator.get_result()
-            ),
+        batch_report = BatchReport(
+            model.name, model.version, batch_name, file_timestamp, df.shape[0]
         )
 
+        for model_field in model_fields:
+            feature_name = model_field.name
 
-def calculate_suspicious_percent(report: ModelReport):
-    rows = report.report.__root__
-    rows_count = len(rows)
-    suspicious_rows = [x for x in rows if x.status == DataRowStatus.HAS_SUSPICIOUS]
-    suspicious_count = len(suspicious_rows)
+            if feature_name not in df.columns:
+                print(f"Could not find feature {feature_name} in batch")
+                continue
 
-    if rows_count == 0 or suspicious_count == 0:
-        return 0
+            if model_field.profile == DataProfileType.NUMERICAL:
+                metric_config = metrics_by_feature[feature_name]
+                result = process_numerical_column(
+                    feature_name, df[feature_name], metric_config
+                )
+                batch_report.process_column_report(result)
 
-    return (suspicious_count / rows_count) * 100
+            elif model_field.profile == DataProfileType.CATEGORICAL:
+                metric_config = metrics_by_feature[feature_name]
+                result = process_categorical_column(
+                    feature_name, df[feature_name], metric_config
+                )
+                batch_report.process_column_report(result)
+            else:
+                pass
 
-
-def calculate_failed_ratio(report):
-    rows = report.report.__root__
-    rows_count = len(rows)
-    failed_rows = [x for x in rows if x.status == DataRowStatus.HAS_FAILED]
-    failed_count = len(failed_rows)
-
-    if rows_count == 0 or failed_count == 0:
-        return 0
-
-    return failed_count / rows_count
+        return batch_report

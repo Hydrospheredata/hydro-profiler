@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Aggregation, DashboardStore } from './dashboard.store';
 import { ProfilerHttpService } from '../profiler-http.service';
+import {create_model_report} from "../../domain/report";
 
 @Injectable({ providedIn: 'root' })
 export class DashboardService {
@@ -27,6 +28,6 @@ export class DashboardService {
   getBatch(modelName: string, modelVersion: number, batchName: string) {
     this.http
       .get(`report/${modelName}/${modelVersion}/${batchName}`)
-      .subscribe((res: any) => this.store.update({ batchReport: res }));
+      .subscribe((res: any) => this.store.update({ batchReport: create_model_report(res) }));
   }
 }

@@ -1,8 +1,9 @@
+import json
 from sqlalchemy import text
 from profiler.domain.aggregation import Aggregation, AggregationBatch
-from profiler.domain.model_report import FeaturesOverall
 from profiler.ports.aggregations_repository import AggregationsRepository
 from profiler.db.pg_engine import engine
+from profiler.utils.json_dumper import dumper
 
 
 class PgAggregationsRepository(AggregationsRepository):
@@ -10,7 +11,7 @@ class PgAggregationsRepository(AggregationsRepository):
         with engine.connect() as conn:
             print("get aggregation")
             query = text(
-                """SELECT model_name, batch_name, file_timestamp, aggregation, batch_rows_count 
+                """SELECT model_name, batch_name, file_timestamp, aggregation
                    FROM aggregations
                    WHERE model_name=:model_name AND model_version=:model_version"""
             ).bindparams(model_name=model_name, model_version=model_version)
@@ -32,16 +33,14 @@ class PgAggregationsRepository(AggregationsRepository):
                     batch_name,
                     file_timestamp,
                     raw_aggregation,
-                    batch_rows_count,
                 ) = row
 
                 batch = AggregationBatch(
                     model_name=model_name,
                     model_version=model_version,
-                    rows_count=batch_rows_count,
                     batch_name=batch_name,
                     file_timestamp=file_timestamp,
-                    feature_overall=FeaturesOverall.parse_raw(raw_aggregation),
+                    feature_statistics=json.loads(raw_aggregation),
                 )
 
                 batches.append(batch)
@@ -55,7 +54,7 @@ class PgAggregationsRepository(AggregationsRepository):
 
     def save(
         self,
-        aggregation_batch: AggregationBatch,
+        batch: AggregationBatch,
     ):
         with engine.connect() as conn:
             try:
@@ -63,12 +62,12 @@ class PgAggregationsRepository(AggregationsRepository):
                     text(
                         "INSERT INTO aggregations VALUES (:model_name, :model_version, :batch_name, :file_timestamp, :data, :batch_rows_count)"
                     ).bindparams(
-                        model_name=aggregation_batch.model_name,
-                        model_version=aggregation_batch.model_version,
-                        batch_name=aggregation_batch.batch_name,
-                        file_timestamp=aggregation_batch.file_timestamp,
-                        data=aggregation_batch.feature_overall.json(),
-                        batch_rows_count=aggregation_batch.rows_count,
+                        model_name=batch.model_name,
+                        model_version=batch.model_version,
+                        batch_name=batch.batch_name,
+                        file_timestamp=batch.file_timestamp,
+                        data=json.dumps(batch.feature_statistics, default=dumper),
+                        batch_rows_count=0,
                     ),
                 )
             except Exception as e:

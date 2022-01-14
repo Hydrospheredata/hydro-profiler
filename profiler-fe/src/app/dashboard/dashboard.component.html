@@ -1,8 +1,4 @@
-<div class="overflow-scroll p-10">
+<div class="overflow-scroll">
   <profiler-aggregation [aggregation]="aggregation$ | async"></profiler-aggregation>
   <router-outlet></router-outlet>
 </div>
-
-<!-- <ng-container *ngIf="batch$ | async as batch">
-    <app-batch-report [report]="batch"></app-batch-report>
-</ng-container> -->

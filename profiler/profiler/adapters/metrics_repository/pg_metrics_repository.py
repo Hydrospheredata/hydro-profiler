@@ -1,15 +1,16 @@
 from typing import Dict, List
-from profiler.domain.model_metrcis import MetricsByFeature, ModelMetrics
-
-from profiler.domain.feature_metric import BaseMetric, parse_metric
-from profiler.ports.metrics_repository import MetricsRepository
-from profiler.db.pg_engine import engine
 from sqlalchemy import text
 import json
 
+from profiler.domain.metric_config import MetricConfig, parse_config
+from profiler.domain.model_metrics import ModelMetrics
+from profiler.ports.metrics_repository import MetricsRepository
+from profiler.db.pg_engine import engine
+from profiler.utils.json_dumper import dumper
+
 
 class PgMetricsRepository(MetricsRepository):
-    def all(self) -> Dict[str, Dict[str, List[BaseMetric]]]:
+    def all(self) -> Dict[str, Dict[str, List[MetricConfig]]]:
         with engine.connect() as conn:
             result = conn.execute(text("SELECT * FROM metrics"))
             return result.all()
@@ -28,12 +29,10 @@ class PgMetricsRepository(MetricsRepository):
             res = ModelMetrics(
                 model_name=name,
                 model_version=version,
-                metrics_by_feature=MetricsByFeature(
-                    __root__={
-                        feature: parse_metric(metrics)
-                        for feature, metrics in parsed.items()
-                    }
-                ),
+                metric_by_feature={
+                    feature: parse_config(metrics)
+                    for feature, metrics in parsed.items()
+                },
             )
             return res
 
@@ -44,6 +43,6 @@ class PgMetricsRepository(MetricsRepository):
             ).bindparams(
                 model_name=model_metrics.model_name,
                 model_version=model_metrics.model_version,
-                metrics=model_metrics.metrics_by_feature.json(),
+                metrics=json.dumps(model_metrics.metrics_by_feature, default=dumper),
             )
             conn.execute(query)

@@ -4,7 +4,7 @@ from profiler.ports.reports_repository import ReportsRepository
 
 
 class LocalReportsRepository(ReportsRepository):
-    reports: List[ModelReport]
+    reports: List[ModelReport] = []
 
     def get_report(self, model_name: str, model_version: int, batch_name: str):
         return [
