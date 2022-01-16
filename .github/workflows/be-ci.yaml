@@ -5,26 +5,42 @@ on:
     paths:
       - "profiler/**"
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   Test:
     runs-on: ubuntu-20.04
     name: "Setup Python & Run Tests"
     steps:
-      - name: Checkout Repo
+      - name: Checkout the repository
         uses: actions/checkout@v2
 
       - name: Setup Python
-        uses: actions/setup-python@v2.2.2
+        uses: actions/setup-python@v2.3.1
         with:
           python-version: 3.8
 
-      - name: Setup poetry
-        uses: abatilo/actions-poetry@v2.1.0
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+          installer-parallel: true
+
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v2
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
         
       - name: Install dependencies
-        shell: bash
-        run: "cd profiler && poetry install"
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        run: cd profiler && poetry install
 
-      - name: Test code
-        shell: bash
-        run: "cd profiler && poetry run pytest tests"
+      - name: Run tests
+        run: |
+          source .venv/bin/activate
+          cd profiler && pytest tests
