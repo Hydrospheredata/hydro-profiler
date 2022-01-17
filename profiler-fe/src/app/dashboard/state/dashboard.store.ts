@@ -9,20 +9,20 @@ export interface Column {
   batch_rows_count: number;
 }
 
-export interface FeatureUnsucceedCount {
+export interface FeatureStatistic {
+  count: number;
   failed: number;
   suspicious: number;
 }
 
-export type FeaturesOverall = { [featureName: string]: FeatureUnsucceedCount };
+export type FeaturesOverall = { [featureName: string]: FeatureStatistic };
 
 export interface AggregationBatch {
   model_name: string;
   model_version: number;
-  rows_count: number;
   batch_name: string;
   file_timestamp: string;
-  feature_overall: FeaturesOverall;
+  feature_statistics: FeaturesOverall;
 }
 
 export interface Aggregation {

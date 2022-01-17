@@ -1,7 +1,7 @@
 <div *ngIf="report">
   <div class="summary w-full flex justify-between mb-6">
     <div class="summary__cell bg-blue-100">
-      <div class="summary__count text-blue-900 bg-opacity-40">{{ report.report.length }}</div>
+      <div class="summary__count text-blue-900 bg-opacity-40">{{ report.rows_count }}</div>
       <div class="summary__title">rows</div>
     </div>
     <div class="summary__cell bg-green-100" (click)="toggleFilter('succeed')">
@@ -14,7 +14,7 @@
         <ng-container *ngTemplateOutlet="filter"></ng-container>
       </div>
       <div class="summary__count text-green-600">
-        {{ report.report.length - suspiciousCount - failedCount }}
+        {{ report.rows_count - report.suspicious_count - report.failed_count }}
       </div>
       <div class="summary__title">succeed</div>
     </div>
@@ -27,7 +27,7 @@
       >
         <ng-container *ngTemplateOutlet="filter"></ng-container>
       </div>
-      <div class="summary__count text-red-600">{{ failedCount }}</div>
+      <div class="summary__count text-red-600">{{ report.failed_count }}</div>
       <div class="summary__title">failed</div>
     </div>
     <div class="summary__cell bg-yellow-100" (click)="toggleFilter('suspicious')">
@@ -39,99 +39,110 @@
       >
         <ng-container *ngTemplateOutlet="filter"></ng-container>
       </div>
-      <div class="summary__count text-yellow-600">{{ suspiciousCount }}</div>
+      <div class="summary__count text-yellow-600">{{ report.suspicious_count }}</div>
       <div class="summary__title">suspicious</div>
     </div>
   </div>
 
-  <table class="br-table">
-    <colgroup>
-      <col span="1" style="min-width: 320px" />
-      <col span="1" style="min-width: 24px" />
-      <col span="1" style="width: 100%" />
-    </colgroup>
-    <thead>
-      <tr>
-        <th>row id</th>
-        <th></th>
-        <th>status</th>
-      </tr>
-    </thead>
-    <tbody>
-      <ng-container *ngFor="let row of data$ | async">
-        <tr
-          (click)="onClickRow($event, row)"
-          [ngClass]="{
-            expandable: !isHealty(row.status)
-          }"
-        >
-          <td>{{ row.id }}</td>
-          <td>
-            <ng-container
-              *ngIf="!isHealty(row.status)"
-              [ngTemplateOutlet]="expander"
-            ></ng-container>
-          </td>
-          <td>
-            <div *ngIf="isFailed(row.status)">
-              <div class="status status--failed">Has failed features</div>
-            </div>
-            <div *ngIf="isSuspicious(row.status)">
-              <div class="status status--susp">Has suspicious features</div>
-            </div>
-            <div class="status status--succeed" *ngIf="isHealty(row.status)">Healthy</div>
-          </td>
-        </tr>
-        <tr>
-          <td colspan="3">
-            <div>
-              <table class="checks">
-                <colgroup>
-                  <col />
-                  <col />
-                  <col />
-                  <col class="w-full" />
-                </colgroup>
-                <thead>
-                  <tr>
-                    <th>feature</th>
-                    <th>status</th>
-                    <th>metric</th>
-                    <th>description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <ng-container *ngFor="let feature of row.features_checks | keyvalue">
-                    <tr *ngFor="let check of feature.value">
-                      <td>
-                        <div class="w-64">
-                          {{ feature.key }}
-                        </div>
-                      </td>
-                      <td>
-                        <div class="status status--failed w-32" *ngIf="check.status === 'failed'">
-                          failed
-                        </div>
-                        <div class="status status--susp w-32" *ngIf="check.status === 'suspicious'">
-                          suspicious
-                        </div>
-                      </td>
-                      <td>
-                        <div class="w-32">
-                          {{ check.metric_type }}
-                        </div>
-                      </td>
-                      <td>{{ check.description }}</td>
-                    </tr>
-                  </ng-container>
-                </tbody>
-              </table>
-            </div>
-          </td>
-        </tr>
+  <div>
+    <table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8">
+      <ng-container matColumnDef="number">
+        <th mat-header-cell *matHeaderCellDef> No. </th>
+        <td mat-cell *matCellDef="let element"> {{element.id }} </td>
       </ng-container>
-    </tbody>
-  </table>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef> Status </th>
+        <td mat-cell *matCellDef="let element">
+          <ng-container
+            *ngIf="!isHealthy(element.status)"
+            [ngTemplateOutlet]="expander"
+          ></ng-container>
+          <div *ngIf="isFailed(element.status)">
+            <div class="status status--failed">Has failed features</div>
+          </div>
+          <div *ngIf="isSuspicious(element.status)">
+            <div class="status status--susp">Has suspicious features</div>
+          </div>
+          <div class="status status--succeed" *ngIf="isHealthy(element.status)">Healthy</div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="expandedDetail">
+        <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
+          <div class="example-element-detail"
+               [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+            <table class="checks">
+              <colgroup>
+                <col />
+                <col />
+                <col />
+                <col class="w-full" />
+              </colgroup>
+              <thead>
+              <tr>
+                <th>feature</th>
+                <th>status</th>
+                <th>metric</th>
+                <th>description</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let checkDescription of element.failed_checks">
+                <td>
+                  <div class="w-64">
+                    {{ checkDescription.feature }}
+                  </div>
+                </td>
+                <td>
+                  <div class="status status--failed w-32">
+                    failed
+                  </div>
+                </td>
+                <td>
+                  <div class="w-32">
+                    {{ checkDescription.metric }}
+                  </div>
+                </td>
+                <td>{{ checkDescription.desc }}</td>
+              </tr>
+              <tr *ngFor="let checkDescription of element.suspicious_checks">
+                <td>
+                  <div class="w-64">
+                    {{ checkDescription.feature }}
+                  </div>
+                </td>
+                <td>
+                  <div class="status status--susp w-32">
+                    suspicious
+                  </div>
+                </td>
+                <td>
+                  <div class="w-32">
+                    {{ checkDescription.metric }}
+                  </div>
+                </td>
+                <td>{{ checkDescription.desc }}</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+          class="example-element-row"
+          [class.is_not_expandable]="isHealthy(row.status)"
+          [class.example-expanded-row]="expandedElement === row"
+          (click)="expandedElement = expandedElement === row ? null : row"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="[10, 20, 100]"
+                   showFirstLastButtons
+                   aria-label="Select page of periodic elements">
+    </mat-paginator>
+  </div>
 
   <ng-template #filter>
     <svg
@@ -154,11 +165,10 @@
 <ng-template #expander>
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    class="h-6 w-6"
+    class="h-6 w-6 expander"
     fill="none"
     viewBox="0 0 24 24"
     stroke="currentColor"
-    class="expander"
   >
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
   </svg>

@@ -4,7 +4,6 @@ from profiler.adapters.overall_reports_repo.local_overall_reports_repository imp
 )
 from profiler.domain.model_signature import ModelSignature
 from profiler.domain.model import Model
-from abc import ABC
 from profiler.adapters.models_repository.local_model_reporsitory import (
     LocalModelsRepository,
 )
@@ -42,7 +41,7 @@ class TestMetricsUseCase:
         agg_uc: AggregationUseCase = AggregationUseCase(agg_repo, models_repo)
         metrics_uc: MetricsUseCase = MetricsUseCase(metric_repo)
         reports_uc: ReportUseCase = ReportUseCase(
-            models_repo, metric_repo, reports_repo, agg_repo
+            models_repo, reports_repo, metrics_uc, agg_uc
         )
 
         overall_uc: OverallReportsUseCase = OverallReportsUseCase(overall_reports_repo)
@@ -53,18 +52,32 @@ class TestMetricsUseCase:
         model = Model(name="adult", version=1, contract=contract)
         models_repo.save(model)
         train_file = pd.read_csv(os.path.join(adult_folder, "train.csv"))
-        batch_file = pd.read_csv(os.path.join(adult_folder, "batch_1.csv"))
+        batch_file = pd.read_csv(os.path.join(adult_folder, "batch_3.csv"))
 
         metrics_uc.generate_metrics(model, train_file)
         metrics = metrics_uc.get_by_model(model)
 
-        report = reports_uc.generate_report(model, "", datetime.now(), batch_file)
+        training_report = reports_uc.generate_report(
+            model, "training", datetime.now(), train_file
+        )
+        reports_uc.save_report(training_report)
+
+        report = reports_uc.generate_report(
+            model, "batch_2", datetime.now(), batch_file
+        )
+        reports_uc.save_report(report)
+
         agg_uc.generate_aggregation(report)
         agg = agg_uc.get(model.name, model.version)
 
+        overall_uc.generate_overall_report(training_report)
         overall_uc.generate_overall_report(report)
-        overall_report = overall_uc.get_report(model.name, model.version, "")
+        overall_report = overall_uc.get_report(model.name, model.version, "batch_2")
 
+        stat = overall_uc.calculate_batch_stats(model.name, model.version, "batch_2")
+
+        assert overall_report
         assert metrics
         assert report
         assert agg
+        assert stat

@@ -1,7 +1,7 @@
 from typing import List
 from abc import ABC, abstractmethod
 
-from profiler.domain.model_metrcis import ModelMetrics
+from profiler.domain.model_metrics import ModelMetrics
 
 
 class MetricsRepository(ABC):

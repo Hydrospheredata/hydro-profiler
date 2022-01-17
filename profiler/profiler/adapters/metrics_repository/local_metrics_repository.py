@@ -1,5 +1,5 @@
 from typing import List
-from profiler.domain.model_metrcis import ModelMetrics
+from profiler.domain.model_metrics import ModelMetrics
 from profiler.ports.metrics_repository import MetricsRepository
 
 
