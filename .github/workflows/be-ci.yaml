@@ -2,8 +2,8 @@ name: Backend CI
 
 on:
   pull_request:
-    # paths:
-    #   - "profiler/**"
+    paths:
+      - "profiler/**"
 
 defaults:
   run:
