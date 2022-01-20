@@ -66,13 +66,13 @@ class MonitoringDataSubscriber:
 
         def qgetter():
             item = ack_queue.get()
-            print("Sending message to the manager")
+            logging.info("Sending message to the manager")
             return item
 
         reqs = iter(qgetter, None)
         for response in self.data_stub.GetInferenceDataUpdates(reqs):
             try:
-                print("Got inference data")
+                logging.info("Got inference data")
                 model = self.model_from_proto(response)
 
                 if self.training_overall_report_exists(model):
@@ -101,35 +101,39 @@ class MonitoringDataSubscriber:
 
                         ack_queue.put(resp)
                 else:
-                    print("Could not find overall report for training data")
-                    print("Waiting for the next message...")
-            except Exception:
-                logging.exception("Error while handling inference data event")
+                    logging.warning("Could not find overall report for training data")
+                    logging.warning("Waiting for the next message...")
+            except Exception as e:
+                logging.exception("Error while handling inference data event", e)
 
     def watch_models(self):
         req = GetModelUpdatesRequest(plugin_id="profiler_plugin")
         for response in self.model_stub.GetModelUpdates(req):
-            print("Got model request")
+            try:
+                logging.info("Got model request")
 
-            model = self.model_from_proto(response)
-            self._model_repo.save(model)
+                model = self.model_from_proto(response)
+                self._model_repo.save(model)
 
-            batch_name = "training"
-            data_obj = response.training_data_objs[0]
+                batch_name = "training"
+                data_obj = response.training_data_objs[0]
 
-            file_url = data_obj.key
-            file_timestamp = data_obj.lastModifiedAt.ToDatetime()
-            data_frame = self.fetch_data_frame(file_url)
+                file_url = data_obj.key
+                file_timestamp = data_obj.lastModifiedAt.ToDatetime()
+                data_frame = self.fetch_data_frame(file_url)
 
-            self.process_training_data_frame(
-                batch_name=batch_name,
-                file_timestamp=file_timestamp,
-                data_frame=data_frame,
-                model=model,
-            )
+                self.process_training_data_frame(
+                    batch_name=batch_name,
+                    file_timestamp=file_timestamp,
+                    data_frame=data_frame,
+                    model=model,
+                )
+
+            except Exception:
+                logging.exception("Couldn't process model")
 
     def start_watching(self):
-        print("Start watching...")
+        logging.info("Start watching...")
 
         inference_data_thread = threading.Thread(target=self.watch_inference_data)
         inference_data_thread.daemon = True

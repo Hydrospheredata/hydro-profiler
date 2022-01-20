@@ -9,8 +9,6 @@ class SqliteOverallReportsRepository(OverallReportsRepository):
         self, model_name: str, model_version: int, batch_name: str
     ) -> OverallReport:
         with SqliteContextManager() as cur:
-            print(f"Take overall report for {model_name}:{model_version}/{batch_name}")
-
             cur.execute(
                 "SELECT * FROM overall_reports WHERE model_name=? AND model_version=? AND batch_name=?",
                 (
@@ -23,7 +21,6 @@ class SqliteOverallReportsRepository(OverallReportsRepository):
             result = cur.fetchone()
 
             if result:
-                print("Found overall report")
                 (
                     model_name,
                     model_version,
@@ -51,8 +48,6 @@ class SqliteOverallReportsRepository(OverallReportsRepository):
         failed_ratio: float,
     ) -> None:
         with SqliteContextManager() as cur:
-            print(f"Save overall report for {model_name}:{model_version}/{batch_name}")
-
             cur.execute(
                 "INSERT INTO overall_reports VALUES (?, ?, ?, ?, ?)",
                 (
