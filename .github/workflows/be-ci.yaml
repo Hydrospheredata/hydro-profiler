@@ -9,10 +9,6 @@ defaults:
   run:
     shell: bash
 
-defaults:
-  run:
-    shell: bash
-
 jobs:
   Test:
     runs-on: ubuntu-20.04
