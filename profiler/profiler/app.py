@@ -1,6 +1,8 @@
 from datetime import datetime
+import logging
 import grpc
 import pandas
+
 from profiler.adapters.aggregations_repository.pg_aggregations_repository import (
     PgAggregationsRepository,
 )
@@ -39,7 +41,6 @@ from fastapi.staticfiles import StaticFiles
 
 from profiler.utils.decode_url import decode_url
 
-
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -48,6 +49,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+logging.basicConfig(level=logging.INFO)
 
 metrics_repo = PgMetricsRepository()
 models_repo = PgModelsRepository()
@@ -120,7 +123,6 @@ async def process_batch(
         df = pandas.read_csv(batch.file)
         model = models_repo.get_by_name(model_name, model_version)
         report = report_use_case.generate_report(model, batch_name, datetime.now(), df)
-        print("report generated")
         report_use_case.save_report(report)
         return f"Report for batch {batch_name} was generated "
     except Exception as e:
@@ -157,7 +159,7 @@ async def get_overall_report(
 #  TODO (Pasha): add exceptions
 if __name__ == "__main__":
     try:
-        print(f"Independent mode: {config.profiler_independent_mode}")
+        logging.info(f"Independent mode: {config.profiler_independent_mode}")
 
         db_user = config.postgres_user
         db_password = config.postgres_password
@@ -182,20 +184,22 @@ if __name__ == "__main__":
                 exposedModule="./Module",
                 addr=f"http://{config.http_host}:{config.http_port}",
             )
-            print("Registering plugin...")
+
+            logging.info("Registering plugin...")
+
             registering = True
             while registering:
                 try:
                     plugin_manager.RegisterPlugin(registration_request)
                     registering = False
-                    print("Success")
+                    logging.info("Success")
                 except Exception:
+                    logging.exception("Registration failed...")
                     pass
 
             monitoring_data_grpc.start_watching()
 
-        print("Start server...")
+        logging.info("Start server...")
         uvicorn.run(app, host="0.0.0.0", port=config.http_port, log_level="info")
-    except Exception as e:
-        print("Could not start application")
-        print(e)
+    except Exception:
+        logging.exception("Could not start application")

@@ -6,7 +6,6 @@ def is_numpy(value):
 
 
 def dumper(obj):
-    print(obj)
     try:
         if is_numpy(obj):
             return obj.item()

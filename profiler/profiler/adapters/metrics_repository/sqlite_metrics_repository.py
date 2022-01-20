@@ -23,7 +23,6 @@ class SqliteMetricsRepository(MetricsRepository):
                     version,
                 ),
             )
-            print(f"Try to take metrics from {name}:{version}")
             res = cur.fetchone()[0]
             parsed = json.loads(res)
 

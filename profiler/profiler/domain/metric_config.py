@@ -1,5 +1,7 @@
 from abc import ABC
 
+from profiler.domain.errors import ParseMetricConfigError
+
 
 class MetricConfig(ABC):
     pass
@@ -31,15 +33,18 @@ class CategoricalMetricConfig(MetricConfig):
 
 
 def parse_config(config):
-    if config["config_type"] == "numerical":
-        min = config["min"]
-        max = config["max"]
-        perc_01 = config["perc_01"]
-        perc_99 = config["perc_99"]
-        perc_25 = config["perc_25"]
-        perc_75 = config["perc_75"]
+    try:
+        if config["config_type"] == "numerical":
+            min = config["min"]
+            max = config["max"]
+            perc_01 = config["perc_01"]
+            perc_99 = config["perc_99"]
+            perc_25 = config["perc_25"]
+            perc_75 = config["perc_75"]
 
-        return NumericalMetricConfig(min, max, perc_01, perc_25, perc_75, perc_99)
-    elif config["config_type"] == "categorical":
-        return CategoricalMetricConfig(config["categories"])
-    return None
+            return NumericalMetricConfig(min, max, perc_01, perc_25, perc_75, perc_99)
+        elif config["config_type"] == "categorical":
+            return CategoricalMetricConfig(config["categories"])
+        return None
+    except Exception as e:
+        raise ParseMetricConfigError("Couldn't parse metrics", e)

@@ -33,7 +33,7 @@ jobs:
         id: cached-poetry-dependencies
         uses: actions/cache@v2
         with:
-          path: .venv
+          path: profiler/.venv
           key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
         
       - name: Install dependencies
@@ -42,5 +42,5 @@ jobs:
 
       - name: Run tests
         run: |
-          source .venv/bin/activate
+          source profiler/.venv/bin/activate
           cd profiler && pytest tests

@@ -1,4 +1,5 @@
 from datetime import datetime
+import logging
 
 from pandas.core.frame import DataFrame
 from profiler.domain.batch_report import BatchReport
@@ -6,6 +7,7 @@ from profiler.domain.column_processor import (
     process_categorical_column,
     process_numerical_column,
 )
+from profiler.domain.errors import GenerateReportError
 from profiler.domain.model import Model
 
 from profiler.domain.model_signature import DataProfileType
@@ -35,9 +37,7 @@ class ReportUseCase:
         self._aggregation_use_case = agg_use_case
 
     def get_report(self, model_name: str, model_version: int, batch_name: str):
-        return self._reports_repo.get_report(
-            model_name=model_name, model_version=model_version, batch_name=batch_name
-        )
+        return self._reports_repo.get_report(model_name, model_version, batch_name)
 
     def save_report(self, report: BatchReport):
         self._reports_repo.save(report)
@@ -46,36 +46,53 @@ class ReportUseCase:
     def generate_report(
         self, model: Model, batch_name: str, file_timestamp: datetime, df: DataFrame
     ) -> BatchReport:
-        metrics_by_feature = self._metrics_use_case.get_by_model(
-            model
-        ).metrics_by_feature
-        model_fields = model.contract.merged_features()
+        try:
+            metrics_by_feature = self._metrics_use_case.get_by_model(
+                model
+            ).metrics_by_feature
+            model_fields = model.contract.merged_features()
 
-        batch_report = BatchReport(
-            model.name, model.version, batch_name, file_timestamp, df.shape[0]
-        )
+            batch_report = BatchReport(
+                model.name, model.version, batch_name, file_timestamp, df.shape[0]
+            )
 
-        for model_field in model_fields:
-            feature_name = model_field.name
+            for model_field in model_fields:
+                feature_name = model_field.name
+                profile = model_field.profile
 
-            if feature_name not in df.columns:
-                print(f"Could not find feature {feature_name} in batch")
-                continue
+                if profile not in [
+                    DataProfileType.NUMERICAL,
+                    DataProfileType.CATEGORICAL,
+                ]:
+                    logging.warning(f"Could not find feature {feature_name} in batch")
+                    continue
 
-            if model_field.profile == DataProfileType.NUMERICAL:
-                metric_config = metrics_by_feature[feature_name]
-                result = process_numerical_column(
-                    feature_name, df[feature_name], metric_config
-                )
-                batch_report.process_column_report(result)
+                try:
+                    metric_config = metrics_by_feature[feature_name]
+                    if model_field.profile == DataProfileType.NUMERICAL:
+                        result = process_numerical_column(
+                            feature_name, df[feature_name], metric_config
+                        )
+                    elif model_field.profile == DataProfileType.CATEGORICAL:
+                        result = process_categorical_column(
+                            feature_name, df[feature_name], metric_config
+                        )
+                except KeyError:
+                    logging.warning(
+                        f"Didn't find metrics for field {feature_name.capitalize()}. SKIP"
+                    )
+                except Exception:
+                    logging.warning(
+                        f"Could'n calculate checks for {model.name}:{model.version}/{batch_name}/{feature_name}",
+                        exc_info=True,
+                    )
+                    continue
+                else:
+                    batch_report.process_column_report(result)
 
-            elif model_field.profile == DataProfileType.CATEGORICAL:
-                metric_config = metrics_by_feature[feature_name]
-                result = process_categorical_column(
-                    feature_name, df[feature_name], metric_config
-                )
-                batch_report.process_column_report(result)
-            else:
-                pass
-
-        return batch_report
+            return batch_report
+        except Exception as e:
+            raise GenerateReportError(
+                f"Report for {model.name}:{model.version}/{batch_name} was not generated",
+                e,
+            )

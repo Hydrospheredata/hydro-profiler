@@ -1,3 +1,4 @@
+from profiler.domain.errors import EntityNotFoundError, EntityWasNotStoredError
 from profiler.ports.overall_reports_repository import OverallReportsRepository
 from profiler.domain.overall_report import OverallReport
 
@@ -20,8 +21,12 @@ class PgOverallReportsRepository(OverallReportsRepository):
 
             result = conn.execute(query).fetchone()
 
+            if result is None:
+                raise EntityNotFoundError(
+                    f"Overall report for {model_name}:{model_version} was not found"
+                )
+
             if result:
-                print("Found overall report")
                 (
                     model_name,
                     model_version,
@@ -42,14 +47,20 @@ class PgOverallReportsRepository(OverallReportsRepository):
 
     def save(self, overall_report: OverallReport) -> None:
         with engine.connect() as conn:
-            query = text(
-                "INSERT INTO overall_reports VALUES (:model_name, :model_version, :batch_name, :suspicious_percent, :failed_ratio)"
-            ).bindparams(
-                model_name=overall_report.model_name,
-                model_version=overall_report.model_version,
-                batch_name=overall_report.batch_name,
-                suspicious_percent=overall_report.suspicious_percent,
-                failed_ratio=overall_report.failed_ratio,
-            )
+            try:
+                query = text(
+                    "INSERT INTO overall_reports VALUES (:model_name, :model_version, :batch_name, :suspicious_percent, :failed_ratio)"
+                ).bindparams(
+                    model_name=overall_report.model_name,
+                    model_version=overall_report.model_version,
+                    batch_name=overall_report.batch_name,
+                    suspicious_percent=overall_report.suspicious_percent,
+                    failed_ratio=overall_report.failed_ratio,
+                )
 
-            conn.execute(query)
+                conn.execute(query)
+            except Exception as e:
+                raise EntityWasNotStoredError(
+                    f"Overall report for {overall_report.model_name}:{overall_report.model_version}/{overall_report.batch_name} was not stored",
+                    e,
+                )

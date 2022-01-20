@@ -1,10 +1,10 @@
 from typing import List
-from profiler.domain.model_report import ModelReport
+from profiler.domain.batch_report import BatchReport
 from profiler.ports.reports_repository import ReportsRepository
 
 
 class LocalReportsRepository(ReportsRepository):
-    reports: List[ModelReport] = []
+    reports: List[BatchReport] = []
 
     def get_report(self, model_name: str, model_version: int, batch_name: str):
         return [
@@ -15,5 +15,5 @@ class LocalReportsRepository(ReportsRepository):
             and x.batch_name == batch_name
         ][0]
 
-    def save(self, report: ModelReport):
+    def save(self, report: BatchReport):
         self.reports.append(report)

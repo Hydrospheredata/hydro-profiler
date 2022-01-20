@@ -1,3 +1,4 @@
+from profiler.domain.errors import EntityNotFoundError, EntityWasNotStoredError
 from profiler.domain.model_signature import ModelSignature
 from profiler.ports.models_repository import ModelsRepository
 from profiler.domain.model import Model
@@ -28,7 +29,14 @@ class PgModelsRepository(ModelsRepository):
                 "SELECT * FROM models WHERE model_name=:name AND model_version=:version"
             ).bindparams(name=model_name, version=model_version)
 
-            (name, version, contract) = conn.execute(query).fetchone()
+            res = conn.execute(query).fetchone()
+
+            if res is None:
+                raise EntityNotFoundError(
+                    f"Model with {model_name}:{model_version} was not found"
+                )
+
+            (name, version, contract) = res
 
             return Model(
                 name=name,
@@ -38,11 +46,16 @@ class PgModelsRepository(ModelsRepository):
 
     def save(self, model: Model):
         with engine.connect() as conn:
-            query = text(
-                "INSERT INTO models VALUES (:name, :version, :contract)"
-            ).bindparams(
-                name=model.name,
-                version=model.version,
-                contract=model.contract.json(),
-            )
-            conn.execute(query)
+            try:
+                query = text(
+                    "INSERT INTO models VALUES (:name, :version, :contract)"
+                ).bindparams(
+                    name=model.name,
+                    version=model.version,
+                    contract=model.contract.json(),
+                )
+                conn.execute(query)
+            except Exception as e:
+                raise EntityWasNotStoredError(
+                    f"Model {model.name}:{model.version} was not stored", e
+                )

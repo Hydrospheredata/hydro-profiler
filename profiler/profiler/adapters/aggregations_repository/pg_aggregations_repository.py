@@ -1,6 +1,7 @@
 import json
 from sqlalchemy import text
 from profiler.domain.aggregation import Aggregation, AggregationBatch
+from profiler.domain.errors import EntityWasNotStoredError
 from profiler.ports.aggregations_repository import AggregationsRepository
 from profiler.db.pg_engine import engine
 from profiler.utils.json_dumper import dumper
@@ -9,7 +10,6 @@ from profiler.utils.json_dumper import dumper
 class PgAggregationsRepository(AggregationsRepository):
     def get_aggregation(self, model_name: str, model_version: int) -> Aggregation:
         with engine.connect() as conn:
-            print("get aggregation")
             query = text(
                 """SELECT model_name, batch_name, file_timestamp, aggregation
                    FROM aggregations
@@ -71,5 +71,7 @@ class PgAggregationsRepository(AggregationsRepository):
                     ),
                 )
             except Exception as e:
-                print("sql error")
-                print(e)
+                raise EntityWasNotStoredError(
+                    f"Aggregation for {batch.model_name}:{batch.model_version}/{batch.batch_name} was not stored",
+                    e,
+                )
