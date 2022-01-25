@@ -3,13 +3,19 @@ from profiler.domain.column_report import ColumnReport
 from profiler.domain.metric_config import NumericalMetricConfig, CategoricalMetricConfig
 import profiler.domain.descriptions as de
 
+pd.options.mode.use_inf_as_na = True
+
 
 def process_numerical_column(
     feature_name: str, series: pd.Series, config: NumericalMetricConfig
 ) -> ColumnReport:
-    is_between_min_max = series.between(config.min, config.max)
-    failed_min_max = series[~is_between_min_max]
-    passed_min_max = series[is_between_min_max]
+    is_missing_value = series.isna()
+    missing_values = series[is_missing_value]
+    not_missing_values = series[~is_missing_value]
+
+    is_between_min_max = not_missing_values.between(config.min, config.max)
+    failed_min_max = not_missing_values[~is_between_min_max]
+    passed_min_max = not_missing_values[is_between_min_max]
 
     is_in_percentile = passed_min_max.between(config.perc_01, config.perc_99)
     failed_percentile = passed_min_max[~is_in_percentile]
@@ -22,6 +28,9 @@ def process_numerical_column(
 
     failed_rows = {}
     susp_rows = {}
+
+    for i in missing_values.index:
+        failed_rows[i] = [de.missing_value(feature_name)]
 
     for i in failed_min_max.index:
         failed_rows[i] = [
@@ -57,11 +66,18 @@ def process_categorical_column(
 ) -> ColumnReport:
     categories = config.categories
 
-    is_in_category = series.isin(categories)
-    failed_category = series[~is_in_category]
+    is_missing_value = series.isna()
+    missing_values = series[is_missing_value]
+    not_missing_values = series[~is_missing_value]
+
+    is_in_category = not_missing_values.isin(categories)
+    failed_category = not_missing_values[~is_in_category]
 
     failed_rows = {}
     susp_rows = {}
+
+    for i in missing_values.index:
+        failed_rows[i] = [de.missing_value(feature_name)]
 
     for i in failed_category.index:
         desc = de.failed_category_description(feature_name, failed_category[i])

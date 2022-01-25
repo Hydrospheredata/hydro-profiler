@@ -13,5 +13,5 @@ def dumper(obj):
         if isinstance(obj, (datetime.datetime, datetime.date)):
             return obj.isoformat()
         return obj.toJSON()
-    except:
+    except Exception:
         return obj.__dict__
