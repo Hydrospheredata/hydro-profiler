@@ -6,6 +6,10 @@ class CheckDescription:
         self.desc = desc
 
 
+def missing_value(feature):
+    return CheckDescription(feature, None, "MissingValue", "Value is missing")
+
+
 def failed_min_max_description(feature, value, min, max):
     return CheckDescription(
         feature, value, "MinMax", f"Value {value} not in [{min},{max}]"
