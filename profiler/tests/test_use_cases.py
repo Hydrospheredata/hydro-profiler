@@ -8,8 +8,8 @@ from profiler.use_cases.overall_reports_use_case import OverallReportsUseCase
 from profiler.use_cases.report_use_case import ReportUseCase
 
 
-class TestMetricsUseCase:
-    def test_x(
+class TestUseCases:
+    def test_cases(
         self,
         caplog,
         models_repo,
@@ -20,14 +20,18 @@ class TestMetricsUseCase:
         adult_model_wrapper,
     ):
         caplog.set_level(logging.INFO)
+
+        train_file_name = "train.csv"
+        production_file_name = "batch_1.csv"
+
         agg_uc: AggregationUseCase = aggregations_use_case
         metrics_uc: MetricsUseCase = metrics_use_case
         reports_uc: ReportUseCase = reports_use_case
         overall_uc: OverallReportsUseCase = overall_reports_use_case
 
         model = adult_model_wrapper.model
-        train_file = pd.read_csv(adult_model_wrapper.get_batch("train.csv"))
-        batch_file = pd.read_csv(adult_model_wrapper.get_batch("batch_3.csv"))
+        train_file = pd.read_csv(adult_model_wrapper.get_batch(train_file_name))
+        batch_file = pd.read_csv(adult_model_wrapper.get_batch(production_file_name))
 
         models_repo.save(model)
 
@@ -40,7 +44,7 @@ class TestMetricsUseCase:
         reports_uc.save_report(training_report)
 
         report = reports_uc.generate_report(
-            model, "batch_2", datetime.now(), batch_file
+            model, production_file_name, datetime.now(), batch_file
         )
         reports_uc.save_report(report)
 
@@ -49,9 +53,13 @@ class TestMetricsUseCase:
 
         overall_uc.generate_overall_report(training_report)
         overall_uc.generate_overall_report(report)
-        overall_report = overall_uc.get_report(model.name, model.version, "batch_2")
+        overall_report = overall_uc.get_report(
+            model.name, model.version, production_file_name
+        )
 
-        stat = overall_uc.calculate_batch_stats(model.name, model.version, "batch_2")
+        stat = overall_uc.calculate_batch_stats(
+            model.name, model.version, production_file_name
+        )
 
         assert overall_report
         assert metrics
